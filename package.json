@@ -1,0 +1,20 @@
+{
+  "name": "sched-qa-playwright",
+  "version": "0.1.0",
+  "private": true,
+  "description": "QA proof of concept: read-only Playwright checks against a Sched environment.",
+  "scripts": {
+    "test:prod": "playwright test --project=prod --project=cfp-readonly",
+    "test:prod:headed": "playwright test --project=prod --project=cfp-readonly --headed",
+    "test:eph": "playwright test --project=eph",
+    "test:eph:headed": "playwright test --project=eph --headed",
+    "test:dev2": "playwright test --project=dev2",
+    "test:cfp": "playwright test --project=cfp --project=cfp-iphone",
+    "record": "playwright codegen",
+    "report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.48.0",
+    "dotenv": "^16.4.5"
+  }
+}

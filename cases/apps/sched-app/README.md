@@ -2,7 +2,7 @@
 
 Run on every Sched app build before it goes to the App Store or Google Play, and when a build changes its toolchain (for example the iOS 27 pipeline, ENG-2275 and ENG-2073). Test builds: iOS through TestFlight ("Sched Dev", shared by Diego); Android APKs shared by Derek until 11/16, then to be confirmed. The store apps and Sched Dev point to production. Use an attendee account with Google SSO, the organizer account, a public QA event on Boost with sessions (one with a description), a private event for the login cases, and record the exact build on every run.
 
-Automation: phase 1 of the app runs with Maestro on qa reminders 2 in production (mobile/README.md): install and launch (APP-01), open an event (APP-02), search (APP-07), session details (APP-09, no description yet) and the attendee list (APP-10, iOS only), passing on 2026-11-13 on Sched Dev 2.16.2 (iOS simulator) and Android 1.63.1. Its web side runs at iPhone size on eph (`npm run test:eph:iphone`): search (APP-07), session description (APP-09), My Schedule (APP-08) and the attendee list (APP-10), all passing on 2026-11-12.
+Automation: phase 1 of the app runs with Maestro on qa reminders 2 in production (mobile/README.md): install and launch (APP-01), open an event (APP-02), search (APP-07), session details (APP-09, no description yet), the attendee list (APP-10) and an event without registration (APP-13), passing on 2026-11-13 on Sched Dev 2.16.2 (iOS simulator) and Android 1.63.1. Its web side runs at iPhone size on eph (`npm run test:eph:iphone`): search (APP-07), session description (APP-09), My Schedule (APP-08) and the attendee list (APP-10), all passing on 2026-11-12.
 
 Not covered yet (to run on the next build):
 
@@ -29,10 +29,10 @@ Test build Sched 2.16.2 (7726), iOS, 2026-11-03 (fix for ENG-2228, foreground re
 | [APP-07](APP-07-search-sessions.md) | Search sessions |  | see builds | ✅ automated |
 | [APP-08](APP-08-add-to-my-schedule.md) | Add to My Schedule |  | see builds | 👤 manual |
 | [APP-09](APP-09-session-description.md) | Session description |  | see builds | 🟡 partly automated |
-| [APP-10](APP-10-attendee-list.md) | Attendee list |  | see builds | 🟡 partly automated (iOS) |
+| [APP-10](APP-10-attendee-list.md) | Attendee list |  | see builds | ✅ automated |
 | [APP-11](APP-11-session-feedback.md) | Session feedback |  | see builds | 👤 manual |
 | [APP-12](APP-12-registration-in-the-app.md) | Registration in the app |  | see builds | 👤 manual |
-| [APP-13](APP-13-registration-disabled.md) | Registration disabled |  | see builds | 👤 manual |
+| [APP-13](APP-13-registration-disabled.md) | Registration disabled |  | see builds | ✅ automated |
 | [APP-14](APP-14-public-profile.md) | Public profile |  | see builds | 👤 manual |
 | [APP-15](APP-15-dark-mode-ios.md) | Dark mode (iOS) |  | see builds | 👤 manual |
 | [APP-16](APP-16-no-download-banner.md) | No download banner |  | see builds | 👤 manual |

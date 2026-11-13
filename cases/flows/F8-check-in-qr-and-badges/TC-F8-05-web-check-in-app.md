@@ -27,7 +27,7 @@ The check-in is recorded and shows in the session's Check-in tab
 
 ✅ 2026-10-22 (qaengreminders): /checkin opens the Check-In App after login; with past sessions it shows "No upcoming sessions found" and "Show All Sessions". Checking an attendee into "qa public" records it. Note: no success message after a session check-in. Event-level check-in and QR scanning not run
 
-❌ 2026-11-12 (eph, Pixel 7 size, automated): session check-in and its undo are saved; Name Search checks an attendee in and the editor lists it. A new issue, not filed yet: a Name Search with first and last name ("QA add 2611…") finds nobody, because the app encodes the space twice and the server answers "No results"; Also confirms ENG-183: undoing an event check-in unticks it on screen but sends nothing, so the attendee stays checked in (also seen on qaengreminders in production). An attendee without a role can't log in, but the app shows no message
+❌ 2026-11-12 (eph, Pixel 7 size, automated): session check-in and its undo are saved; Name Search checks an attendee in and the editor lists it. A new issue, filed as ENG-2784: a Name Search with first and last name ("QA add 2611…") finds nobody, because the app encodes the space twice and the server answers "No results"; Also confirms ENG-183: undoing an event check-in unticks it on screen but sends nothing, so the attendee stays checked in (also seen on qaengreminders in production). An attendee without a role can't log in, but the app shows no message
 
 ---
 

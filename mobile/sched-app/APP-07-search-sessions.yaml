@@ -1,4 +1,4 @@
-# APP-07: the event's search finds a session by one word of its name and hides the others.
+# APP-07: the event's search finds a session ($MAESTRO_OTHER_SESSION) by one word of its name and hides the others.
 appId: ${MAESTRO_APP_ID}
 ---
 - runFlow: common/open-event.yaml
@@ -7,13 +7,13 @@ appId: ${MAESTRO_APP_ID}
       platform: iOS
     commands:
       - tapOn: {id: "ScheduleSearchBar"}
-      - inputText: "capacity"
+      - inputText: ${MAESTRO_OTHER_SESSION_WORD}
 - runFlow:
     when:
       platform: Android
     commands:
       - tapOn: "Search for a session"
-      - inputText: "capacity"
+      - inputText: ${MAESTRO_OTHER_SESSION_WORD}
       - hideKeyboard
-- assertVisible: "qa capacity"
+- assertVisible: ${MAESTRO_OTHER_SESSION}
 - assertNotVisible: ${MAESTRO_SESSION}

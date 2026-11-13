@@ -27,6 +27,7 @@ Opens without closing; icon and launch screen look right
 | --- | --- |
 | β 1.8.3 (2094), 2026-10-29 | ✅ |
 | 1.8.3 (2095), 2026-10-29 | ✅ |
+| 1.6.3 (1688, App Store), iOS 27.2 simulator, 2026-11-13 | ❌ closes as soon as it opens (UIKit: the app doesn't adopt the scene life cycle required on iOS 27; the β moved to the Xcode 27 tool chain in ENG-754) |
 
 ---
 

@@ -1,0 +1,46 @@
+# Logs the QA account (SCHED_EMAIL and SCHED_PASSWORD from .env) in to the Sched app inside qa reminders 2, from a fresh
+# install, for the flows in mobile/sched-app-logged-in. Run it yourself (npm run test:ios:login): mobile/run.sh passes
+# the account to Maestro only for this folder. The labels keep the values out of Maestro's console output; Maestro's
+# own debug files in ~/.maestro/tests can still hold them. iOS only for now, and blocked by that login issue (below).
+appId: ${MAESTRO_APP_ID}
+---
+- runFlow: ../sched-app/common/open-event.yaml
+- tapOn: "My Account"
+- tapOn: "Sign In"
+- extendedWaitUntil:
+    visible: "Sign in with Sched"
+    timeout: 10000
+- waitForAnimationToEnd
+# The two text fields aren't in the accessibility tree (only their labels are), so the flow taps where the email field
+# sits on an iPhone 17 and moves to the password with the keyboard's return key. The keyboard can't be hidden, so the
+# flow scrolls the form up until Sign In shows above the keyboard and taps it.
+# Not passing yet (2026-11-13): on Sched Dev 2.16.2 (7698) in the simulator, signing in closes the sign-in screen with
+# no error and no session, by hand too, so My Account still offers Sign Up.
+- tapOn:
+    point: "50%,58%"
+- inputText:
+    text: ${MAESTRO_SCHED_EMAIL}
+    label: Type the QA account's email
+- pressKey: Enter
+- inputText:
+    text: ${MAESTRO_SCHED_PASSWORD}
+    label: Type the QA account's password
+- swipe:
+    start: "50%,45%"
+    end: "50%,20%"
+    duration: 400
+- waitForAnimationToEnd
+- tapOn:
+    text: "Sign In"
+    below: "Password"
+    enabled: true
+- waitForAnimationToEnd
+# What the app shows right after signing in (an error, a prompt, or the event), for when the login doesn't stick.
+# Maestro saves it in ~/.maestro/tests/<run>/sched-app/takeScreenshot/.
+- takeScreenshot: login-after-submit
+- extendedWaitUntil:
+    notVisible: "Sign in with Sched"
+    timeout: 20000
+# The sign-in screen closing isn't enough: My Account must no longer offer Sign Up.
+- tapOn: "My Account"
+- assertNotVisible: "Sign Up"

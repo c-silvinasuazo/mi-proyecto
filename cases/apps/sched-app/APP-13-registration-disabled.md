@@ -4,7 +4,7 @@ title: Registration disabled
 flow: Sched app regression (iOS and Android)
 bugs: [ENG-547]
 last_run: see builds
-automation: 👤 manual — Native apps (Sched)
+automation: ✅ automated — `mobile/sched-app/APP-13-registration-disabled.yaml` (Maestro, iOS and Android)
 ---
 
 # APP-13 — Registration disabled
@@ -19,7 +19,7 @@ Goes straight to the schedule (REG-126, ENG-547)
 
 ## Automation
 
-👤 manual — Native apps (Sched)
+✅ automated — `mobile/sched-app/APP-13-registration-disabled.yaml` (Maestro, iOS and Android)
 
 ## Results by build
 
@@ -28,6 +28,8 @@ Goes straight to the schedule (REG-126, ENG-547)
 | iOS test build: Sched Dev 2.16.0 (7712) | Not run |
 | iOS App Store 2.16 | Not run |
 | Android Google Play 1.63.0 | ✅ 2026-10-22 |
+| iOS simulator build: Sched Dev 2.16.2 (7698) | ✅ 2026-11-13 (automated, qa reminders 2) |
+| Android 1.63.1 (APK from Diego) | ✅ 2026-11-13 (automated, qa reminders 2) |
 
 ---
 

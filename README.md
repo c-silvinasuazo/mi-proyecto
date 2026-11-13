@@ -9,7 +9,7 @@ Browser checks for the QA regression suite, with these targets:
 | eph on an iPhone | `npm run test:eph:iphone` | `tests/eph-iphone`: the event site at iPhone size in WebKit (search, description, My Schedule, attendee list). Needs `npx playwright install webkit` | Yes, only on eph |
 | dev2 | `npm run test:dev2` | Payments (F4) with Stripe test mode; opt in with `DEV2_BASE_URL` | Yes, in the production database: use billmtttest42 only |
 | CFP | `npm run test:cfp` | CFP flows (F7) on the production CFP, plus ENG-2267 on an iPhone viewport; opt in with `CFP_ENABLED=1` | Yes, on a qaeng event's CFP form only |
-| Sched app (iOS and Android) | `npm run test:ios` or `npm run test:android` | `mobile/sched-app`: Maestro flows for the native app on a simulator or emulator (phase 1: APP-01, 02, 07, 09, 10). Setup in [mobile/README.md](mobile/README.md) | No (read-only, on qa reminders 2 in production) |
+| Sched app (iOS and Android) | `npm run test:ios` or `npm run test:android` | `mobile/sched-app`: Maestro flows for the native app on a simulator or emulator (APP-01, 02, 07, 09, 10 and 13). Setup in [mobile/README.md](mobile/README.md) | No (read-only, on qa reminders 2 in production) |
 
 `COVERAGE.md` maps every validated check to its test, or to "manual" with the reason.
 

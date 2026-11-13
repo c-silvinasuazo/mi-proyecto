@@ -5,23 +5,33 @@ is a YAML flow in `mobile/<app>/` that taps, types and checks what the screen sh
 and iOS. The plan and the order of the cases are in the Notion page "Mobile automation plan (draft)": phase 1 is the
 read-only checks (APP-01, 02, 07, 09, 10 and SC-01 to SC-04).
 
-Status (2026-11-13): phase 1 of the Sched app passes on both platforms, twice in a row: `mobile/sched-app` has
-APP-01 (install and launch), APP-02 (open an event), APP-07 (search sessions), APP-09 (session details) and APP-10
-(attendee list), on Diego's builds: Sched Dev 2.16.2 (7698) on an iPhone 17 simulator with iOS 27.2 (5 flows) and
-the Sched app 1.63.1 (`com.sched`, prod APK) on the Android emulator (4 flows: APP-10 is iOS only, because without
-logging in the Android app shows no Directory tab). Still to do:
+Status (2026-11-13): phase 1 of the Sched app passes on both platforms, twice in a row: `mobile/sched-app` has APP-01
+(install and launch), APP-02 (open an event), APP-07 (search sessions), APP-09 (session details) and APP-10 (attendee
+list), on Diego's builds: Sched Dev 2.16.2 (7698) on an iPhone 17 simulator with iOS 27.2 and the Sched app
+1.63.1 (`com.sched`, prod APK) on the Android emulator (same flows; on Android the attendee list is at Info ->
+Attendees, as the app has no Directory tab, ENG-2591). APP-13 (phase 2, read-only) was added the same day and passes
+on both. Both platforms run the same 6 flows. Still to do:
 - APP-09 checks the title, time and speaker, but not a description: no session in qa reminders 2 has one. Add a
   description to "qa publico" and run with `MAESTRO_SESSION_DESCRIPTION="<the text>"`.
 - Sched Count (SC-01 to SC-04): the build Diego sent is 1.6.3 (1688), the production app, not the β 1.8.3 that points
-  to dev2.
-- Phase 2 (APP-08, 11, 13, SC-05/06, SC-08 to 10) changes data, so each flow has to undo what it changes.
+  to dev2, and it closes as soon as it opens on the iOS 27.2 simulator (UIKit stops apps that don't adopt the scene
+  life cycle on iOS 27; ENG-754 moved the β to the Xcode 27 tool chain). SC-01 to SC-04 need a β 1.8.3 simulator build.
+- Phase 2: APP-13 (an event without registration opens straight to its schedule) passes on both platforms.
+- APP-08 and APP-11 need a logged-in account in the app, and are blocked: on Sched Dev 2.16.2 (7698) in the
+  simulator, signing in with Sched closes the sign-in screen with no error and no session, by hand and with the login
+  flow (2026-11-13). The simulator's log shows why: the app's keychain read fails with -34018 ("Client has neither
+  application-identifier nor keychain-access-groups entitlements"), and the simulator builds are signed ad hoc with no
+  entitlements. Diego is looking at it. The login flow (`mobile/login`, run with `npm run test:ios:login` by the person
+  whose account it uses) is ready for when that works.
+- SC-05/06 and SC-08 to 10 need Sched Count. Flows that change data have to undo what they change.
 
 The flows open **qa reminders 2** (qaengreminders) in production from the app's event search, which only finds public
-events: it was made public on 2026-11-13, and the app found it a few minutes later. `mobile/run.sh` sets the event,
-session and attendee the flows expect (`MAESTRO_EVENT`, `MAESTRO_SESSION`, `MAESTRO_ATTENDEE`) and the app to open
-(`MAESTRO_APP_ID`: Sched Dev on iOS, `com.sched` on Android); set any of them in the shell to point elsewhere.
-`mobile/sched-app/common/open-event.yaml` is the shared start (fresh install -> search -> the event); the screens
-differ between the two apps (texts and ids), so each flow has an iOS and an Android branch where they do.
+events: it was made public on 2026-11-13, and the app found it a few minutes later. If it goes private, every flow but
+APP-01 fails at the search; after making it public again, the app took about 5 minutes to find it. `mobile/run.sh`
+sets the event, session and attendee the flows expect (`MAESTRO_EVENT`, `MAESTRO_SESSION`, `MAESTRO_ATTENDEE`) and the
+app to open (`MAESTRO_APP_ID`: Sched Dev on iOS, `com.sched` on Android); set any of them in the shell to point
+elsewhere. `mobile/sched-app/common/open-event.yaml` is the shared start (fresh install -> search -> the event); the
+screens differ between the two apps (texts and ids), so each flow has an iOS and an Android branch where they do.
 
 Sched Count has no Android app: on Android, check-in staff use the web Check-In App (/checkin) in the phone's browser.
 That part runs with Playwright at an Android phone's size, on eph: `tests/eph/checkin-android.spec.ts` (part of
@@ -54,6 +64,10 @@ events, and the ones that change data will undo it. Phase 1 needs no login.
    - iOS: unzip the `.app` and `xcrun simctl install booted <App>.app`.
 3. `npm run test:android` or `npm run test:ios`. Results go to `mobile/results/` (JUnit XML); screenshots of failures
    stay in `~/.maestro/tests`.
+
+To run on another simulator, pass its id: `sh mobile/run.sh sched-app --platform ios --device <udid>`. The flows also
+pass on an iPhone SE (3rd generation) with iOS 27.2 (2026-11-13), the smallest iPhone screen; install the app on it
+first. The login flow taps the email field by its position on an iPhone 17, so it may need adjusting on other sizes.
 
 To write or fix a flow, `maestro studio` shows the screen and the selector of each element.
 

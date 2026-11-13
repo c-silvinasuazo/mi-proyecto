@@ -2,7 +2,7 @@
 appId: ${MAESTRO_APP_ID}
 ---
 - runFlow: common/open-event.yaml
-- assertVisible: "qa capacity"
+- assertVisible: ${MAESTRO_OTHER_SESSION}
 - assertVisible: "Info"
 - assertVisible: "My Account"
 - runFlow:

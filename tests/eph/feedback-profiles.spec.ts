@@ -95,9 +95,10 @@ test.describe('feedback, profiles, sponsors and PD', () => {
   // their names are swapped. With one of them on, a speaker attached to a session gets one tool on the session's
   // speaker page (/event/<id>/edit): "Edit Description" (the description editor only) or "Edit Session" (title, video
   // stream, button link and photo). Turns on one option at a time and checks that the option named for the description
-  // gives "Edit Description" and the one named for the details gives "Edit Session". Open request: expected to fail
-  // until the names are switched (on eph 2026-11-12 each option gives the other tool). Both options are put back.
-  test('ENG-2217: with only one Speaker Tools option on, a speaker can edit only the matching fields (open request: expected to fail until the names are switched)', async ({ page, browser }) => {
+  // gives "Edit Description" and the one named for the details gives "Edit Session". ENG-2217 was closed on 2026-11-13
+  // with the names switched, and this passes on eph since then (a regression check now); on eph 2026-11-12, before the
+  // fix, each option gave the other tool. Both options are put back.
+  test('ENG-2217: with only one Speaker Tools option on, a speaker can edit only the matching fields', async ({ page, browser }) => {
     requireAccount('SPEAKER');
     test.setTimeout(240_000);
     const speaker = await ensureSpeakerName(page, process.env.EPH_SPEAKER_USERNAME!);

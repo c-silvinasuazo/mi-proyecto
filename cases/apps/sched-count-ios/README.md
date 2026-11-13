@@ -2,7 +2,7 @@
 
 Run on every Sched Count build before it goes to the App Store. Sched Count has two TestFlight builds (Diego, 2026-10-29): production (com.sched.checkin, points to sched.com, real data, no test tools) and β (com.sched.checkinbeta, points to dev2.sched.co, with a "QA" button that generates test QR codes). Use the organizer account (Admin of the event), an attendee account without an admin role, and a QA event on Boost with attendees. A real attendee QR is the one behind the QR icon (top right) on the public site, logged in as that attendee, or on their exported badge.
 
-Android has no Sched Count: check-in on Android is the web Check-In App (/checkin), automated at phone size on eph in `tests/eph/checkin-android.spec.ts` (role check like SC-03, Name Search check-in like SC-05 and SC-10, undo like SC-06). On 2026-11-12 it found a new issue in the web app, not filed yet (a Name Search with first and last name finds nobody) and confirmed ENG-183 (undoing an event check-in isn't saved).
+Android has no Sched Count: check-in on Android is the web Check-In App (/checkin), automated at phone size on eph in `tests/eph/checkin-android.spec.ts` (role check like SC-03, Name Search check-in like SC-05 and SC-10, undo like SC-06). On 2026-11-12 it found a new issue in the web app, ENG-2784 (a Name Search with first and last name finds nobody) and confirmed ENG-183 (undoing an event check-in isn't saved).
 
 Also checked on β: a QR that doesn't belong to any attendee (the badge template preview) shows "invalid QR", as expected.
 

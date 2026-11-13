@@ -9,15 +9,15 @@ appId: ${MAESTRO_APP_ID}
     commands:
       - tapOn: ${MAESTRO_SESSION}
       - assertVisible: {id: "session title", text: "${MAESTRO_SESSION}"}
-      - assertVisible: ".*begins Wednesday, October 21, 2026 at 10:00.AM.*"  # iOS puts a narrow no-break space before AM
+      - assertVisible: ".*begins ${MAESTRO_SESSION_DAY}, ${MAESTRO_SESSION_DATE} at ${MAESTRO_SESSION_START}.*"
 - runFlow:
     when:
       platform: Android
     commands:
       - tapOn: {id: "${MAESTRO_SESSION}"}
-      - assertVisible: "Wednesday October 21, 2026"
-      - assertVisible: "10:00AM - 11:00AM PDT"
-- assertVisible: "qa speaker 2228"
+      - assertVisible: "${MAESTRO_SESSION_DAY} ${MAESTRO_SESSION_DATE}"
+      - assertVisible: "${MAESTRO_SESSION_START}.*"
+- assertVisible: ${MAESTRO_SPEAKER}
 - runFlow:
     when:
       true: ${MAESTRO_SESSION_DESCRIPTION}

@@ -84,7 +84,7 @@ test.describe('Android check-in: the web Check-In App on a phone', () => {
   });
 
   // SC-03 on Android: Sched Count tells an account with no admin or check-in role "No events assigned yet" (ENG-754).
-  // The web app refuses it too (the session list answers 401), but goes back to the login form with no message.
+  // The web app refuses it too (the session list answers 401), but goes back to the login form with no message (ENG-2785).
   test('an attendee without an admin or check-in role can\'t log in to the Check-In App', async ({ browser, baseURL }) => {
     requireAccount('ATTENDEE');
     const { page, sessions } = await openCheckinApp(browser, baseURL!, 'EPH_ATTENDEE');
@@ -120,9 +120,9 @@ test.describe('Android check-in: the web Check-In App on a phone', () => {
     expect(await eventCheckins(editor, attendee.id), 'The editor does not list the event check-in').toBe(1);
   });
 
-  // Found 2026-11-12, not filed yet. The search box asks for "first/last name", but a search with a space finds nobody:
+  // ENG-2784 (open, found 2026-11-12). The search box asks for "first/last name", but a search with a space finds nobody:
   // the app encodes the space twice (query=QA%2520add) and the server answers 404 "No results".
-  test('Name Search finds an attendee by first and last name (issue found 2026-11-12: expected to fail until fixed)', async ({ page: editor, browser, baseURL }) => {
+  test('ENG-2784: Name Search finds an attendee by first and last name (open bug: expected to fail until fixed)', async ({ page: editor, browser, baseURL }) => {
     const attendee = await addAttendee(editor);
     const { page } = await openCheckinApp(browser, baseURL!, 'EPH');
     await waitForSessions(page);

@@ -4,7 +4,7 @@ title: Attendee list
 flow: Sched app regression (iOS and Android)
 bugs: [ENG-2213]
 last_run: see builds
-automation: 🟡 partly automated — `mobile/sched-app/APP-10-attendee-list.yaml` (Maestro, iOS only: without logging in, the Android app shows no Directory tab)
+automation: ✅ automated — `mobile/sched-app/APP-10-attendee-list.yaml` (Maestro, iOS and Android: Directory -> Attendees on iOS, Info -> Attendees on Android; ENG-2591)
 ---
 
 # APP-10 — Attendee list
@@ -19,7 +19,7 @@ The list isn't blank (ENG-2213)
 
 ## Automation
 
-🟡 partly automated — `mobile/sched-app/APP-10-attendee-list.yaml` (Maestro, iOS only: without logging in, the Android app shows no Directory tab)
+✅ automated — `mobile/sched-app/APP-10-attendee-list.yaml` (Maestro, iOS and Android: Directory -> Attendees on iOS, Info -> Attendees on Android; ENG-2591)
 
 ## Results by build
 
@@ -29,7 +29,7 @@ The list isn't blank (ENG-2213)
 | iOS App Store 2.16 | ✅ 2026-10-27 |
 | Android Google Play 1.63.0 | Not run |
 | iOS simulator build: Sched Dev 2.16.2 (7698) | ✅ 2026-11-13 (automated) |
-| Android 1.63.1 (APK from Diego) | Not run: without logging in, the event shows no Directory tab (Schedule, Info and My Account only) |
+| Android 1.63.1 (APK from Diego) | ✅ 2026-11-13 (automated: Info -> Attendees; the app has no Directory tab, ENG-2591) |
 
 ---
 

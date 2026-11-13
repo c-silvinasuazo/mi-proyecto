@@ -13,6 +13,8 @@
     "test:cfp": "playwright test --project=cfp --project=cfp-iphone",
     "test:android": "sh mobile/run.sh sched-app --platform android",
     "test:ios": "sh mobile/run.sh sched-app --platform ios",
+    "test:ios:login": "sh mobile/run.sh login --platform ios",
+    "test:ios:logged-in": "sh mobile/run.sh sched-app-logged-in --platform ios",
     "record": "playwright codegen",
     "report": "playwright show-report"
   },

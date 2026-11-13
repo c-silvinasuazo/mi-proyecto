@@ -6,7 +6,7 @@ area: F9
 priority: High
 bugs: [ENG-685]
 last_run: passed
-automation: 🟡 placeholder — `tests/eph/f9-sessions.spec.ts`
+automation: ✅ automated — `tests/eph/f9-sessions.spec.ts` (eph)
 ---
 
 # REG-120 — The Accept button works when uploading a sponsor photo
@@ -19,7 +19,7 @@ Prevents the return of: ENG-685
 
 ## Automation
 
-🟡 placeholder — `tests/eph/f9-sessions.spec.ts`
+✅ automated — `tests/eph/f9-sessions.spec.ts` (eph)
 
 ## Last run
 

@@ -6,7 +6,7 @@ area: F9
 priority: Reopened
 bugs: [ENG-388, ENG-431]
 last_run: passed
-automation: 🟡 placeholder — `tests/eph/f9-sessions.spec.ts`
+automation: ✅ automated — `tests/eph/f9-sessions.spec.ts` (eph)
 ---
 
 # REG-127 — Turning chat on or off doesn't throw a parsererror
@@ -19,7 +19,7 @@ Prevents the return of: ENG-388, ENG-431
 
 ## Automation
 
-🟡 placeholder — `tests/eph/f9-sessions.spec.ts`
+✅ automated — `tests/eph/f9-sessions.spec.ts` (eph)
 
 ## Last run
 

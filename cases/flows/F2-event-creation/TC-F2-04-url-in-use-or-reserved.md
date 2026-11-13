@@ -6,7 +6,7 @@ type: Negative
 env: Local
 bugs: []
 last_run: passed
-automation: 🟡 placeholder — `tests/eph/f2-events.spec.ts`
+automation: ✅ automated — `tests/eph/f2-events.spec.ts` (eph)
 ---
 
 # TC-F2-04 — URL in use or reserved
@@ -21,7 +21,7 @@ URL of an existing event; then "admin"
 
 ## Automation
 
-🟡 placeholder — `tests/eph/f2-events.spec.ts`
+✅ automated — `tests/eph/f2-events.spec.ts` (eph)
 
 ## Last run
 

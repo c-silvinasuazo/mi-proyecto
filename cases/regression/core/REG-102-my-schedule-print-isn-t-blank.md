@@ -6,7 +6,7 @@ area: F6
 priority: High
 bugs: [ENG-669]
 last_run: passed
-automation: 🟡 placeholder — `tests/eph/public-site.spec.ts`
+automation: ✅ automated — `tests/eph/public-site.spec.ts` (eph)
 ---
 
 # REG-102 — "My Schedule > Print" isn't blank
@@ -19,7 +19,7 @@ Prevents the return of: ENG-669
 
 ## Automation
 
-🟡 placeholder — `tests/eph/public-site.spec.ts`
+✅ automated — `tests/eph/public-site.spec.ts` (eph)
 
 ## Last run
 

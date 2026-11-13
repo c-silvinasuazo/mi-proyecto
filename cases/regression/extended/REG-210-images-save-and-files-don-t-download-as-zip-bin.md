@@ -5,7 +5,7 @@ level: Extended
 area: Sessions
 bugs: [ENG-721, ENG-1407, ENG-1561]
 last_run: passed
-automation: 🟡 placeholder — `tests/eph/f9-sessions.spec.ts`
+automation: ✅ automated — `tests/eph/f9-sessions.spec.ts` (eph)
 ---
 
 # REG-210 — Images save and files don't download as zip/bin
@@ -18,7 +18,7 @@ Prevents the return of: ENG-721, ENG-1561, ENG-1407
 
 ## Automation
 
-🟡 placeholder — `tests/eph/f9-sessions.spec.ts`
+✅ automated — `tests/eph/f9-sessions.spec.ts` (eph)
 
 ## Last run
 

@@ -6,7 +6,7 @@ type: Positive
 env: Local + production
 bugs: [ENG-419]
 last_run: passed
-automation: 🟡 placeholder — `tests/eph/f3-login.spec.ts`
+automation: ✅ automated — `tests/eph/f3-login.spec.ts` (eph)
 ---
 
 # TC-F3-02 — Password reset
@@ -21,7 +21,7 @@ Works; /password-reset and /password-reset/ behave the same (ENG-419)
 
 ## Automation
 
-🟡 placeholder — `tests/eph/f3-login.spec.ts`
+✅ automated — `tests/eph/f3-login.spec.ts` (eph)
 
 ## Last run
 

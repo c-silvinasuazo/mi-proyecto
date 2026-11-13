@@ -6,7 +6,7 @@ type: Positive
 env: Local
 bugs: [ENG-729]
 last_run: passed
-automation: 🟡 placeholder — `tests/eph/f10-control-panel.spec.ts`
+automation: ✅ automated — `tests/eph/f10-control-panel.spec.ts` (eph)
 ---
 
 # TC-F10-06 — Exports
@@ -21,7 +21,7 @@ Every row and the expected columns (ENG-729)
 
 ## Automation
 
-🟡 placeholder — `tests/eph/f10-control-panel.spec.ts`
+✅ automated — `tests/eph/f10-control-panel.spec.ts` (eph)
 
 ## Last run
 

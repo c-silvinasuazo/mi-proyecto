@@ -6,7 +6,7 @@ type: Positive
 env: Local
 bugs: [ENG-630]
 last_run: passed
-automation: 🟡 placeholder — `tests/eph/f9-sessions.spec.ts`
+automation: ✅ automated — `tests/eph/f9-sessions.spec.ts` (eph)
 ---
 
 # TC-F9-01 — Multi-day session
@@ -21,7 +21,7 @@ Dates don't change (ENG-630)
 
 ## Automation
 
-🟡 placeholder — `tests/eph/f9-sessions.spec.ts`
+✅ automated — `tests/eph/f9-sessions.spec.ts` (eph)
 
 ## Last run
 

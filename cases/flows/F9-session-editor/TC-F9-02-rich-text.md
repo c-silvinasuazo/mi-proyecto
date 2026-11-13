@@ -6,7 +6,7 @@ type: Positive
 env: Local + App
 bugs: [ENG-1202]
 last_run: partial
-automation: not mapped yet
+automation: ✅ automated — `tests/eph/f9-sessions.spec.ts` (eph)
 ---
 
 # TC-F9-02 — Rich text
@@ -21,7 +21,7 @@ Same on web, apps, print and PDF (ENG-1202)
 
 ## Automation
 
-not mapped yet
+✅ automated — `tests/eph/f9-sessions.spec.ts` (eph)
 
 ## Last run
 

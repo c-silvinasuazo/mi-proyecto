@@ -41,7 +41,7 @@ test.describe('eph areas: public site', () => {
   // REG-103: the schedule, a session page and search work.
   test('REG-103 schedule lists sessions and a session page opens', async ({ page }) => {
     await expectPageWorks(page, '/');
-    const session = page.locator('a[href*="/event/"]').first();
+    const session = page.locator('a[href*="event/"]').first();
     await expect(session, `No session links on the schedule. Landed on: ${where(page)}`).toBeVisible({ timeout: 15_000 });
     const title = (await session.innerText()).trim().split('\n')[0];
     await session.click();
@@ -55,7 +55,7 @@ test.describe('eph areas: public site', () => {
     await expect(box, `No search box on the schedule. Landed on: ${where(page)}`).toBeVisible({ timeout: 15_000 });
     await box.fill('test');
     await box.press('Enter');
-    await expect(page.locator('a[href*="/event/"]').first(), 'Search for "test" returned no sessions').toBeVisible({ timeout: 15_000 });
+    await expect(page.locator('a[href*="event/"]').first(), 'Search for "test" returned no sessions').toBeVisible({ timeout: 15_000 });
   });
 
   test('attendees directory opens', async ({ page }) => {

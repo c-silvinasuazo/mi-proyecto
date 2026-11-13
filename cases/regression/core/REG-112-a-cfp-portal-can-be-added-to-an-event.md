@@ -6,7 +6,7 @@ area: F7
 priority: High
 bugs: [ENG-605]
 last_run: passed
-automation: 🟡 placeholder — `tests/eph/f10-control-panel.spec.ts`
+automation: ✅ automated — `tests/eph/f10-control-panel.spec.ts` (eph)
 ---
 
 # REG-112 — A CFP portal can be added to an event
@@ -19,7 +19,7 @@ Prevents the return of: ENG-605
 
 ## Automation
 
-🟡 placeholder — `tests/eph/f10-control-panel.spec.ts`
+✅ automated — `tests/eph/f10-control-panel.spec.ts` (eph)
 
 ## Last run
 

@@ -5,7 +5,7 @@ level: Extended
 area: Sessions
 bugs: [ENG-152, ENG-630]
 last_run: passed
-automation: 🟡 placeholder — `tests/eph/f9-sessions.spec.ts`
+automation: ✅ automated — `tests/eph/f9-sessions.spec.ts` (eph)
 ---
 
 # REG-208 — Multi-day dates don't change when editing
@@ -18,7 +18,7 @@ Prevents the return of: ENG-630, ENG-152
 
 ## Automation
 
-🟡 placeholder — `tests/eph/f9-sessions.spec.ts`
+✅ automated — `tests/eph/f9-sessions.spec.ts` (eph)
 
 ## Last run
 

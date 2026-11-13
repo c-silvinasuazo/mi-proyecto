@@ -7,7 +7,7 @@ priority: High
 base_case: TC-F9-05
 bugs: [ENG-517]
 last_run: passed
-automation: 🟡 placeholder — `tests/eph/f9-sessions.spec.ts`
+automation: ✅ automated — `tests/eph/f9-sessions.spec.ts` (eph)
 ---
 
 # REG-105 — Unfreezing sessions unlocks the list
@@ -22,7 +22,7 @@ Prevents the return of: ENG-517
 
 ## Automation
 
-🟡 placeholder — `tests/eph/f9-sessions.spec.ts`
+✅ automated — `tests/eph/f9-sessions.spec.ts` (eph)
 
 ## Last run
 

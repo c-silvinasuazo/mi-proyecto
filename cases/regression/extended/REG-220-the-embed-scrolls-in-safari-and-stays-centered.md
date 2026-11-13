@@ -5,7 +5,7 @@ level: Extended
 area: Public site
 bugs: [ENG-118, ENG-2178]
 last_run: passed
-automation: 🟡 placeholder — `tests/eph/public-site.spec.ts`
+automation: ✅ automated — `tests/eph/public-site.spec.ts` (eph)
 ---
 
 # REG-220 — The embed scrolls in Safari and stays centered
@@ -18,7 +18,7 @@ Prevents the return of: ENG-2178, ENG-118
 
 ## Automation
 
-🟡 placeholder — `tests/eph/public-site.spec.ts`
+✅ automated — `tests/eph/public-site.spec.ts` (eph)
 
 ## Last run
 

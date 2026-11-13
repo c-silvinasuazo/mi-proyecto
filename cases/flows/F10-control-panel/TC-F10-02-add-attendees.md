@@ -6,7 +6,7 @@ type: Positive
 env: Production for emails
 bugs: []
 last_run: passed
-automation: 🟡 placeholder — `tests/eph/f10-control-panel.spec.ts`
+automation: ✅ automated — `tests/eph/f10-control-panel.spec.ts` (eph)
 ---
 
 # TC-F10-02 — Add attendees
@@ -21,7 +21,7 @@ One invite, only with "Add + Send Invite"
 
 ## Automation
 
-🟡 placeholder — `tests/eph/f10-control-panel.spec.ts`
+✅ automated — `tests/eph/f10-control-panel.spec.ts` (eph)
 
 ## Last run
 

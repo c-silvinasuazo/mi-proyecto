@@ -6,7 +6,7 @@ type: Positive
 env: Local
 bugs: []
 last_run: passed
-automation: 🟡 placeholder — `tests/eph/f10-control-panel.spec.ts`
+automation: ✅ automated — `tests/eph/f10-control-panel.spec.ts` (eph)
 ---
 
 # TC-F10-01 — Settings
@@ -21,7 +21,7 @@ Saved; shown on the public site and in the header
 
 ## Automation
 
-🟡 placeholder — `tests/eph/f10-control-panel.spec.ts`
+✅ automated — `tests/eph/f10-control-panel.spec.ts` (eph)
 
 ## Last run
 

@@ -21,6 +21,26 @@ export function runId(): string {
   return new Date().toISOString().replace(/\D/g, '').slice(2, 14);
 }
 
+// Logs in to the eph event's editor and saves the session to .auth/eph.json, which every eph test loads. eph has
+// its own database: use the docker-cd test admin (see README), not a production account.
+export async function logInToEphEditor(page: Page) {
+  await logInToEph(page, 'EPH');
+  await page.context().storageState({ path: '.auth/eph.json' });
+}
+
+// Logs in to the eph event with the admin (EPH) or one of the optional accounts (EPH_SPEAKER, EPH_ATTENDEE). The
+// event's /login only asks for the event password; /editor/login takes any account, and non-admins land on the
+// public site.
+export async function logInToEph(page: Page, prefix: 'EPH' | 'EPH_SPEAKER' | 'EPH_ATTENDEE') {
+  const base = requireEnv('EPH_BASE_URL').replace(/\/$/, '');
+  await page.goto(`${base}/editor/login`);
+  const form = page.locator('form').filter({ has: page.locator('input[type="password"]') }).first();
+  await form.getByRole('textbox').first().fill(requireEnv(`${prefix}_USERNAME`));
+  await form.locator('input[type="password"]').fill(requireEnv(`${prefix}_PASSWORD`));
+  await form.getByRole('button', { name: /^log in$/i }).click();
+  await expect(page, `eph login failed for ${prefix}_USERNAME (still on /editor/login)`).not.toHaveURL(/\/editor\/login/, { timeout: 20_000 });
+}
+
 // Skips write tests when the eph target isn't configured.
 export function requireEph() {
   test.skip(!process.env.EPH_BASE_URL, 'Set EPH_BASE_URL in .env to run eph tests.');

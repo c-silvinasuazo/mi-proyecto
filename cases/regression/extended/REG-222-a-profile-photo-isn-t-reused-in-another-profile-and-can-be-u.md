@@ -5,7 +5,7 @@ level: Extended
 area: Profiles
 bugs: [ENG-2087, ENG-2133]
 last_run: passed
-automation: 🟡 placeholder — `tests/eph/feedback-profiles.spec.ts`
+automation: ✅ automated — `tests/eph/feedback-profiles.spec.ts` (eph)
 ---
 
 # REG-222 — A profile photo isn't reused in another profile and can be updated
@@ -18,7 +18,7 @@ Prevents the return of: ENG-2087, ENG-2133
 
 ## Automation
 
-🟡 placeholder — `tests/eph/feedback-profiles.spec.ts`
+✅ automated — `tests/eph/feedback-profiles.spec.ts` (eph)
 
 ## Last run
 

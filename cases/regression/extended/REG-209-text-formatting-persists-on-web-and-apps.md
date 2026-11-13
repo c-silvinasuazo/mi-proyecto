@@ -5,7 +5,7 @@ level: Extended
 area: Sessions
 bugs: [ENG-585, ENG-595, ENG-671, ENG-1202, ENG-2015]
 last_run: passed
-automation: 🟡 placeholder — `tests/eph/f9-sessions.spec.ts`
+automation: ✅ automated — `tests/eph/f9-sessions.spec.ts` (eph)
 ---
 
 # REG-209 — Text formatting persists on web and apps
@@ -18,7 +18,7 @@ Prevents the return of: ENG-1202, ENG-585, ENG-595, ENG-2015, ENG-671
 
 ## Automation
 
-🟡 placeholder — `tests/eph/f9-sessions.spec.ts`
+✅ automated — `tests/eph/f9-sessions.spec.ts` (eph)
 
 ## Last run
 

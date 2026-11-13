@@ -7,7 +7,7 @@ priority: Reopened
 base_case: TC-F2-06
 bugs: [ENG-359, ENG-634, ENG-1230, ENG-2088]
 last_run: passed
-automation: 🟡 placeholder — `tests/eph/public-site.spec.ts`
+automation: ✅ automated — `tests/eph/public-site.spec.ts` (eph)
 ---
 
 # REG-129 — The chatbot doesn't cover editor buttons or dropdowns
@@ -22,7 +22,7 @@ Prevents the return of: ENG-359, ENG-634, ENG-1230, ENG-2088
 
 ## Automation
 
-🟡 placeholder — `tests/eph/public-site.spec.ts`
+✅ automated — `tests/eph/public-site.spec.ts` (eph)
 
 ## Last run
 

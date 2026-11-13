@@ -6,7 +6,7 @@ type: Edge
 env: Local
 bugs: [ENG-517]
 last_run: failed
-automation: 🟡 placeholder — `tests/eph/f9-sessions.spec.ts`
+automation: ✅ automated — `tests/eph/f9-sessions.spec.ts` (eph)
 ---
 
 # TC-F9-05 — Freeze / unfreeze
@@ -21,7 +21,7 @@ The list unlocks (ENG-517)
 
 ## Automation
 
-🟡 placeholder — `tests/eph/f9-sessions.spec.ts`
+✅ automated — `tests/eph/f9-sessions.spec.ts` (eph)
 
 ## Last run
 

@@ -25,11 +25,12 @@ Status: ✅ automated · 🟡 placeholder (`test.fixme`, to record) · 👤 stay
 | ENG-87: a session type with a comma is stored as one type | eph/f9-sessions | ✅ (open bug: fails until fixed; on eph 2026-11-09 "QA Workshop, Advanced" saved as two types) |
 | REG-103: schedule, session page, date filter and search; the date filter doesn't redirect | eph/public-site | ✅ |
 | REG-102: an attendee adds and removes a session in My Schedule; its print view isn't blank | eph/public-site | ✅ |
-| REG-105 / TC-F9-05: a frozen session has no remove button for the attendee; unfreezing unlocks it; a page opened before the freeze can't remove it | eph/f9-sessions | ✅ (ENG-2762, open: from a page opened before the freeze, the attendee still removes the frozen session; 6 of 6 runs on eph) |
+| REG-105 / TC-F9-05: a frozen session has no remove button for the attendee; unfreezing unlocks it; a page opened before the freeze can't remove it | eph/f9-sessions | ✅ (ENG-2762 fixed 2026-11-13: a removal from a page opened before the freeze now gets "frozen" and the session stays; before the fix it was removed, 6 of 6 runs on eph) |
 | REG-220: the embed loads, scrolls and stays centered | eph/public-site | ✅ (Chrome; Safari with the eph-safari project, needs `npx playwright install webkit`) |
 | ENG-1568: /print/all shows descriptions | eph/public-site | ✅ |
 | REG-129: chatbot and banners don't cover editor menus or buttons | eph/public-site | ✅ |
 | TC-F8-05: /checkin records a session check-in (Check-In App, saved after reload) | eph/f8-checkin | ✅ |
+| REG-113 / TC-F8-03 (ENG-194, ENG-770, ENG-544, ENG-545, ENG-546): with Self Check-in on, the session QR export has only the selected published sessions, 3 per page | eph/f8-checkin | ✅ (fails on eph at "Export all (PDF)": the PDF library is missing from the eph image, ENG-2665) |
 | Android check-in (/checkin at Pixel 7 size; Sched Count is iOS only): an attendee without an admin or check-in role can't log in (SC-03 on Android) | eph/checkin-android | ✅ (the app goes back to its login form with no message, unlike Sched Count's "No events assigned yet": ENG-2785) |
 | Android check-in: Name Search checks an attendee in; saved after reopening the app; the editor lists it (SC-05 / SC-10 on Android) | eph/checkin-android | ✅ |
 | ENG-2784: Android check-in: Name Search finds an attendee by first and last name | eph/checkin-android | ✅ (open bug: a search with a space finds nobody, because the app encodes the space twice) |
@@ -82,7 +83,7 @@ fails with "steps not recorded yet", so it gets written against the real screens
 | dev2 | dev2/f4-payments | REG-001 to REG-006, REG-017, REG-202 to REG-205, TC-F4-03/07/09, SCH-16 |
 | cfp | cfp/f7-cfp | TC-F7-01 to 06, REG-108, REG-109, REG-111, REG-212 to REG-216, ENG-1328, ENG-1565, ENG-2091, ENG-2267 (also iPhone), ENG-450 |
 
-Open bugs kept as checks (expected to fail until fixed): ENG-241, ENG-87, ENG-2091, ENG-2267, ENG-2293, ENG-183, ENG-2762, ENG-2784.
+Open bugs kept as checks (expected to fail until fixed): ENG-241, ENG-87, ENG-2091, ENG-2267, ENG-2293, ENG-183, ENG-2784.
 
 ## Stays manual
 

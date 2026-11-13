@@ -239,7 +239,8 @@ test.describe('F9 session editor', () => {
   // REG-105 / TC-F9-05 (ENG-517, ENG-2262): an attendee adds a session; once it's frozen its page has no remove button;
   // once it's unfrozen they can remove it again. On production the unfreeze took about 5 minutes to reach attendees
   // (2026-10-19), so that step waits up to 8. Last, a page the attendee opened before the freeze still shows the remove
-  // button: clicking it must not take the frozen session off My Schedule (on eph 2026-11-10 it did).
+  // button: clicking it must not take the frozen session off My Schedule. It did on eph until ENG-2762 was fixed
+  // (2026-11-13); now the server answers "frozen" and the session stays.
   test('REG-105 / TC-F9-05: freezing blocks schedule changes; unfreezing unlocks them (needs a paid plan)', async ({ page, browser }) => {
     requireAccount('ATTENDEE');
     test.setTimeout(720_000);
@@ -294,11 +295,21 @@ test.describe('F9 session editor', () => {
       });
 
       await test.step('a page opened before the freeze can\'t remove the frozen session', async () => {
-        await add.click();
+        // Right after a removal, the page can show "Add" before it reacts to clicks: a click then sends nothing. Click
+        // until the add request goes out.
+        await expect(async () => {
+          const added = attendee.waitForResponse((r) => r.url().includes(`/event-set?add=${id}`), { timeout: 3_000 });
+          await add.click();
+          expect((await added).ok(), 'Adding the session failed').toBe(true);
+        }).toPass({ timeout: 30_000 });
         await expect(remove).toBeVisible();
         await setFrozen(true);
-        // The attendee's page still has the button from before the freeze (it calls /event-set?del=<id>).
+        // The attendee's page still has the button from before the freeze (it calls /event-set?del=<id>). Make sure the
+        // request goes out, so a pass means the server refused it and not that the click did nothing.
+        const removal = attendee.waitForResponse((r) => r.url().includes(`/event-set?del=${id}`));
         await remove.click();
+        const answer = await removal;
+        test.info().annotations.push({ type: 'removal of the frozen session from the old page', description: `${answer.status()} ${(await answer.text()).trim().slice(0, 80)}` });
         await openSession();
         await expect(session, 'A page opened before the freeze took the frozen session off My Schedule').toHaveClass(/\bsub\b/);
       });

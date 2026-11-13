@@ -26,6 +26,8 @@ Prevents the return of: ENG-517
 
 ## Last run
 
+✅ 2026-11-13 (eph, automated): ENG-2762 fixed; a removal from a page opened before the freeze now gets "frozen" and the session stays on the attendee's My Schedule.
+
 ✅ 2026-10-19 (production). Unfreeze takes a few minutes to reach attendees
 
 ---

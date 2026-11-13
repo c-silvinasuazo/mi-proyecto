@@ -1,0 +1,16 @@
+# Setup check, not a Sched case: Maestro opens the system Settings app and finds a known entry. Run it after setting up
+# a new emulator or simulator: sh mobile/run.sh smoke --platform android (or ios).
+appId: com.apple.Preferences
+---
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - launchApp: com.apple.Preferences
+      - assertVisible: General
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - launchApp: com.android.settings
+      - assertVisible: Network & internet

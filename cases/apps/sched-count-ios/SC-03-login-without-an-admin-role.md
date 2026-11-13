@@ -27,6 +27,7 @@ Rejected with a clear message
 | --- | --- |
 | β 1.8.3 (2094), 2026-10-29 | ⚠️ Logs in, but the event tab stays empty and nothing can be done |
 | 1.8.3 (2095), 2026-10-29 | ⚠️ Same |
+| β 1.8.3 (2108), 2026-11-10 | ✅ Shows "No events assigned yet. Events assigned to your account will appear here." instead of the empty list, and the app doesn't freeze (ENG-754) |
 
 ---
 

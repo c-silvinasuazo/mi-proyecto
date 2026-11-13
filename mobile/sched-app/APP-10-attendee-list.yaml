@@ -1,0 +1,10 @@
+# APP-10: Directory -> Attendees lists the event's attendees (ENG-2213 was a blank list). iOS only for now: without
+# logging in, the Android app (1.63.1) shows no Directory tab in the event (Schedule, Info and My Account only).
+appId: ${MAESTRO_APP_ID}
+tags:
+  - ios-only
+---
+- runFlow: common/open-event.yaml
+- tapOn: "Directory"
+- tapOn: "Attendees"
+- assertVisible: ${MAESTRO_ATTENDEE}

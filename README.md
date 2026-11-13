@@ -1,13 +1,15 @@
 # Sched QA – Playwright
 
-Browser checks for the QA regression suite, with four targets:
+Browser checks for the QA regression suite, with these targets:
 
 | Target | Command | What runs | Writes data? |
 | --- | --- | --- | --- |
 | Production | `npm run test:prod` | `tests/readonly` and `tests/cfp-readonly`: read-only checks | No |
 | eph (PR environment) | `npm run test:eph` | Every flow in `tests/eph`, in Chrome. REG-220 in Safari: `npx playwright test --project=eph-safari` | Yes, only on eph (isolated database) |
+| eph on an iPhone | `npm run test:eph:iphone` | `tests/eph-iphone`: the event site at iPhone size in WebKit (search, description, My Schedule, attendee list). Needs `npx playwright install webkit` | Yes, only on eph |
 | dev2 | `npm run test:dev2` | Payments (F4) with Stripe test mode; opt in with `DEV2_BASE_URL` | Yes, in the production database: use billmtttest42 only |
 | CFP | `npm run test:cfp` | CFP flows (F7) on the production CFP, plus ENG-2267 on an iPhone viewport; opt in with `CFP_ENABLED=1` | Yes, on a qaeng event's CFP form only |
+| Sched app (iOS and Android) | `npm run test:ios` or `npm run test:android` | `mobile/sched-app`: Maestro flows for the native app on a simulator or emulator (phase 1: APP-01, 02, 07, 09, 10). Setup in [mobile/README.md](mobile/README.md) | No (read-only, on qa reminders 2 in production) |
 
 `COVERAGE.md` maps every validated check to its test, or to "manual" with the reason.
 
@@ -71,6 +73,7 @@ Each flow in `tests/eph`, `tests/dev2` and `tests/cfp` is a `test.fixme` with it
 
 ## Notes
 
+- eph tests that create sessions delete them when they finish (pass or fail), so runs don't pile up data on the shared demofriends event. A test that dies mid-run can still leave one behind: look for titles starting with "QA F9 " in the editor.
 - Production checks log in once per run (`tests/setup`) and reuse the session saved in `.auth/prod.json`, because Sched throttles repeated logins. That file holds session cookies: delete it after a run with `rm -rf .auth test-results playwright-report`.
 
 - Sched's login labels aren't linked to their inputs, so `helpers.ts` finds the fields by position inside the main area.

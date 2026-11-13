@@ -16,32 +16,80 @@ Status: ✅ automated · 🟡 placeholder (`test.fixme`, to record) · 👤 stay
 | ENG-450: CFP info page fits an iPhone screen | cfp-readonly/eng-450-cfp-info-fits-iphone | ✅ |
 | TC-F7-01 (organizer): the CFP portal opens from the editor and lists the QA form | cfp-readonly/cfp-organizer | ✅ (to confirm on first run) |
 | TC-F7-06: on Free Trial, Download all asks to upgrade | cfp-readonly/cfp-organizer | ✅ (to confirm on first run) |
+| REG-208 / TC-F9-01: a multi-day session keeps its dates after save, reopen and a description-only edit (eph, writes) | eph/f9-sessions | ✅ |
+| REG-209 / TC-F9-02: description formatting persists in the editor and on the public page (apps, print and PDF stay manual) | eph/f9-sessions | ✅ |
+| ENG-2244: a long description pasted with heavy markup is not cut off and renders cleanly | eph/f9-sessions | ✅ |
+| REG-127: turning chat on and off saves without a parsererror | eph/f9-sessions | ✅ (fails on eph 2026-11-09: "Failed to change chat status: parsererror"; to confirm whether eph-only) |
+| REG-107: event and attendee schedule PDFs contain data | eph/f9-sessions | ✅ (fails on eph 2026-11-09: "Download PDF" doesn't return a PDF; PDF generation likely not set up on eph) |
+| REG-210: session image saves; a PDF downloads as .pdf | eph/f9-sessions | ✅ (fails on eph 2026-11-09: uploads fail with "Could not upload the file", hosted_files folder missing on eph) |
+| ENG-87: a session type with a comma is stored as one type | eph/f9-sessions | ✅ (open bug: fails until fixed; on eph 2026-11-09 "QA Workshop, Advanced" saved as two types) |
+| REG-103: schedule, session page, date filter and search; the date filter doesn't redirect | eph/public-site | ✅ |
+| REG-102: an attendee adds and removes a session in My Schedule; its print view isn't blank | eph/public-site | ✅ |
+| REG-105 / TC-F9-05: a frozen session has no remove button for the attendee; unfreezing unlocks it; a page opened before the freeze can't remove it | eph/f9-sessions | ✅ (ENG-2762, open: from a page opened before the freeze, the attendee still removes the frozen session; 6 of 6 runs on eph) |
+| REG-220: the embed loads, scrolls and stays centered | eph/public-site | ✅ (Chrome; Safari with the eph-safari project, needs `npx playwright install webkit`) |
+| ENG-1568: /print/all shows descriptions | eph/public-site | ✅ |
+| REG-129: chatbot and banners don't cover editor menus or buttons | eph/public-site | ✅ |
+| TC-F8-05: /checkin records a session check-in (Check-In App, saved after reload) | eph/f8-checkin | ✅ |
+| Android check-in (/checkin at Pixel 7 size; Sched Count is iOS only): an attendee without an admin or check-in role can't log in (SC-03 on Android) | eph/checkin-android | ✅ (the app goes back to its login form with no message, unlike Sched Count's "No events assigned yet") |
+| Android check-in: Name Search checks an attendee in; saved after reopening the app; the editor lists it (SC-05 / SC-10 on Android) | eph/checkin-android | ✅ |
+| Android check-in: Name Search finds an attendee by first and last name | eph/checkin-android | ✅ (issue found 2026-11-12, not filed yet: a search with a space finds nobody, because the app encodes the space twice) |
+| APP-07 (web): Menu -> Search finds a session by name on an iPhone | eph-iphone/event-site-iphone | ✅ (WebKit, iPhone 15 size; also checks the schedule fits the screen) |
+| APP-09 (web): a session page shows its description on an iPhone | eph-iphone/event-site-iphone | ✅ |
+| APP-08 (web): add a session to My Schedule and remove it on an iPhone | eph-iphone/event-site-iphone | ✅ |
+| APP-10 (web): the attendee list isn't blank on an iPhone | eph-iphone/event-site-iphone | ✅ |
+| APP-01: the Sched app opens on a fresh install to the events list, no login wall | mobile/sched-app (Maestro) | ✅ iOS (Sched Dev 2.16.2 simulator) and Android (1.63.1) |
+| APP-02: the app's search finds qa reminders 2 and it opens to its schedule and tabs | mobile/sched-app (Maestro) | ✅ iOS and Android |
+| APP-07: the event's search finds a session by one word and hides the others | mobile/sched-app (Maestro) | ✅ iOS and Android |
+| APP-09: a session opens to its title, time and speaker (and its description, once a session has one) | mobile/sched-app (Maestro) | ✅ iOS and Android (description not checked: no session in qa reminders 2 has one) |
+| APP-10: Directory -> Attendees lists the attendees | mobile/sched-app (Maestro) | ✅ iOS only (without logging in, the Android app shows no Directory tab) |
+| ENG-183: Android check-in: undoing an event check-in in Name Search is saved | eph/checkin-android | ✅ (open bug: the circle unticks but no request is sent; the attendee stays checked in, also on qaengreminders in production) |
+| Android check-in: undoing a session check-in is saved (SC-06 on Android) | eph/checkin-android | ✅ |
+| TC-F3-02: /password-reset and /password-reset/ show the reset form (main site; email, link and new password stay manual: captcha, no email on eph) | eph/f3-login | ✅ |
+| TC-F3-08: editor -> Dashboard -> back without logging in again; logout ends both | eph/f3-login | ✅ (on eph the logout lands on qa.eph.sched.co, which loops; noted in the report) |
+| TC-F2-04: a taken or reserved URL disables Create in the Dashboard's Create New Event | eph/f2-events | ✅ |
+| TC-F10-01: a time zone change saves and shows on the public site; sessions keep their clock time (name and dates stay manual) | eph/f10-control-panel | ✅ |
+| TC-F10-02: "Add" and "Add + Send Invite" add the attendee (the invite email stays manual) | eph/f10-control-panel | ✅ |
+| TC-F10-06: Reports -> XLS Attendees has every attendee and the expected columns | eph/f10-control-panel | ✅ (fails on eph 2026-11-09: the export is 0 bytes) |
+| REG-112: the CFP portal opens from the editor | eph/f10-control-panel | ✅ |
+| REG-120: a sponsor photo's crop Accept works and the photo saves and loads | eph/f9-sessions | ✅ (on eph photos point to the production avatars host: 403, or another person's photo when a production id matches; not verifiable on eph) |
+| REG-222: two attendees keep their own photos (updating one stays manual) | eph/feedback-profiles | ✅ (same avatars-host problem on eph; not verifiable there) |
+| ENG-2217: with only one Speaker Tools option on, a speaker attached to a session gets the matching tool and fields | eph/feedback-profiles | ✅ (open request: fails until the names are switched; on eph 2026-11-12 "Edit session description" gives Edit Session (title, video stream, button link, photo) and "Edit session details" gives Edit Description. Gives demofriendsspeaker a name first: with none, Attach People breaks for every session) |
+
+## Skipped on eph until their precondition is met
+
+Each of these runs a quick check first and skips with the reason in the report. Once the precondition is met the test
+fails with "steps not recorded yet", so it gets written against the real screens instead of passing silently.
+
+| Check | File | Skips while |
+| --- | --- | --- |
+| REG-012 / TC-F1-01, REG-013 / TC-F1-02, TC-F1-04/05 | eph/f1-signup | /signup has a captcha on eph |
+| TC-F2-08 (written in full; ran once on eph 2026-11-10: the event was created and its editor opened), REG-014 / ENG-271 | eph/f2-events | EPH_ALLOW_EVENT_CREATION isn't set (each run creates an event that can't be deleted); the /signup half (TC-F2-01) stays manual: captcha |
+| REG-101, REG-206, REG-207, REG-125, TC-F6-05 | eph/f6-registration | registration isn't on: its setup doesn't stick on demofriends' plan (tried 2026-11-10; needs a plan with registration, such as Boost) |
+| REG-117 | eph/f8-checkin | file uploads fail on eph |
+| ENG-241 | eph/f8-checkin | always: visual check (special characters drawn as boxes), stays manual; badge templates don't load on eph either |
+| REG-106 (written in full), REG-104 / REG-211 | eph/f9-sessions | the import queue isn't processing / secret sessions need Ultra |
+| TC-F10-04 (written in full) | eph/f10-control-panel | the import queue isn't processing |
+| REG-118, REG-221, ENG-2588, ENG-2592 | eph/feedback-profiles | no feedback button on the public site, for the admin or the attendee (feedback is enabled in Settings; checked 2026-11-10) |
+| REG-223 | eph/feedback-profiles | sponsor levels can't be added on the event's plan |
+| REG-124, ENG-1543 (regression of the designed behavior, closed 2026-11-04: a timed session earns credit for its duration, TBA and ineligible sessions earn none) | eph/feedback-profiles | PD Hours isn't enabled on the event (the pdhours tag, blocker #11) |
+| ENG-2641 | eph/feedback-profiles | the event's dates don't include today |
 
 ## Placeholders by target
 
 | Target | File | Checks |
 | --- | --- | --- |
-| eph | eph/f1-signup | REG-012, REG-013, TC-F1-04/05 |
-| eph | eph/f2-events | TC-F2-01/04/08, REG-014, ENG-271 |
-| eph | eph/f3-login | TC-F3-02, TC-F3-08 |
-| eph | eph/f6-registration | REG-101, REG-206, REG-207, REG-125, TC-F6-05 |
-| eph | eph/f8-checkin | REG-113, ENG-544/545/546, TC-F8-05, REG-117, ENG-241 |
-| eph | eph/f9-sessions | REG-208, REG-209, REG-210, ENG-2244, REG-106, REG-105, REG-104, REG-211, REG-107, REG-127, REG-120, ENG-87 |
-| eph | eph/f10-control-panel | TC-F10-01/02/04/06, REG-112 |
-| eph | eph/public-site | REG-103, REG-102, REG-220 (also Safari), ENG-1568, REG-129 |
-| eph | eph/feedback-profiles | REG-118, REG-221, ENG-2588, ENG-2592, REG-222, REG-223, REG-124, ENG-1543, ENG-2641, ENG-2217 |
 | dev2 | dev2/f4-payments | REG-001 to REG-006, REG-017, REG-202 to REG-205, TC-F4-03/07/09, SCH-16 |
 | cfp | cfp/f7-cfp | TC-F7-01 to 06, REG-108, REG-109, REG-111, REG-212 to REG-216, ENG-1328, ENG-1565, ENG-2091, ENG-2267 (also iPhone), ENG-450 |
 
-Open bugs kept as checks (expected to fail until fixed): ENG-241, ENG-87, ENG-1543, ENG-2091, ENG-2267, ENG-2293.
+Open bugs kept as checks (expected to fail until fixed): ENG-241, ENG-87, ENG-2091, ENG-2217, ENG-2267, ENG-2293, ENG-183, ENG-2762, and a Check-In App issue found 2026-11-12 and not filed yet (Name Search with first and last name).
 
 ## Stays manual
 
 | Check | Reason |
 | --- | --- |
 | REG-009, REG-010, TC-F1-09, TC-F3-04/05 (Google and Microsoft SSO) | Third-party login; doesn't work on eph |
-| REG-011, REG-015, REG-121, REG-122, REG-123, REG-126, REG-217, REG-218, REG-219, REG-225, ENG-2228, ENG-2253, APP-01 to APP-18 | Native apps (Sched) |
-| REG-114, REG-115, REG-116, SC-01 to SC-12 | Sched Count app and camera |
+| REG-011, REG-015, REG-121, REG-122, REG-123, REG-126, REG-217, REG-218, REG-219, REG-225, ENG-2228, ENG-2253, APP-03 to APP-06, APP-08, APP-11 to APP-18 | Native apps (Sched); phase 1 (APP-01, 02, 07, 09, 10) runs with Maestro above, the rest is phase 2 or stays manual (mobile/README.md) |
+| REG-114, REG-115, REG-116, SC-01 to SC-12 | Sched Count app and camera (to automate with Maestro, see mobile/README.md: the simulator build we have is 1.6.3, the production app, not the β 1.8.3; the Android equivalents on the web Check-In App are automated above) |
 | REG-119 | Push needs an event with its own app |
 | REG-201, REG-110, ENG-1328 email part, reminders (TC-F9-04) | Email delivery |
 | REG-016 | Covered by the existing screenshot tests in eph |

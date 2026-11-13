@@ -1,0 +1,11 @@
+# Opens the app from a fresh install. On the Android emulator, "System UI isn't responding" sometimes covers the screen
+# (the emulator, not the app): tap Wait and go on.
+appId: ${MAESTRO_APP_ID}
+---
+- launchApp:
+    clearState: true
+- runFlow:
+    when:
+      visible: "System UI isn't responding"
+    commands:
+      - tapOn: "Wait"

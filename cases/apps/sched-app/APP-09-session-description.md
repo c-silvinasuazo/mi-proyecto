@@ -4,7 +4,7 @@ title: Session description
 flow: Sched app regression (iOS and Android)
 bugs: []
 last_run: see builds
-automation: 👤 manual — Native apps (Sched)
+automation: 🟡 partly automated — `mobile/sched-app/APP-09-session-description.yaml` (Maestro, iOS and Android; checks the title, time and speaker; the description check waits for a session in qa reminders 2 with a description)
 ---
 
 # APP-09 — Session description
@@ -19,7 +19,7 @@ The description shows (TC-F9-02)
 
 ## Automation
 
-👤 manual — Native apps (Sched)
+🟡 partly automated — `mobile/sched-app/APP-09-session-description.yaml` (Maestro, iOS and Android; checks the title, time and speaker; the description check waits for a session in qa reminders 2 with a description)
 
 ## Results by build
 
@@ -28,6 +28,8 @@ The description shows (TC-F9-02)
 | iOS test build: Sched Dev 2.16.0 (7712) | ✅ 2026-10-27 |
 | iOS App Store 2.16 | Not run |
 | Android Google Play 1.63.0 | ✅ 2026-10-23 |
+| iOS simulator build: Sched Dev 2.16.2 (7698) | 🟡 2026-11-13 (automated): title, time and speaker show; not checked for a description, because no session in qa reminders 2 has one |
+| Android 1.63.1 (APK from Diego) | 🟡 2026-11-13 (automated): title, time and speaker show; not checked for a description, because no session in qa reminders 2 has one |
 
 ---
 

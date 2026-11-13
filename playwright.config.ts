@@ -56,6 +56,13 @@ export default defineConfig({
       use: { ...devices['Desktop Safari'], baseURL: process.env.EPH_BASE_URL, storageState: '.auth/eph.json' },
     },
     {
+      // The event site on an iPhone (WebKit): the web side of the Sched app's checks. Needs `npx playwright install webkit`.
+      name: 'eph-iphone',
+      testDir: './tests/eph-iphone',
+      dependencies: ['eph-setup'],
+      use: { ...devices['iPhone 15'], baseURL: process.env.EPH_BASE_URL, storageState: '.auth/eph.json' },
+    },
+    {
       name: 'dev2',
       testDir: './tests/dev2',
       use: { ...devices['Desktop Chrome'], baseURL: process.env.DEV2_BASE_URL },

@@ -1,0 +1,17 @@
+# APP-02: searching an event by name finds it, and it opens to its schedule with its sessions and tabs.
+appId: ${MAESTRO_APP_ID}
+---
+- runFlow: common/open-event.yaml
+- assertVisible: "qa capacity"
+- assertVisible: "Info"
+- assertVisible: "My Account"
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - assertVisible: "My Schedule"
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - assertVisible: "My Sched"

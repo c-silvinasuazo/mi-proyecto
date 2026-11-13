@@ -1,0 +1,35 @@
+# Opens the QA event ($MAESTRO_EVENT) from a fresh install: Events -> Search -> the event. Used by the other flows.
+# The search box shows the same name as the result, so the tap targets the result: on iOS the one above "Don't see
+# your event?", on Android by the result's id (the event's name).
+appId: ${MAESTRO_APP_ID}
+---
+- runFlow: launch.yaml
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn: "Search"
+      - inputText: ${MAESTRO_EVENT}
+      - extendedWaitUntil:
+          visible:
+            text: ${MAESTRO_EVENT}
+            above: "Don't see your event?"
+          timeout: 15000
+      - tapOn:
+          text: ${MAESTRO_EVENT}
+          above: "Don't see your event?"
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - tapOn: {id: "Event discovery search bar"}
+      - inputText: ${MAESTRO_EVENT}
+      - hideKeyboard
+      - extendedWaitUntil:
+          visible: {id: "${MAESTRO_EVENT}"}
+          timeout: 15000
+      - tapOn: {id: "${MAESTRO_EVENT}"}
+# The first time, the event can stay on "Loading..." for a while.
+- extendedWaitUntil:
+    visible: ${MAESTRO_SESSION}
+    timeout: 30000

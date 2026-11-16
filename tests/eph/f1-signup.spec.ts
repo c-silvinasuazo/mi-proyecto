@@ -1,13 +1,10 @@
-import { test } from '@playwright/test';
-import { requireEph } from '../helpers';
+import { test } from './fixtures';
 import { requireSignupWithoutCaptcha, stepsNotRecordedYet } from './preconditions';
 
 // F1 signup. /signup on eph has a captcha that keeps "Continue" disabled until it's solved (even for a valid email),
 // so every case here needs it. They skip (with that reason) until eph uses test captcha keys or turns the captcha off;
 // the tests never try to get past it.
 test.describe('F1 signup', () => {
-  test.beforeEach(() => requireEph());
-
   // REG-012 / TC-F1-01 (blocked by the captcha)
   test('REG-012 / TC-F1-01: planner signup creates a valid username, profile link and event', async ({ browser, baseURL }) => {
     await requireSignupWithoutCaptcha(browser, baseURL!);

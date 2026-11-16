@@ -1,11 +1,8 @@
-import { test } from '@playwright/test';
-import { requireEph } from '../helpers';
+import { test } from './fixtures';
 import { requireRegistration, stepsNotRecordedYet } from './preconditions';
 
 // F6 registration (needs a paid plan). Each case is a placeholder until it's recorded (see README: Recording a flow).
 test.describe('F6 registration (needs a paid plan)', () => {
-  test.beforeEach(() => requireEph());
-
   // REG-101 / TC-F6-01
   test('REG-101 / TC-F6-01: registration form shows login and signup to logged-out users; required and conditional questions work', async ({ page }) => {
     await requireRegistration(page);

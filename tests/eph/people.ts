@@ -1,13 +1,29 @@
 import { test, expect, Page } from '@playwright/test';
 import * as zlib from 'zlib';
-import { runId } from '../helpers';
+import { editorJson, retryRequest, runId } from '../helpers';
 
-// Attendee helpers shared by the eph specs that add people. afterEach should call removeAddedAttendees.
+// Attendee helpers shared by the eph specs that add people. The eph fixtures (fixtures.ts) remove them after each test.
 
 const added: string[] = [];
 
+// Adds an attendee and returns their name, id and email. It sends the request Attendees -> Add New -> Add sends
+// (what=savePerson), so tests that only need an attendee don't go through the form; TC-F10-02 checks the form's
+// buttons with addAttendeeFromEditor.
+export async function addAttendee(page: Page) {
+  const name = `QA add ${runId()}${added.length}`;
+  const email = `${name.replace(/\W+/g, '-').toLowerCase()}@example.com`;
+  const response = await retryRequest(() => page.request.post('/editor/people?role=attendees', {
+    form: { what: 'savePerson', 'data[name]': name, 'data[url]': 'http://usesavedvalue', 'data[email]': email, 'data[from]': 'control panel user add form' },
+  }));
+  const result = await editorJson(response, `Adding the attendee "${name}"`);
+  expect(result.status, `Adding the attendee "${name}" failed: ${JSON.stringify(result).slice(0, 200)}`).toBe('OK');
+  const id = String(result.results.id);
+  added.push(id);
+  return { name, id, email };
+}
+
 // Adds an attendee from Attendees -> Add New with "Add" or "Add + Send Invite" and returns their name, id and email.
-export async function addAttendee(page: Page, button: 'Add' | 'Add + Send Invite' = 'Add') {
+export async function addAttendeeFromEditor(page: Page, button: 'Add' | 'Add + Send Invite') {
   const name = `QA ${button === 'Add' ? 'add' : 'invite'} ${runId()}${added.length}`;
   const email = `${name.replace(/\W+/g, '-').toLowerCase()}@example.com`;
   await page.goto('/editor/attendees');
@@ -29,7 +45,7 @@ export async function addAttendee(page: Page, button: 'Add' | 'Add + Send Invite
 // Removes the attendees the running test added, the way the editor's Remove button does.
 export async function removeAddedAttendees(page: Page) {
   for (const id of added.splice(0)) {
-    const response = await page.request.post('/editor/attendees', { form: { what: 'deleteConfirmed', 'data[confirm]': 'Y', 'data[id]': id } });
+    const response = await retryRequest(() => page.request.post('/editor/attendees', { form: { what: 'deleteConfirmed', 'data[confirm]': 'Y', 'data[id]': id } }));
     expect(response.ok(), `Could not remove attendee ${id}`).toBeTruthy();
   }
 }
@@ -54,8 +70,9 @@ export async function ensureSpeakerName(page: Page, username: string) {
   return name;
 }
 
-// A small solid-color PNG, so a test can upload images that differ from each other.
-export function solidPng(red: number, green: number, blue: number, size = 64) {
+// A solid-color PNG, so a test can upload images that differ from each other. 400x400 by default: the editor's photo
+// crop rejects tiny images ("Wrong resize size given." for an 8x8 one on eph, 2026-11-16).
+export function solidPng(red: number, green: number, blue: number, size = 400) {
   const chunk = (type: string, data: Buffer) => {
     const length = Buffer.alloc(4);
     length.writeUInt32BE(data.length);
@@ -83,7 +100,7 @@ export async function setAttendeePhoto(page: Page, id: string, png: Buffer) {
   const marker = `attendee-photo-${id}-${Date.now()}`;
   await expect.poll(() => page.evaluate((marker) => {
     const ready = [...document.querySelectorAll('#edit-person-photo .avatar-dropzone')].find((el) => (el as any).dropzone && (el as HTMLElement).offsetParent);
-    ready && (ready as any).dropzone.hiddenFileInput.setAttribute('data-qa', marker);
+    if (ready) (ready as any).dropzone.hiddenFileInput.setAttribute('data-qa', marker);
     return !!ready;
   }, marker), { message: 'The photo area never became ready (does the attendee already have a photo?)', timeout: 20_000 }).toBe(true);
   await page.locator(`input[data-qa="${marker}"]`).setInputFiles({ name: `qa-${id}.png`, mimeType: 'image/png', buffer: png });
@@ -106,10 +123,16 @@ export async function attendeePhoto(page: Page, id: string) {
 }
 
 // Fetches an image the editor points to and fails unless it really loads. On eph, profile photos point to the
-// production avatars host with the eph person's id: it answers 403, or, when a production person happens to have the
-// same id, someone else's photo. So on eph these checks fail, and a pass there doesn't prove much.
+// production avatars host with the eph person's id (blocker #5 in ENG-2665): it answers 403, or, when a production
+// person happens to have the same id, someone else's photo, so a load there proves nothing. In that case the check is
+// skipped with a note and this returns null; callers that need the bytes skip the rest of the test.
 export async function expectImageLoads(page: Page, src: string) {
-  const response = await page.request.get(new URL(src, page.url()).toString());
+  const url = new URL(src, page.url());
+  if (url.hostname === 'avatars.sched.co' && new URL(page.url()).hostname.endsWith('.eph.sched.co')) {
+    test.info().annotations.push({ type: 'skipped step', description: `The photo loading: eph points photos to production's avatars host (blocker #5 in ENG-2665): ${src}` });
+    return null;
+  }
+  const response = await page.request.get(url.toString());
   test.info().annotations.push({ type: 'image', description: `${response.status()} ${src}` });
   expect(response.ok() && /^image\//.test(response.headers()['content-type'] ?? ''), `The photo doesn't load: HTTP ${response.status()} ${response.headers()['content-type']} from ${src}`).toBe(true);
   return response.body();

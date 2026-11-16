@@ -1,4 +1,5 @@
-import { test, expect, Page } from '@playwright/test';
+import { Page } from '@playwright/test';
+import { test, expect } from './fixtures';
 
 // eph, batch 1: every area of the editor and the public site opens for the admin, without
 // errors or a redirect to login. Read-only. Uses URLs (the eph test event renames some menus,

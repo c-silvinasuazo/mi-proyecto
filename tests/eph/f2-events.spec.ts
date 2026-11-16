@@ -1,11 +1,9 @@
-import { test, expect } from '@playwright/test';
-import { requireEph, runId } from '../helpers';
+import { test, expect } from './fixtures';
+import { runId } from '../helpers';
 import { requireEventCreationAllowed, stepsNotRecordedYet } from './preconditions';
 
 // F2 events. Cases still marked fixme are placeholders until they're recorded (see README: Recording a flow).
 test.describe('F2 events', () => {
-  test.beforeEach(() => requireEph());
-
   // TC-F2-08 (ENG-446): Dashboard -> My Events -> Create New Event (organization, name, URL) -> Create opens the new
   // event's editor, logged in, with no redirect to Contact Us. Opt-in: each run creates an event on eph that can't be
   // deleted. The /signup half of the title (TC-F2-01) stays manual: /signup has a captcha on eph.

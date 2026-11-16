@@ -9,7 +9,8 @@ test.use(iphone);
 // Read-only: opens the /event page of the open QA form.
 test('ENG-450 CFP info page fits an iPhone screen', async ({ page }) => {
   await page.goto(`${requireEnv('CFP_OPEN_FORM')}/event`);
-  await page.waitForLoadState('networkidle');
+  // The page loads its content after the first paint; measure once the form's dates are there.
+  await expect(page.getByText('Application start')).toBeVisible();
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
   expect(overflow, 'The page is wider than the screen (horizontal scroll)').toBeLessThanOrEqual(1);
 });

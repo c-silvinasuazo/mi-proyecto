@@ -1,30 +1,20 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 import * as fs from 'fs';
-import { requireEph, runId } from '../helpers';
-import { requireImportQueueWorking } from './preconditions';
+import { runId } from '../helpers';
+import { requireExports, requireImportQueueWorking } from './preconditions';
 import { readXlsxRows, writeXlsx } from '../xlsx';
-import { addAttendee, removeAddedAttendees } from './people';
-import { deleteCreatedSessions, openAddSession, pickTime, publishNewSession, sessionId } from './sessions';
+import { addAttendee, addAttendeeFromEditor } from './people';
+import { createSession, sessionId } from './sessions';
 
 // F10 Control Panel.
 
 test.describe('F10 Control Panel', () => {
-  test.beforeEach(() => requireEph());
-  test.afterEach(async ({ page }) => {
-    await removeAddedAttendees(page);
-    await deleteCreatedSessions(page);
-  });
-
   // TC-F10-01: a time zone change in Settings saves and shows on the public site, and sessions keep their clock time.
   // Event dates can't be changed on this event ("Create your next event to change dates") and the name isn't editable
   // in Settings, so those parts stay manual. Restores the original time zone at the end.
   test('TC-F10-01: name, dates and time zone changes show on the public site', async ({ page }) => {
     const title = `QA F10 time zone ${runId()}`;
-    await openAddSession(page);
-    await page.locator('#add-session-title').fill(title);
-    await page.locator('#add-session-start-date').fill('2026-01-31');
-    await pickTime(page, '#add-session-start-time', '10:00');
-    await publishNewSession(page);
+    await createSession(page, title, { start: '10:00', end: '10:30' });
 
     const setTimeZone = async (zone: string) => {
       await page.goto('/editor/settings');
@@ -48,17 +38,17 @@ test.describe('F10 Control Panel', () => {
   // TC-F10-02: "Add" and "Add + Send Invite" both add the attendee. That only "Add + Send Invite" emails an invite
   // can't be checked on eph (it doesn't deliver email), so that part stays manual.
   test('TC-F10-02: "Add" and "Add + Send Invite" add the attendee', async ({ page }) => {
-    await addAttendee(page, 'Add');
-    await addAttendee(page, 'Add + Send Invite');
+    await addAttendeeFromEditor(page, 'Add');
+    await addAttendeeFromEditor(page, 'Add + Send Invite');
   });
 
   // TC-F10-04: Attendees -> Add New -> Import with a two-row sheet: an existing attendee (updated, not duplicated) and a
-  // new one (added). The import is a background job ("about 10 minutes"). The sheet is built in the test from the
+  // new one (added). The import is a background job ("about 10 minutes"), so the test is tagged @slow. The sheet is built in the test from the
   // attendee template's columns (v2.6), since the template download comes back empty on eph.
-  test('TC-F10-04: importing the attendee spreadsheet adds or updates without duplicates', async ({ page }) => {
+  test('TC-F10-04: importing the attendee spreadsheet adds or updates without duplicates', { tag: '@slow' }, async ({ page }) => {
     test.setTimeout(900_000);
     await requireImportQueueWorking(page);
-    const existing = await addAttendee(page, 'Add');
+    const existing = await addAttendee(page);
     const run = runId();
     const company = `QA Co ${run}`;
     const newcomer = `QA import new ${run}`;
@@ -94,7 +84,8 @@ test.describe('F10 Control Panel', () => {
 
   // TC-F10-06 (ENG-729): Reports -> XLS Attendees downloads a valid workbook with every attendee and the expected columns.
   test('TC-F10-06: Reports -> Directory -> Attendees downloads every row', async ({ page }) => {
-    const { name } = await addAttendee(page, 'Add');
+    await requireExports(page);
+    const { name } = await addAttendee(page);
     await page.goto('/editor/exports');
     const download = page.waitForEvent('download');
     await page.getByRole('link', { name: /XLS Attendees/ }).click();

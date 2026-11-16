@@ -1,4 +1,4 @@
-import { Page, expect, test } from '@playwright/test';
+import { APIResponse, Page, expect, test } from '@playwright/test';
 
 export function requireEnv(name: string): string {
   const value = process.env[name];
@@ -16,7 +16,32 @@ export function creds(projectName: string) {
   };
 }
 
-// Unique suffix so each eph run creates fresh data (eph is isolated, so no cleanup is needed).
+// eph sometimes drops a request under load (a 503, or "socket hang up"; blocker #8 in ENG-2665). Requests that set up or
+// clean up a test's data go through this, which tries twice more, a few seconds apart. The checks themselves never
+// retry.
+export async function retryRequest(send: () => Promise<APIResponse>) {
+  for (let attempt = 1; ; attempt++) {
+    try {
+      const response = await send();
+      if (response.status() < 500 || attempt === 3) return response;
+    } catch (error) {
+      if (attempt === 3) throw error;
+    }
+    await new Promise((resolve) => setTimeout(resolve, 3_000 * attempt));
+  }
+}
+
+// Reads the JSON an editor request answers. The editor sometimes prints a PHP notice before it, so this starts at the
+// JSON; a server error fails with the status and the start of the page instead of a JSON parse error.
+export async function editorJson(response: APIResponse, what: string) {
+  const text = await response.text();
+  const start = text.search(/\{\s*"/);
+  if (!response.ok() || start < 0) throw new Error(`${what}: HTTP ${response.status()} ${text.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 200)}`);
+  return JSON.parse(text.slice(start));
+}
+
+// Unique suffix for the names of the data a test creates, so runs don't collide (the eph fixtures delete that data
+// after each test).
 export function runId(): string {
   return new Date().toISOString().replace(/\D/g, '').slice(2, 14);
 }
@@ -39,11 +64,6 @@ export async function logInToEph(page: Page, prefix: 'EPH' | 'EPH_SPEAKER' | 'EP
   await form.locator('input[type="password"]').fill(requireEnv(`${prefix}_PASSWORD`));
   await form.getByRole('button', { name: /^log in$/i }).click();
   await expect(page, `eph login failed for ${prefix}_USERNAME (still on /editor/login)`).not.toHaveURL(/\/editor\/login/, { timeout: 20_000 });
-}
-
-// Skips write tests when the eph target isn't configured.
-export function requireEph() {
-  test.skip(!process.env.EPH_BASE_URL, 'Set EPH_BASE_URL in .env to run eph tests.');
 }
 
 // Logs in on the main Sched login page with an email or a username.

@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 
 // eph smoke: the environment is up and the saved admin session works. Read-only.
 test.describe('eph smoke', () => {

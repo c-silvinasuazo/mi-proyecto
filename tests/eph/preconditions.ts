@@ -1,5 +1,6 @@
 import { test, Page, Browser } from '@playwright/test';
 import { solidPng } from './people';
+import { eventFirstDay } from './sessions';
 
 // Checks for what some cases need on the eph event and don't have yet. A test that needs one calls it first: while the
 // precondition is missing it skips with the reason (shown in the report); once it's met, the test fails with "steps
@@ -84,17 +85,55 @@ export async function requireFileUploads(page: Page) {
   await page.getByRole('button', { name: 'Add New' }).click();
   const form = page.locator('#session-add-tab');
   await page.locator('#add-session-title').fill(`QA upload probe ${Date.now()}`);
-  await page.locator('#add-session-start-date').fill('2026-01-31');
+  await page.locator('#add-session-start-date').fill(await eventFirstDay(page));
   await form.getByRole('link', { name: 'Photo', exact: true }).click();
   await page.evaluate(() => (window as any).Dropzone.forElement('#add-session-uploadphoto-dropzone').hiddenFileInput.setAttribute('data-qa', 'upload-probe'));
   await page.locator('input[data-qa="upload-probe"]').setInputFiles({ name: 'probe.png', mimeType: 'image/png', buffer: solidPng(120, 120, 120) });
   const saved = page.waitForResponse((r) => r.request().method() === 'POST' && /\/editor\/schedule$/.test(r.url()) && r.request().postDataBuffer() === null);
   await page.getByRole('button', { name: 'Publish' }).click();
   const text = await (await saved).text();
-  const result = JSON.parse(text.slice(text.indexOf('{')));
+  const result = JSON.parse(text.slice(text.search(/\{\s*"/)));
   const id = result.result ?? (await page.goto('/editor/schedule').then(() => page.locator('a[href*="#edit"]', { hasText: 'QA upload probe' }).first().getAttribute('href')).then((h) => h && new URL(h, page.url()).searchParams.get('id')));
   if (id) await page.request.post('/editor/schedule', { form: { what: 'delete', data: id } });
   test.skip(result.status !== 'OK', `File uploads fail on eph ("${result.message ?? result.status}"; the hosted_files folder is missing)`);
+}
+
+// An open product bug the check reproduces: the check is expected to fail until the bug is fixed. The run stays green,
+// and once the fix lands Playwright reports the check as "unexpectedly passed", the cue to remove this line.
+export function openBug(ticket: string, what: string) {
+  test.fail(true, `${ticket} (open): ${what}`);
+}
+
+// An eph environment gap from the blocker list in ENG-2665 that blocks everything the check looks at, with no way to
+// tell it apart from the bug the check guards against. Expected to fail like openBug, for the same reason.
+export function ephGap(blocker: number, what: string) {
+  test.fail(true, `eph blocker #${blocker} in ENG-2665: ${what}`);
+}
+
+// Whether eph generates PDFs (blocker #2 in ENG-2665: the PDF library is missing from the image). Checks that only
+// end in a PDF still run their other steps and skip the PDF one while this is false. Read once per run, from the
+// "Download PDF" link of the printable schedule.
+let pdfs: boolean | undefined;
+export async function ephMakesPdfs(page: Page) {
+  if (pdfs === undefined) {
+    const probe = await page.context().newPage();
+    await probe.goto('/print');
+    const href = await probe.getByRole('link', { name: /download pdf/i }).getAttribute('href', { timeout: 5_000 }).catch(() => null);
+    const body = href ? await probe.request.get(new URL(href, probe.url()).toString(), { timeout: 30_000 }).then((r) => r.body(), () => Buffer.alloc(0)) : Buffer.alloc(0);
+    pdfs = body.subarray(0, 5).toString() === '%PDF-';
+    await probe.close();
+  }
+  if (!pdfs) test.info().annotations.push({ type: 'skipped step', description: 'The PDF: eph blocker #2 in ENG-2665 (PDFs aren\'t generated)' });
+  return pdfs;
+}
+
+// Spreadsheet exports come back empty on eph (blocker #3 in ENG-2665). Tries the attendee export and skips while it's
+// empty, so the check runs for real once exports work.
+export async function requireExports(page: Page) {
+  await page.goto('/editor/exports');
+  const href = await page.getByRole('link', { name: /XLS Attendees/ }).getAttribute('href');
+  const size = href ? (await (await page.request.get(new URL(href, page.url()).toString())).body()).length : 0;
+  test.skip(size === 0, 'Spreadsheet exports come back empty on eph (0 bytes; blocker #3 in ENG-2665)');
 }
 
 // Reached only once the precondition above is met: the steps still have to be recorded against the real screens.

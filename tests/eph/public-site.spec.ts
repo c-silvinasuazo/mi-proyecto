@@ -1,31 +1,37 @@
-import { test, expect } from '@playwright/test';
-import { requireEph, runId } from '../helpers';
-import { addDescription, createSession, deleteCreatedSessions, openAddSession, publishNewSession } from './sessions';
+import { test, expect } from './fixtures';
+import { runId } from '../helpers';
+import { SessionPage } from './pages/session-page';
+import { createSession, eventDates } from './sessions';
 
-// public site. Each test creates the session it looks for (on 2026-01-31, inside the event's dates; sessions outside
-// them don't show, "No schedule listed yet") and deletes it afterwards. Schedule links are relative ("event/<id>/...").
+// public site. Each test creates the session it looks for (on the event's first day, inside the event's dates; sessions
+// outside them don't show, "No schedule listed yet") and deletes it afterwards. Schedule links are relative ("event/<id>/...").
 test.describe('public site', () => {
-  test.beforeEach(() => requireEph());
-  test.afterEach(({ page }) => deleteCreatedSessions(page));
-
   // REG-103 (ENG-1816): the schedule, a session page, Filter By Date and search work; the date filter stays on the
   // schedule instead of redirecting to the landing page.
   test('REG-103: schedule, session page, date filter and search load; the date filter doesn\'t redirect', async ({ page }) => {
     const title = `QA public ${runId()}`;
+    const { first: day, last } = await eventDates(page);
     await createSession(page, title);
 
     await page.goto('/');
     await expect(page.locator('a[href*="event/"]').first(), 'The schedule lists no sessions').toBeVisible();
 
     // A day's schedule lives at /<date>; it must stay there and list that day's sessions.
-    await page.goto('/2026-01-31');
-    await expect(page, 'The date filter redirected away from the schedule').toHaveURL(/\/2026-01-31$/);
+    await page.goto(`/${day}`);
+    await expect(page, 'The date filter redirected away from the schedule').toHaveURL(new RegExp(`/${day}$`));
     const session = page.getByRole('link', { name: new RegExp(title) }).first();
     await expect(session, 'The date filter does not show the session').toBeVisible();
-    // The sidebar's Filter By Date link must also keep the schedule (with sessions) on screen.
-    await page.getByRole('link', { name: /2026/ }).filter({ hasText: /jan/i }).first().click();
-    await expect(page.locator('a[href*="event/"]').first(), 'Filter By Date left the schedule').toBeVisible();
-    await page.goto('/2026-01-31');
+    // The sidebar's Filter By Date link must also keep the schedule (with sessions) on screen. A one-day event has no
+    // Filter By Date (demofriends on eph, 2026-11-15), so that part only runs on a longer event.
+    if (last === day) {
+      test.info().annotations.push({ type: 'skipped step', description: `Filter By Date: the event has one day (${day})` });
+    } else {
+      const [year] = day.split('-');
+      const month = new Date(`${day}T12:00:00Z`).toLocaleString('en-US', { month: 'short', timeZone: 'UTC' });
+      await page.getByRole('link', { name: new RegExp(year) }).filter({ hasText: new RegExp(month, 'i') }).first().click();
+      await expect(page.locator('a[href*="event/"]').first(), 'Filter By Date left the schedule').toBeVisible();
+      await page.goto(`/${day}`);
+    }
 
     await session.click();
     await expect(page).toHaveURL(/\/event\//);
@@ -44,23 +50,20 @@ test.describe('public site', () => {
     const title = `QA my schedule ${runId()}`;
     const id = await createSession(page, title);
 
-    // The star-like toggle next to the title (span.ev-save) is the real control; "Click here to add" is just text.
-    const toggle = page.getByRole('button', { name: /my schedule/i }).first();
-    await page.goto(`/event/${id}`);
-    await toggle.click();
-    await expect(page.locator('#add-remove-text'), 'The session was not added').not.toHaveText(/^add to My Schedule$/);
-    await page.goto('/my-schedule');
-    await expect(page.getByText(title).first(), 'My Schedule does not list the added session').toBeVisible();
+    const sessionPage = new SessionPage(page);
+    await sessionPage.goto(id);
+    await sessionPage.addToMySchedule();
+    await sessionPage.openMySchedule();
+    await expect(sessionPage.mySchedulesEntry(title).first(), 'My Schedule does not list the added session').toBeVisible();
 
     // The print icon next to the mobile icon opens the attendee's schedule for printing.
     await page.goto((await page.locator('a[href*="print"]').first().getAttribute('href'))!);
     await expect(page.getByText(title).first(), 'The My Schedule print view is blank').toBeVisible();
 
-    await page.goto(`/event/${id}`);
-    await toggle.click();
-    await expect(page.locator('#add-remove-text')).toHaveText(/^add to My Schedule$/);
-    await page.goto('/my-schedule');
-    await expect(page.getByText(title), 'The session is still in My Schedule after removing it').toHaveCount(0);
+    await sessionPage.goto(id);
+    await sessionPage.removeFromMySchedule();
+    await sessionPage.openMySchedule();
+    await expect(sessionPage.mySchedulesEntry(title), 'The session is still in My Schedule after removing it').toHaveCount(0);
   });
 
   // REG-220 (ENG-2178, ENG-118): the embed code from Settings -> Appearance, on a page served over http, loads, scrolls
@@ -89,11 +92,7 @@ test.describe('public site', () => {
   test('ENG-1568: /print/all shows descriptions (expected behavior for pasted formatting pending a Product decision)', async ({ page }) => {
     const title = `QA print all ${runId()}`;
     const description = `QA description for print ${runId()}`;
-    await openAddSession(page);
-    await page.locator('#add-session-title').fill(title);
-    await page.locator('#add-session-start-date').fill('2026-01-31');
-    await addDescription(page).fill(description);
-    await publishNewSession(page);
+    await createSession(page, title, { description: `<p>${description}</p>` });
 
     await page.goto('/print/all');
     await expect(page.getByText(title).first()).toBeVisible();
@@ -115,7 +114,10 @@ test.describe('public site', () => {
       }
     };
     await page.goto('/editor/schedule');
-    await page.waitForLoadState('networkidle').catch(() => {});
+    // The chat bubble and banners load after the page, from other services, and they're what this case looks for, so
+    // wait for the network to go quiet (an exception to waiting for something on the page: there is nothing to wait
+    // for when nothing covers the controls). The chat keeps a connection open, so give up after 15 seconds.
+    await page.waitForLoadState('networkidle', { timeout: 15_000 }).catch(() => {});
     await expectUncovered([
       page.getByRole('button', { name: 'Add New' }),
       page.getByRole('link', { name: 'Account menu' }),

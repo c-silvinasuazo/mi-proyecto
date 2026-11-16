@@ -1,8 +1,9 @@
-import { test, expect, Page } from '@playwright/test';
-import { logInToEph, requireEph, runId } from '../helpers';
-import { addAttendee, attendeePhoto, ensureSpeakerName, removeAddedAttendees, setAttendeePhoto, solidPng } from './people';
+import { Page } from '@playwright/test';
+import { test, expect } from './fixtures';
+import { logInToEph, runId } from '../helpers';
+import { addAttendee, attendeePhoto, ensureSpeakerName, setAttendeePhoto, solidPng } from './people';
 import { requireAccount, requireEventFeedback, requireEventRunningToday, requirePdHours, requireSponsorLevelEditing, stepsNotRecordedYet } from './preconditions';
-import { deleteCreatedSessions, openAddSession, publishNewSession, sessionId } from './sessions';
+import { eventFirstDay, openAddSession, publishNewSession, sessionId } from './sessions';
 
 type SpeakerTools = { 'Edit session details': boolean; 'Edit session description': boolean };
 const speakerToolSwitch = (page: Page, name: keyof SpeakerTools) => page.locator('#speaker-tools').getByRole('switch', { name, exact: true });
@@ -22,19 +23,14 @@ async function setSpeakerTools(page: Page, options: SpeakerTools) {
     const box = speakerToolSwitch(page, name);
     if ((await box.isChecked()) !== on) await box.evaluate((el) => (el as HTMLInputElement).click());
   }
+  const saved = page.waitForResponse((r) => r.request().method() === 'POST' && r.url().includes('/editor/settings'));
   await page.locator('#frm-general-submit').click();
-  await page.waitForLoadState('networkidle').catch(() => {});
+  await saved;
   expect(await speakerTools(page), 'Speaker Tools did not save').toEqual(options);
 }
 
 // feedback, profiles, sponsors and PD. Cases still marked fixme are placeholders until they're recorded (see README: Recording a flow).
 test.describe('feedback, profiles, sponsors and PD', () => {
-  test.beforeEach(() => requireEph());
-  test.afterEach(async ({ page }) => {
-    await removeAddedAttendees(page);
-    await deleteCreatedSessions(page);
-  });
-
   // REG-118
   test('REG-118: session feedback timestamps use the event time zone', async ({ page }) => {
     await requireEventFeedback(page);
@@ -65,8 +61,9 @@ test.describe('feedback, profiles, sponsors and PD', () => {
     await setAttendeePhoto(page, first.id, solidPng(220, 30, 30));
     await setAttendeePhoto(page, second.id, solidPng(30, 30, 220));
     const [firstPhoto, secondPhoto] = [await attendeePhoto(page, first.id), await attendeePhoto(page, second.id)];
-    expect(firstPhoto.bytes.equals(secondPhoto.bytes), 'Both attendees show the same photo').toBe(false);
-    expect((await attendeePhoto(page, first.id)).bytes.equals(firstPhoto.bytes), 'The first attendee\'s photo changed').toBe(true);
+    test.skip(!firstPhoto.bytes || !secondPhoto.bytes, 'Photos can\'t be compared on eph: they point to production\'s avatars host (blocker #5 in ENG-2665)');
+    expect(firstPhoto.bytes!.equals(secondPhoto.bytes!), 'Both attendees show the same photo').toBe(false);
+    expect((await attendeePhoto(page, first.id)).bytes!.equals(firstPhoto.bytes!), 'The first attendee\'s photo changed').toBe(true);
   });
   // REG-223
   test('REG-223: a sponsor level can be created and deleted (needs a paid plan)', async ({ page }) => {
@@ -98,14 +95,14 @@ test.describe('feedback, profiles, sponsors and PD', () => {
   // gives "Edit Description" and the one named for the details gives "Edit Session". ENG-2217 was closed on 2026-11-13
   // with the names switched, and this passes on eph since then (a regression check now); on eph 2026-11-12, before the
   // fix, each option gave the other tool. Both options are put back.
-  test('ENG-2217: with only one Speaker Tools option on, a speaker can edit only the matching fields', async ({ page, browser }) => {
+  test('ENG-2217: with only one Speaker Tools option on, a speaker can edit only the matching fields', async ({ page, newPage }) => {
     requireAccount('SPEAKER');
     test.setTimeout(240_000);
     const speaker = await ensureSpeakerName(page, process.env.EPH_SPEAKER_USERNAME!);
     const title = `QA ENG-2217 ${runId()}`;
     await openAddSession(page);
     await page.locator('#add-session-title').fill(title);
-    await page.locator('#add-session-start-date').fill('2026-01-31');
+    await page.locator('#add-session-start-date').fill(await eventFirstDay(page));
     await page.locator('#session-add-tab .select-wrapper--people .selectize-input').click();
     await page.keyboard.type(speaker);
     await page.locator('.selectize-dropdown:visible .option', { hasText: speaker }).first().click();
@@ -114,8 +111,7 @@ test.describe('feedback, profiles, sponsors and PD', () => {
     const id = sessionId(title);
 
     const before = await speakerTools(page);
-    const speakerContext = await browser.newContext({ storageState: { cookies: [], origins: [] } });
-    const sp = await speakerContext.newPage();
+    const sp = await newPage({ storageState: { cookies: [], origins: [] } });
     try {
       await logInToEph(sp, 'EPH_SPEAKER');
       // The speaker page's tools are tabs (li.tab-link): Your Attendees, Edit Profile, Add Presentation, then the editing tool.
@@ -160,7 +156,6 @@ test.describe('feedback, profiles, sponsors and PD', () => {
         }
       });
     } finally {
-      await speakerContext.close();
       await setSpeakerTools(page, before);
     }
   });

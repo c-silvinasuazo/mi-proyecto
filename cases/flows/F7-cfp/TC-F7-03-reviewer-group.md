@@ -6,7 +6,7 @@ type: Positive
 env: cfp-staging
 bugs: [ENG-237]
 last_run: passed
-automation: 🟡 placeholder — `tests/cfp/f7-cfp.spec.ts`
+automation: 🟡 placeholder — `tests/eph/f7-cfp.spec.ts` (needs applications on eph: EPH_ALLOW_CFP_APPLICATIONS=1)
 ---
 
 # TC-F7-03 — Reviewer group
@@ -21,7 +21,7 @@ Correct averages; file fields visible (ENG-237)
 
 ## Automation
 
-🟡 placeholder — `tests/cfp/f7-cfp.spec.ts`
+🟡 placeholder — `tests/eph/f7-cfp.spec.ts` (needs applications on eph: EPH_ALLOW_CFP_APPLICATIONS=1)
 
 ## Last run
 

@@ -7,7 +7,7 @@ priority: High
 base_case: TC-F7-05
 bugs: [ENG-33, ENG-2072]
 last_run: passed
-automation: 🟡 placeholder — `tests/cfp/f7-cfp.spec.ts`
+automation: 🟡 placeholder — `tests/eph/f7-cfp.spec.ts` (needs applications on eph: EPH_ALLOW_CFP_APPLICATIONS=1)
 ---
 
 # REG-108 — CFP → Sched sync keeps titles, descriptions and the TBA date
@@ -22,7 +22,7 @@ Prevents the return of: ENG-2072, ENG-33
 
 ## Automation
 
-🟡 placeholder — `tests/cfp/f7-cfp.spec.ts`
+🟡 placeholder — `tests/eph/f7-cfp.spec.ts` (needs applications on eph: EPH_ALLOW_CFP_APPLICATIONS=1)
 
 ## Last run
 

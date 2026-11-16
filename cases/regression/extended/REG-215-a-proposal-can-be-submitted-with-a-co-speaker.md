@@ -5,7 +5,7 @@ level: Extended
 area: CFP
 bugs: [ENG-503]
 last_run: passed
-automation: 🟡 placeholder — `tests/cfp/f7-cfp.spec.ts`
+automation: ✅ automated — `tests/eph/f7-cfp.spec.ts` (eph; opt-in with EPH_ALLOW_CFP_APPLICATIONS=1, since it leaves an applicant account and an application)
 ---
 
 # REG-215 — A proposal can be submitted with a co-speaker
@@ -18,7 +18,7 @@ Prevents the return of: ENG-503
 
 ## Automation
 
-🟡 placeholder — `tests/cfp/f7-cfp.spec.ts`
+✅ automated — `tests/eph/f7-cfp.spec.ts` (eph; opt-in with EPH_ALLOW_CFP_APPLICATIONS=1, since it leaves an applicant account and an application)
 
 ## Last run
 

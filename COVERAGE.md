@@ -16,12 +16,15 @@ Status: ✅ automated · 🟡 placeholder (`test.fixme`, to record) · 👤 stay
 | ENG-450: CFP info page fits an iPhone screen | cfp-readonly/eng-450-cfp-info-fits-iphone | ✅ |
 | TC-F7-01 (organizer): the CFP portal opens from the editor and lists the QA form | cfp-readonly/cfp-organizer | ✅ (to confirm on first run) |
 | TC-F7-06: on Free Trial, Download all asks to upgrade | cfp-readonly/cfp-organizer | ✅ (to confirm on first run) |
+| TC-F7-02 (eph): a CFP form is closed before it opens and after it closes (forms created and archived by the test) | eph/f7-cfp | ✅ |
+| ENG-2091: logging in from a CFP form with a Sched account keeps you on the form | eph/f7-cfp | ✅ (open bug, marked with openBug; on the PR's eph, pr-309, it already passes) |
+| REG-215 / TC-F7-01 (part): an application with a co-speaker reaches the organizer | eph/f7-cfp | ✅ (opt-in: EPH_ALLOW_CFP_APPLICATIONS=1, since it leaves an applicant account and an application on eph) |
 | REG-208 / TC-F9-01: a multi-day session keeps its dates after save, reopen and a description-only edit (eph, writes) | eph/f9-sessions | ✅ |
 | REG-209 / TC-F9-02: description formatting persists in the editor and on the public page (apps, print and PDF stay manual) | eph/f9-sessions | ✅ |
 | ENG-2244: a long description pasted with heavy markup is not cut off and renders cleanly | eph/f9-sessions | ✅ |
-| REG-127: turning chat on and off saves without a parsererror | eph/f9-sessions | ✅ (expected to fail on eph: the chat toggle answers "parsererror" there, blocker #6 in ENG-2665; marked with ephGap) |
-| REG-107: event and attendee schedule PDFs contain data | eph/f9-sessions | ✅ (on eph the PDF downloads are skipped while PDFs aren't generated, blocker #2 in ENG-2665; the printable pages are still checked) |
-| REG-210: session image saves; a PDF downloads as .pdf | eph/f9-sessions | ✅ (skips on eph while uploads fail with "Could not upload the file", blocker #1 in ENG-2665) |
+| REG-127: turning chat on and off saves without a parsererror | eph/f9-sessions | ✅ (expected to fail on eph: the chat toggle answers "parsererror" there, blocker #6 in ENG-2832; marked with ephGap) |
+| REG-107: event and attendee schedule PDFs contain data | eph/f9-sessions | ✅ (on eph the PDF downloads are skipped while PDFs aren't generated, blocker #2 in ENG-2832; the printable pages are still checked) |
+| REG-210: session image saves; a PDF downloads as .pdf | eph/f9-sessions | ✅ (skips on eph while uploads fail with "Could not upload the file", blocker #1 in ENG-2832) |
 | ENG-87: a session type with a comma is stored as one type | eph/f9-sessions | ✅ (open bug, marked with openBug: "QA Workshop, Advanced" is saved as two types) |
 | REG-103: schedule, session page, date filter and search; the date filter doesn't redirect | eph/public-site | ✅ |
 | REG-102: an attendee adds and removes a session in My Schedule; its print view isn't blank | eph/public-site | ✅ |
@@ -31,7 +34,7 @@ Status: ✅ automated · 🟡 placeholder (`test.fixme`, to record) · 👤 stay
 | ENG-1568: /print/all shows descriptions | eph/public-site | ✅ |
 | REG-129: chatbot and banners don't cover editor menus or buttons | eph/public-site | ✅ |
 | TC-F8-05: /checkin records a session check-in (Check-In App, saved after reload) | eph/f8-checkin | ✅ |
-| REG-113 / TC-F8-03 (ENG-194, ENG-770, ENG-544, ENG-545, ENG-546): with Self Check-in on, the session QR export has only the selected published sessions, 3 per page | eph/f8-checkin | ✅ (on eph the "Export all (PDF)" step is skipped while PDFs aren't generated, blocker #2 in ENG-2665; the selection and the 3-per-page paging are checked) |
+| REG-113 / TC-F8-03 (ENG-194, ENG-770, ENG-544, ENG-545, ENG-546): with Self Check-in on, the session QR export has only the selected published sessions, 3 per page | eph/f8-checkin | ✅ (on eph the "Export all (PDF)" step is skipped while PDFs aren't generated, blocker #2 in ENG-2832; the selection and the 3-per-page paging are checked) |
 | Android check-in (/checkin at Pixel 7 size; Sched Count is iOS only): an attendee without an admin or check-in role can't log in (SC-03 on Android) | eph/checkin-android | ✅ (the app goes back to its login form with no message, unlike Sched Count's "No events assigned yet": ENG-2785) |
 | Android check-in: Name Search checks an attendee in; saved after reopening the app; the editor lists it (SC-05 / SC-10 on Android) | eph/checkin-android | ✅ |
 | ENG-2784: Android check-in: Name Search finds an attendee by first and last name | eph/checkin-android | ✅ (open bug, marked with openBug: a search with a space finds nobody, because the app encodes the space twice) |
@@ -52,10 +55,10 @@ Status: ✅ automated · 🟡 placeholder (`test.fixme`, to record) · 👤 stay
 | TC-F2-04: a taken or reserved URL disables Create in the Dashboard's Create New Event | eph/f2-events | ✅ |
 | TC-F10-01: a time zone change saves and shows on the public site; sessions keep their clock time (name and dates stay manual) | eph/f10-control-panel | ✅ |
 | TC-F10-02: "Add" and "Add + Send Invite" add the attendee (the invite email stays manual) | eph/f10-control-panel | ✅ |
-| TC-F10-06: Reports -> XLS Attendees has every attendee and the expected columns | eph/f10-control-panel | ✅ (skips on eph while exports come back empty, blocker #3 in ENG-2665) |
+| TC-F10-06: Reports -> XLS Attendees has every attendee and the expected columns | eph/f10-control-panel | ✅ (skips on eph while exports come back empty, blocker #3 in ENG-2832) |
 | REG-112: the CFP portal opens from the editor | eph/f10-control-panel | ✅ |
-| REG-120: a sponsor photo's crop Accept works and the photo saves and loads | eph/f9-sessions | ✅ (on eph the photo-loading step is skipped: photos point to production's avatars host, blocker #5 in ENG-2665; Accept and the save are checked) |
-| REG-222: two attendees keep their own photos (updating one stays manual) | eph/feedback-profiles | ✅ (skips on eph: photos point to production's avatars host, so they can't be compared there; blocker #5 in ENG-2665) |
+| REG-120: a sponsor photo's crop Accept works and the photo saves and loads | eph/f9-sessions | ✅ (on eph the photo-loading step is skipped: photos point to production's avatars host, blocker #5 in ENG-2832; Accept and the save are checked) |
+| REG-222: two attendees keep their own photos (updating one stays manual) | eph/feedback-profiles | ✅ (skips on eph: photos point to production's avatars host, so they can't be compared there; blocker #5 in ENG-2832) |
 | ENG-2217: with only one Speaker Tools option on, a speaker attached to a session gets the matching tool and fields | eph/feedback-profiles | ✅ (closed 2026-11-13 with the names switched; passes on eph 2026-11-13. Before the fix, on eph 2026-11-12, "Edit session description" gave Edit Session (title, video stream, button link, photo) and "Edit session details" gave Edit Description. Gives demofriendsspeaker a name first: with none, Attach People breaks for every session) |
 
 ## Skipped on eph until their precondition is met
@@ -82,15 +85,16 @@ fails with "steps not recorded yet", so it gets written against the real screens
 | Target | File | Checks |
 | --- | --- | --- |
 | dev2 | dev2/f4-payments | REG-001 to REG-006, REG-017, REG-202 to REG-205, TC-F4-03/07/09, SCH-16 |
-| cfp | cfp/f7-cfp | TC-F7-01 to 06, REG-108, REG-109, REG-111, REG-212 to REG-216, ENG-1328, ENG-1565, ENG-2091, ENG-2267 (also iPhone), ENG-450 |
+| eph CFP (needs EPH_ALLOW_CFP_APPLICATIONS=1) | eph/f7-cfp | REG-108 / TC-F7-05 / ENG-1565, REG-214, REG-216, REG-213 / TC-F7-03, REG-212 / TC-F7-06 (also a paid plan), REG-109; TC-F7-04 / REG-111 is a security case, checked by review |
 
-Open bugs kept as checks (expected to fail until fixed): ENG-241, ENG-87, ENG-2091, ENG-2267, ENG-2293, ENG-183, ENG-2784.
+Open bugs kept as checks (expected to fail until fixed): ENG-241, ENG-87, ENG-2091, ENG-2293, ENG-183, ENG-2784.
 
 ## Stays manual
 
 | Check | Reason |
 | --- | --- |
 | REG-009, REG-010, TC-F1-09, TC-F3-04/05 (Google and Microsoft SSO) | Third-party login; doesn't work on eph |
+| ENG-2267 (the CFP form title is left-aligned on iOS) | Only shows in real iOS Safari: Playwright's WebKit at iPhone size centers the title, as Android does (checked on eph, 2026-11-16) |
 | REG-011, REG-015, REG-121, REG-122, REG-123, REG-126, REG-217, REG-218, REG-219, REG-225, ENG-2228, ENG-2253, APP-03 to APP-06, APP-08, APP-11, APP-12, APP-14 to APP-18 | Native apps (Sched); phase 1 (APP-01, 02, 07, 09, 10) and APP-13 run with Maestro above, the rest is phase 2 or stays manual (mobile/README.md) |
 | REG-114, REG-115, REG-116, SC-01 to SC-12 | Sched Count app and camera (to automate with Maestro, see mobile/README.md: the simulator build we have is 1.6.3, the production app, not the β 1.8.3; the Android equivalents on the web Check-In App are automated above) |
 | REG-119 | Push needs an event with its own app |

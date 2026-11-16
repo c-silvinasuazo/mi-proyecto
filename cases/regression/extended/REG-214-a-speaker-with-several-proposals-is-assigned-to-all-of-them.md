@@ -5,7 +5,7 @@ level: Extended
 area: CFP
 bugs: [ENG-228, ENG-335]
 last_run: passed
-automation: 🟡 placeholder — `tests/cfp/f7-cfp.spec.ts`
+automation: 🟡 placeholder — `tests/eph/f7-cfp.spec.ts` (needs applications on eph: EPH_ALLOW_CFP_APPLICATIONS=1)
 ---
 
 # REG-214 — A speaker with several proposals is assigned to all of them
@@ -18,7 +18,7 @@ Prevents the return of: ENG-335, ENG-228
 
 ## Automation
 
-🟡 placeholder — `tests/cfp/f7-cfp.spec.ts`
+🟡 placeholder — `tests/eph/f7-cfp.spec.ts` (needs applications on eph: EPH_ALLOW_CFP_APPLICATIONS=1)
 
 ## Last run
 

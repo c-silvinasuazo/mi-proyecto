@@ -5,7 +5,7 @@ level: Extended
 area: CFP
 bugs: [ENG-30, ENG-237]
 last_run: passed
-automation: 🟡 placeholder — `tests/cfp/f7-cfp.spec.ts`
+automation: 🟡 placeholder — `tests/eph/f7-cfp.spec.ts` (needs applications on eph: EPH_ALLOW_CFP_APPLICATIONS=1)
 ---
 
 # REG-213 — Ratings average correctly and the file field shows in the group
@@ -18,7 +18,7 @@ Prevents the return of: ENG-237, ENG-30
 
 ## Automation
 
-🟡 placeholder — `tests/cfp/f7-cfp.spec.ts`
+🟡 placeholder — `tests/eph/f7-cfp.spec.ts` (needs applications on eph: EPH_ALLOW_CFP_APPLICATIONS=1)
 
 ## Last run
 

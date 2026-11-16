@@ -16,7 +16,7 @@ export function creds(projectName: string) {
   };
 }
 
-// eph sometimes drops a request under load (a 503, or "socket hang up"; blocker #8 in ENG-2665). Requests that set up or
+// eph sometimes drops a request under load (a 503, or "socket hang up"; blocker #8 in ENG-2832). Requests that set up or
 // clean up a test's data go through this, which tries twice more, a few seconds apart. The checks themselves never
 // retry.
 export async function retryRequest(send: () => Promise<APIResponse>) {

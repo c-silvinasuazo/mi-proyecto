@@ -61,7 +61,7 @@ test.describe('feedback, profiles, sponsors and PD', () => {
     await setAttendeePhoto(page, first.id, solidPng(220, 30, 30));
     await setAttendeePhoto(page, second.id, solidPng(30, 30, 220));
     const [firstPhoto, secondPhoto] = [await attendeePhoto(page, first.id), await attendeePhoto(page, second.id)];
-    test.skip(!firstPhoto.bytes || !secondPhoto.bytes, 'Photos can\'t be compared on eph: they point to production\'s avatars host (blocker #5 in ENG-2665)');
+    test.skip(!firstPhoto.bytes || !secondPhoto.bytes, 'Photos can\'t be compared on eph: they point to production\'s avatars host (blocker #5 in ENG-2832)');
     expect(firstPhoto.bytes!.equals(secondPhoto.bytes!), 'Both attendees show the same photo').toBe(false);
     expect((await attendeePhoto(page, first.id)).bytes!.equals(firstPhoto.bytes!), 'The first attendee\'s photo changed').toBe(true);
   });

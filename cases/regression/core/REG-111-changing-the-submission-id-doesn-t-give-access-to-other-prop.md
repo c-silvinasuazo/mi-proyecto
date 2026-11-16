@@ -7,7 +7,7 @@ priority: High
 base_case: TC-F7-04
 bugs: [ENG-1483]
 last_run: partial
-automation: 🟡 placeholder — `tests/cfp/f7-cfp.spec.ts`
+automation: 🟡 placeholder — `tests/eph/f7-cfp.spec.ts` (security case: checked by reviewing the fix, never by exploiting it)
 ---
 
 # REG-111 — Changing the submission ID doesn't give access to other proposals
@@ -22,7 +22,7 @@ Prevents the return of: ENG-1483
 
 ## Automation
 
-🟡 placeholder — `tests/cfp/f7-cfp.spec.ts`
+🟡 placeholder — `tests/eph/f7-cfp.spec.ts` (security case: checked by reviewing the fix, never by exploiting it)
 
 ## Last run
 

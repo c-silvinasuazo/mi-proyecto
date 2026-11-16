@@ -7,7 +7,7 @@ priority: High
 base_case: TC-F7-01
 bugs: [ENG-25]
 last_run: passed
-automation: 🟡 placeholder — `tests/cfp/f7-cfp.spec.ts`
+automation: 🟡 placeholder — `tests/eph/f7-cfp.spec.ts` (needs applications on eph: EPH_ALLOW_CFP_APPLICATIONS=1)
 ---
 
 # REG-109 — A file within the recommended size can be uploaded in CFP
@@ -22,7 +22,7 @@ Prevents the return of: ENG-25
 
 ## Automation
 
-🟡 placeholder — `tests/cfp/f7-cfp.spec.ts`
+🟡 placeholder — `tests/eph/f7-cfp.spec.ts` (needs applications on eph: EPH_ALLOW_CFP_APPLICATIONS=1)
 
 ## Last run
 

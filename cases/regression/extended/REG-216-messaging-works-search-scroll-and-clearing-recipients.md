@@ -5,7 +5,7 @@ level: Extended
 area: CFP
 bugs: [ENG-157, ENG-158, ENG-159]
 last_run: passed
-automation: 🟡 placeholder — `tests/cfp/f7-cfp.spec.ts`
+automation: 🟡 placeholder — `tests/eph/f7-cfp.spec.ts` (needs applications on eph: EPH_ALLOW_CFP_APPLICATIONS=1)
 ---
 
 # REG-216 — Messaging works: search, scroll and clearing recipients
@@ -18,7 +18,7 @@ Prevents the return of: ENG-157, ENG-158, ENG-159
 
 ## Automation
 
-🟡 placeholder — `tests/cfp/f7-cfp.spec.ts`
+🟡 placeholder — `tests/eph/f7-cfp.spec.ts` (needs applications on eph: EPH_ALLOW_CFP_APPLICATIONS=1)
 
 ## Last run
 

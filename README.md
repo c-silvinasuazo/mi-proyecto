@@ -8,7 +8,6 @@ Browser checks for the QA regression suite, with these targets:
 | eph (PR environment) | `npm run test:eph` | Every flow in `tests/eph`, in Chrome. REG-220 in Safari: `npx playwright test --project=eph-safari`. `npm run test:eph:quick` leaves out the two `@slow` cases (REG-105's unfreeze wait and the TC-F10-04 import, up to 15 minutes each) | Yes, only on eph (isolated database) |
 | eph on an iPhone | `npm run test:eph:iphone` | `tests/eph-iphone`: the event site at iPhone size in WebKit (search, description, My Schedule, attendee list). Needs `npx playwright install webkit` | Yes, only on eph |
 | dev2 | `npm run test:dev2` | Payments (F4) with Stripe test mode; opt in with `DEV2_BASE_URL` | Yes, in the production database: use billmtttest42 only |
-| CFP | `npm run test:cfp` | CFP flows (F7) on the production CFP, plus ENG-2267 on an iPhone viewport; opt in with `CFP_ENABLED=1` | Yes, on a qaeng event's CFP form only |
 | Sched app (iOS and Android) | `npm run test:ios` or `npm run test:android` | `mobile/sched-app`: Maestro flows for the native app on a simulator or emulator (APP-01, 02, 07, 09, 10 and 13). Setup in [mobile/README.md](mobile/README.md) | No (read-only, on qa reminders 2 in production) |
 
 `COVERAGE.md` maps every validated check to its test, or to "manual" with the reason. `TEST-IDS.md` lists the elements
@@ -35,9 +34,8 @@ workflow in `.github/workflows/eph.yml` runs it on every push, and the eph suite
 | `test:prod` | `SCHED_EMAIL`, `SCHED_PASSWORD`, `CFP_OPEN_FORM`, `CFP_FUTURE_FORM`, `CFP_CLOSED_FORM` | `SCHED_BASE_URL` (defaults to sched.com), `SCHED_USERNAME` (REG-008 username check is skipped without it), `QA_EVENT` (defaults to qaengf6app), `CFP_EVENT` (defaults to qaengreminders) |
 | `test:eph` | `EPH_BASE_URL`, `EPH_USERNAME`, `EPH_PASSWORD` | — (the eph login uses the username; no email needed) |
 | `test:dev2` | `DEV2_BASE_URL` | — |
-| `test:cfp` | `CFP_ENABLED=1` (documented opt-in; no test reads it yet) | — |
 
-`test:dev2` and `test:cfp` only hold placeholders today (see [Status of the placeholders](#status-of-the-placeholders)), so they run nothing yet.
+`test:dev2` only holds placeholders today (see [Status of the placeholders](#status-of-the-placeholders)), so it runs nothing yet. The CFP flows (F7) run with `test:eph`, on the eph event's own CFP: each check creates its own form and archives it afterwards. The checks that send an application leave an applicant account and an application on eph (the CFP can't delete them), so they only run with `EPH_ALLOW_CFP_APPLICATIONS=1`.
 
 A missing required value fails the run with `Missing <NAME>. Copy .env.example to .env and fill it in.`
 
@@ -48,7 +46,7 @@ A missing required value fails the run with `Missing <NAME>. Copy .env.example t
 3. Then the flows on eph: `npm run test:eph` (add `:headed` to watch the browser).
 4. Open the report with `npm run report`: every failure has a screenshot, a trace and an `error-context.md`.
 5. A green run means nothing new broke. Known issues don't turn it red:
-   - **Open bugs** are marked with `openBug('ENG-…')` and **eph gaps** from ENG-2665 with `ephGap(#)`: the check is
+   - **Open bugs** are marked with `openBug('ENG-…')` and **eph gaps** from ENG-2832 (the list began in ENG-2665) with `ephGap(#)`: the check is
      expected to fail. When the bug or gap is fixed, Playwright reports the check as **"unexpectedly passed"**: remove
      the mark and update the case.
    - Gaps that only block one step (PDFs, photos) skip that step with a "skipped step" note in the report; gaps that
@@ -71,7 +69,7 @@ A missing required value fails the run with `Missing <NAME>. Copy .env.example t
 
 ## Status of the placeholders
 
-Each flow in `tests/eph`, `tests/dev2` and `tests/cfp` is a `test.fixme` with its steps and the REG / TC it covers. They show as "fixme" (skipped) until they are recorded. The order follows the eph exploration run sheet: only automate flows that worked by hand on eph.
+Each flow in `tests/eph` and `tests/dev2` that isn't recorded yet is a `test.fixme` with its steps and the REG / TC it covers. They show as "fixme" (skipped) until they are recorded. The order follows the eph exploration run sheet: only automate flows that worked by hand on eph.
 
 ## Recording a flow (eph)
 

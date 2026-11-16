@@ -6,7 +6,7 @@ import 'dotenv/config';
 // - cfp-readonly: read-only checks on public QA CFP forms (production CFP). Never writes.
 // - eph:  read-only checks plus every flow that creates data, against an isolated eph environment.
 // - dev2: payments with Stripe test mode. Writes to the production database: opt in with DEV2_BASE_URL.
-// - cfp:  CFP flows on the production CFP with a qaeng event. Opt in with CFP_ENABLED=1.
+// The CFP flows (F7) run in the eph project, on the eph event's own CFP (tests/eph/f7-cfp.spec.ts).
 // Credentials and URLs come from .env (git-ignored).
 export default defineConfig({
   timeout: 90_000,
@@ -72,17 +72,6 @@ export default defineConfig({
       name: 'dev2',
       testDir: './tests/dev2',
       use: { ...devices['Desktop Chrome'], baseURL: process.env.DEV2_BASE_URL },
-    },
-    {
-      name: 'cfp',
-      testDir: './tests/cfp',
-      use: { ...devices['Desktop Chrome'], baseURL: 'https://cfp.sched.com' },
-    },
-    {
-      name: 'cfp-iphone',
-      testDir: './tests/cfp',
-      grep: /ENG-2267/,
-      use: { ...devices['iPhone 15'], baseURL: 'https://cfp.sched.com' },
     },
   ],
 });

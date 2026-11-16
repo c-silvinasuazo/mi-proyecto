@@ -63,6 +63,12 @@ export async function requireSignupWithoutCaptcha(browser: Browser, baseURL: str
   test.skip(captcha > 0, '/signup has a captcha on eph; the tests never try to get past it (needs test captcha keys or the captcha off)');
 }
 
+// Applying to a CFP form creates an applicant account and an application, and the CFP can't delete either: these
+// checks only run when asked for, so the shared eph doesn't fill up with them.
+export function requireCfpApplications() {
+  test.skip(!process.env.EPH_ALLOW_CFP_APPLICATIONS, 'Creates a CFP applicant and an application on eph each run, and neither can be deleted: opt in with EPH_ALLOW_CFP_APPLICATIONS=1');
+}
+
 export function requireEventCreationAllowed() {
   test.skip(!process.env.EPH_ALLOW_EVENT_CREATION, 'Creates an event on eph each run and events can\'t be deleted from the tests: opt in with EPH_ALLOW_EVENT_CREATION=1');
 }
@@ -104,13 +110,13 @@ export function openBug(ticket: string, what: string) {
   test.fail(true, `${ticket} (open): ${what}`);
 }
 
-// An eph environment gap from the blocker list in ENG-2665 that blocks everything the check looks at, with no way to
+// An eph environment gap from the blocker list in ENG-2832 that blocks everything the check looks at, with no way to
 // tell it apart from the bug the check guards against. Expected to fail like openBug, for the same reason.
 export function ephGap(blocker: number, what: string) {
-  test.fail(true, `eph blocker #${blocker} in ENG-2665: ${what}`);
+  test.fail(true, `eph blocker #${blocker} in ENG-2832: ${what}`);
 }
 
-// Whether eph generates PDFs (blocker #2 in ENG-2665: the PDF library is missing from the image). Checks that only
+// Whether eph generates PDFs (blocker #2 in ENG-2832: the PDF library is missing from the image). Checks that only
 // end in a PDF still run their other steps and skip the PDF one while this is false. Read once per run, from the
 // "Download PDF" link of the printable schedule.
 let pdfs: boolean | undefined;
@@ -123,17 +129,17 @@ export async function ephMakesPdfs(page: Page) {
     pdfs = body.subarray(0, 5).toString() === '%PDF-';
     await probe.close();
   }
-  if (!pdfs) test.info().annotations.push({ type: 'skipped step', description: 'The PDF: eph blocker #2 in ENG-2665 (PDFs aren\'t generated)' });
+  if (!pdfs) test.info().annotations.push({ type: 'skipped step', description: 'The PDF: eph blocker #2 in ENG-2832 (PDFs aren\'t generated)' });
   return pdfs;
 }
 
-// Spreadsheet exports come back empty on eph (blocker #3 in ENG-2665). Tries the attendee export and skips while it's
+// Spreadsheet exports come back empty on eph (blocker #3 in ENG-2832). Tries the attendee export and skips while it's
 // empty, so the check runs for real once exports work.
 export async function requireExports(page: Page) {
   await page.goto('/editor/exports');
   const href = await page.getByRole('link', { name: /XLS Attendees/ }).getAttribute('href');
   const size = href ? (await (await page.request.get(new URL(href, page.url()).toString())).body()).length : 0;
-  test.skip(size === 0, 'Spreadsheet exports come back empty on eph (0 bytes; blocker #3 in ENG-2665)');
+  test.skip(size === 0, 'Spreadsheet exports come back empty on eph (0 bytes; blocker #3 in ENG-2832)');
 }
 
 // Reached only once the precondition above is met: the steps still have to be recorded against the real screens.

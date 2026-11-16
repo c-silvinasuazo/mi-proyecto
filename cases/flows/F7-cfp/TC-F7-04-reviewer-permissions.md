@@ -6,7 +6,7 @@ type: Negative
 env: cfp-staging (isolated)
 bugs: [ENG-1483, ENG-2220, ENG-2221]
 last_run: passed
-automation: 🟡 placeholder — `tests/cfp/f7-cfp.spec.ts`
+automation: 🟡 placeholder — `tests/eph/f7-cfp.spec.ts` (security case: checked by reviewing the fix, never by exploiting it)
 ---
 
 # TC-F7-04 — Reviewer permissions
@@ -21,7 +21,7 @@ Access denied (ENG-1483, ENG-2220, ENG-2221)
 
 ## Automation
 
-🟡 placeholder — `tests/cfp/f7-cfp.spec.ts`
+🟡 placeholder — `tests/eph/f7-cfp.spec.ts` (security case: checked by reviewing the fix, never by exploiting it)
 
 ## Last run
 

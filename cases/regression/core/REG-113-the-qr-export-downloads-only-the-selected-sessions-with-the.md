@@ -7,7 +7,7 @@ priority: High (reopened)
 base_case: TC-F8-03
 bugs: [ENG-194, ENG-544, ENG-545, ENG-546, ENG-770, ENG-774]
 last_run: passed
-automation: 🟡 placeholder — `tests/eph/f8-checkin.spec.ts`
+automation: ✅ automated — `tests/eph/f8-checkin.spec.ts` (eph; the "Export all (PDF)" step is skipped while eph doesn't generate PDFs)
 ---
 
 # REG-113 — The QR export downloads only the selected sessions, with the right layout
@@ -22,7 +22,7 @@ Prevents the return of: ENG-194, ENG-770 (+ ENG-544, ENG-545, ENG-546, ENG-774 o
 
 ## Automation
 
-🟡 placeholder — `tests/eph/f8-checkin.spec.ts`
+✅ automated — `tests/eph/f8-checkin.spec.ts` (eph; the "Export all (PDF)" step is skipped while eph doesn't generate PDFs)
 
 ## Last run
 

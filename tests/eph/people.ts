@@ -123,13 +123,13 @@ export async function attendeePhoto(page: Page, id: string) {
 }
 
 // Fetches an image the editor points to and fails unless it really loads. On eph, profile photos point to the
-// production avatars host with the eph person's id (blocker #5 in ENG-2665): it answers 403, or, when a production
+// production avatars host with the eph person's id (blocker #5 in ENG-2832): it answers 403, or, when a production
 // person happens to have the same id, someone else's photo, so a load there proves nothing. In that case the check is
 // skipped with a note and this returns null; callers that need the bytes skip the rest of the test.
 export async function expectImageLoads(page: Page, src: string) {
   const url = new URL(src, page.url());
   if (url.hostname === 'avatars.sched.co' && new URL(page.url()).hostname.endsWith('.eph.sched.co')) {
-    test.info().annotations.push({ type: 'skipped step', description: `The photo loading: eph points photos to production's avatars host (blocker #5 in ENG-2665): ${src}` });
+    test.info().annotations.push({ type: 'skipped step', description: `The photo loading: eph points photos to production's avatars host (blocker #5 in ENG-2832): ${src}` });
     return null;
   }
   const response = await page.request.get(url.toString());

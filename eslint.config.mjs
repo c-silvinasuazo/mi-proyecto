@@ -40,7 +40,7 @@ export default tseslint.config(
   },
   {
     // Placeholder groups: every test is a test.fixme with an empty body until its steps are recorded.
-    files: ['tests/dev2/**', 'tests/cfp/**'],
+    files: ['tests/dev2/**'],
     rules: { 'playwright/expect-expect': 'off' },
   },
 );

@@ -6,7 +6,7 @@ type: Positive
 env: Local
 bugs: [ENG-544, ENG-545, ENG-546, ENG-774]
 last_run: passed
-automation: not mapped yet
+automation: ✅ automated — `tests/eph/f8-checkin.spec.ts` (eph; the "Export all (PDF)" step is skipped while eph doesn't generate PDFs)
 ---
 
 # TC-F8-03 — Session QR export
@@ -21,7 +21,7 @@ Only selected sessions; consistent layout and orientation (ENG-544, ENG-545, ENG
 
 ## Automation
 
-not mapped yet
+✅ automated — `tests/eph/f8-checkin.spec.ts` (eph; the "Export all (PDF)" step is skipped while eph doesn't generate PDFs)
 
 ## Last run
 

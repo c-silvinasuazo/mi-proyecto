@@ -6,7 +6,7 @@ type: Positive
 env: cfp-staging
 bugs: [ENG-33, ENG-2072]
 last_run: passed
-automation: 🟡 placeholder — `tests/cfp/f7-cfp.spec.ts`
+automation: 🟡 placeholder — `tests/eph/f7-cfp.spec.ts` (needs applications on eph: EPH_ALLOW_CFP_APPLICATIONS=1)
 ---
 
 # TC-F7-05 — Sync to Sched
@@ -21,7 +21,7 @@ Title and formatting OK; speaker on the session (ENG-33). New sessions get today
 
 ## Automation
 
-🟡 placeholder — `tests/cfp/f7-cfp.spec.ts`
+🟡 placeholder — `tests/eph/f7-cfp.spec.ts` (needs applications on eph: EPH_ALLOW_CFP_APPLICATIONS=1)
 
 ## Last run
 

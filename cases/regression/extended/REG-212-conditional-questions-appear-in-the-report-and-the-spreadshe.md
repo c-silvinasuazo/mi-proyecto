@@ -5,7 +5,7 @@ level: Extended
 area: CFP
 bugs: [ENG-29, ENG-369, ENG-578]
 last_run: not run
-automation: 🟡 placeholder — `tests/cfp/f7-cfp.spec.ts`
+automation: 🟡 placeholder — `tests/eph/f7-cfp.spec.ts` (needs applications on eph and a paid plan)
 ---
 
 # REG-212 — Conditional questions appear in the report and the spreadsheet (✅ 2026-10-21, cfp-staging on Boost: the export includes the conditional answer)
@@ -18,7 +18,7 @@ Prevents the return of: ENG-29, ENG-369, ENG-578
 
 ## Automation
 
-🟡 placeholder — `tests/cfp/f7-cfp.spec.ts`
+🟡 placeholder — `tests/eph/f7-cfp.spec.ts` (needs applications on eph and a paid plan)
 
 ## Last run
 

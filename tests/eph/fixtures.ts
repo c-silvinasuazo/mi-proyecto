@@ -2,6 +2,7 @@ import { test as base, BrowserContextOptions, Page } from '@playwright/test';
 import { logInToEphEditor } from '../helpers';
 import { removeAddedAttendees } from './people';
 import { deleteCreatedSessions } from './sessions';
+import { CfpOrganizer } from './pages/cfp';
 
 export { expect } from '@playwright/test';
 
@@ -21,6 +22,9 @@ type EphFixtures = {
   // Logging in to the Check-In App, or logging out in the Dashboard, ends the editor session on the server, and every
   // later test loads that session from .auth/eph.json. A test that does either calls editorSession.ended() first.
   editorSession: EditorSession;
+  // The event's CFP app as the organizer, opened from the editor on first use (on `page` unless another editor page is
+  // given). After the test, the forms it created are archived.
+  cfp: (editor?: Page) => Promise<CfpOrganizer>;
   // Runs around every eph test: skips it when eph isn't configured, and afterwards logs the editor back in if its
   // session ended and removes the sessions and attendees the test created, even when it failed or timed out.
   ephTest: void;
@@ -50,6 +54,12 @@ export const test = base.extend<EphFixtures>({
       },
       isEnded: () => ended,
     });
+  },
+
+  cfp: async ({ page }, use) => {
+    let organizer: CfpOrganizer | undefined;
+    await use(async (editor = page) => (organizer ??= await CfpOrganizer.open(editor)));
+    await organizer?.archiveForms();
   },
 
   ephTest: [async ({ page, editorSession }, use, testInfo) => {

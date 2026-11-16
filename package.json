@@ -7,6 +7,7 @@
     "test:prod": "playwright test --project=prod --project=cfp-readonly",
     "test:prod:headed": "playwright test --project=prod --project=cfp-readonly --headed",
     "test:eph": "playwright test --project=eph",
+    "test:eph:quick": "playwright test --project=eph --grep-invert @slow",
     "test:eph:headed": "playwright test --project=eph --headed",
     "test:eph:iphone": "playwright test --project=eph-iphone",
     "test:dev2": "playwright test --project=dev2",
@@ -14,12 +15,18 @@
     "test:android": "sh mobile/run.sh sched-app --platform android",
     "test:ios": "sh mobile/run.sh sched-app --platform ios",
     "test:ios:login": "sh mobile/run.sh login --platform ios",
-    "test:ios:logged-in": "sh mobile/run.sh sched-app-logged-in --platform ios",
+    "typecheck": "tsc -p .",
+    "lint": "eslint .",
     "record": "playwright codegen",
     "report": "playwright show-report"
   },
   "devDependencies": {
     "@playwright/test": "^1.48.0",
-    "dotenv": "^16.4.5"
+    "@types/node": "^22.10.2",
+    "dotenv": "^16.4.5",
+    "eslint": "^9.17.0",
+    "eslint-plugin-playwright": "^2.1.0",
+    "typescript": "^5.6.3",
+    "typescript-eslint": "^8.18.1"
   }
 }

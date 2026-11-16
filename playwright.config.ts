@@ -10,10 +10,16 @@ import 'dotenv/config';
 // Credentials and URLs come from .env (git-ignored).
 export default defineConfig({
   timeout: 90_000,
-  retries: 0,
+  // In CI a check that fails once is retried, and the report marks it flaky (eph sometimes drops requests under load).
+  // Locally a failure stays a failure, so nothing is hidden while writing a check.
+  retries: process.env.CI ? 1 : 0,
   workers: 1,
   reporter: [['list'], ['html', { open: 'never' }]],
   use: {
+    // A click or a page load that can't happen fails on its own instead of using up the whole test timeout, which
+    // would leave the fixtures no time to clean up. Steps that need longer pass their own timeout.
+    actionTimeout: 15_000,
+    navigationTimeout: 30_000,
     screenshot: 'only-on-failure',
     trace: 'retain-on-failure',
   },

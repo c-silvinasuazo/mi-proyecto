@@ -9,3 +9,8 @@ appId: ${MAESTRO_APP_ID}
       visible: "System UI isn't responding"
     commands:
       - tapOn: "Wait"
+# The events list loads from the network. Until it does, Android shows a spinner and the search bar isn't in the
+# accessibility tree yet (on Nov 15 a slow emulator took over a minute), so wait for the list before using the search.
+- extendedWaitUntil:
+    visible: "Upcoming Events"
+    timeout: 90000

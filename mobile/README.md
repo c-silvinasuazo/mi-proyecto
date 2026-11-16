@@ -67,7 +67,9 @@ events, and the ones that change data will undo it. Phase 1 needs no login.
 
 To run on another simulator, pass its id: `sh mobile/run.sh sched-app --platform ios --device <udid>`. The flows also
 pass on an iPhone SE (3rd generation) with iOS 27.2 (2026-11-13), the smallest iPhone screen; install the app on it
-first. The login flow taps the email field by its position on an iPhone 17, so it may need adjusting on other sizes.
+first. The login flow taps the email field by its position on an iPhone 17, so it may need adjusting on other sizes:
+the fields aren't in the accessibility tree, and the fix (accessibility identifiers) is on the app's side (see
+`TEST-IDS.md`).
 
 To write or fix a flow, `maestro studio` shows the screen and the selector of each element.
 

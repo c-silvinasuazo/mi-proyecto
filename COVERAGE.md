@@ -19,21 +19,22 @@ Status: ✅ automated · 🟡 placeholder (`test.fixme`, to record) · 👤 stay
 | REG-208 / TC-F9-01: a multi-day session keeps its dates after save, reopen and a description-only edit (eph, writes) | eph/f9-sessions | ✅ |
 | REG-209 / TC-F9-02: description formatting persists in the editor and on the public page (apps, print and PDF stay manual) | eph/f9-sessions | ✅ |
 | ENG-2244: a long description pasted with heavy markup is not cut off and renders cleanly | eph/f9-sessions | ✅ |
-| REG-127: turning chat on and off saves without a parsererror | eph/f9-sessions | ✅ (fails on eph 2026-11-09: "Failed to change chat status: parsererror"; to confirm whether eph-only) |
-| REG-107: event and attendee schedule PDFs contain data | eph/f9-sessions | ✅ (fails on eph 2026-11-09: "Download PDF" doesn't return a PDF; PDF generation likely not set up on eph) |
-| REG-210: session image saves; a PDF downloads as .pdf | eph/f9-sessions | ✅ (fails on eph 2026-11-09: uploads fail with "Could not upload the file", hosted_files folder missing on eph) |
-| ENG-87: a session type with a comma is stored as one type | eph/f9-sessions | ✅ (open bug: fails until fixed; on eph 2026-11-09 "QA Workshop, Advanced" saved as two types) |
+| REG-127: turning chat on and off saves without a parsererror | eph/f9-sessions | ✅ (expected to fail on eph: the chat toggle answers "parsererror" there, blocker #6 in ENG-2665; marked with ephGap) |
+| REG-107: event and attendee schedule PDFs contain data | eph/f9-sessions | ✅ (on eph the PDF downloads are skipped while PDFs aren't generated, blocker #2 in ENG-2665; the printable pages are still checked) |
+| REG-210: session image saves; a PDF downloads as .pdf | eph/f9-sessions | ✅ (skips on eph while uploads fail with "Could not upload the file", blocker #1 in ENG-2665) |
+| ENG-87: a session type with a comma is stored as one type | eph/f9-sessions | ✅ (open bug, marked with openBug: "QA Workshop, Advanced" is saved as two types) |
 | REG-103: schedule, session page, date filter and search; the date filter doesn't redirect | eph/public-site | ✅ |
 | REG-102: an attendee adds and removes a session in My Schedule; its print view isn't blank | eph/public-site | ✅ |
-| REG-105 / TC-F9-05: a frozen session has no remove button for the attendee; unfreezing unlocks it; a page opened before the freeze can't remove it | eph/f9-sessions | ✅ (ENG-2762 fixed 2026-11-13: a removal from a page opened before the freeze now gets "frozen" and the session stays; before the fix it was removed, 6 of 6 runs on eph) |
+| REG-105 / TC-F9-05: a frozen session has no remove button for the attendee; unfreezing unlocks it | eph/f9-sessions | ✅ (tagged @slow: the unfreeze can take up to 8 minutes to reach attendees) |
+| ENG-2762 (part of REG-105): a page opened before the freeze can't remove the frozen session | eph/f9-sessions | ✅ (fixed 2026-11-13: the removal now gets "frozen" and the session stays; before the fix it was removed, 6 of 6 runs on eph) |
 | REG-220: the embed loads, scrolls and stays centered | eph/public-site | ✅ (Chrome; Safari with the eph-safari project, needs `npx playwright install webkit`) |
 | ENG-1568: /print/all shows descriptions | eph/public-site | ✅ |
 | REG-129: chatbot and banners don't cover editor menus or buttons | eph/public-site | ✅ |
 | TC-F8-05: /checkin records a session check-in (Check-In App, saved after reload) | eph/f8-checkin | ✅ |
-| REG-113 / TC-F8-03 (ENG-194, ENG-770, ENG-544, ENG-545, ENG-546): with Self Check-in on, the session QR export has only the selected published sessions, 3 per page | eph/f8-checkin | ✅ (fails on eph at "Export all (PDF)": the PDF library is missing from the eph image, ENG-2665) |
+| REG-113 / TC-F8-03 (ENG-194, ENG-770, ENG-544, ENG-545, ENG-546): with Self Check-in on, the session QR export has only the selected published sessions, 3 per page | eph/f8-checkin | ✅ (on eph the "Export all (PDF)" step is skipped while PDFs aren't generated, blocker #2 in ENG-2665; the selection and the 3-per-page paging are checked) |
 | Android check-in (/checkin at Pixel 7 size; Sched Count is iOS only): an attendee without an admin or check-in role can't log in (SC-03 on Android) | eph/checkin-android | ✅ (the app goes back to its login form with no message, unlike Sched Count's "No events assigned yet": ENG-2785) |
 | Android check-in: Name Search checks an attendee in; saved after reopening the app; the editor lists it (SC-05 / SC-10 on Android) | eph/checkin-android | ✅ |
-| ENG-2784: Android check-in: Name Search finds an attendee by first and last name | eph/checkin-android | ✅ (open bug: a search with a space finds nobody, because the app encodes the space twice) |
+| ENG-2784: Android check-in: Name Search finds an attendee by first and last name | eph/checkin-android | ✅ (open bug, marked with openBug: a search with a space finds nobody, because the app encodes the space twice) |
 | APP-07 (web): Menu -> Search finds a session by name on an iPhone | eph-iphone/event-site-iphone | ✅ (WebKit, iPhone 15 size; also checks the schedule fits the screen) |
 | APP-09 (web): a session page shows its description on an iPhone | eph-iphone/event-site-iphone | ✅ |
 | APP-08 (web): add a session to My Schedule and remove it on an iPhone | eph-iphone/event-site-iphone | ✅ |
@@ -44,17 +45,17 @@ Status: ✅ automated · 🟡 placeholder (`test.fixme`, to record) · 👤 stay
 | APP-09: a session opens to its title, time and speaker (and its description, once a session has one) | mobile/sched-app (Maestro) | ✅ iOS and Android (description not checked: no session in qa reminders 2 has one) |
 | APP-10: the attendee list isn't blank (Directory -> Attendees on iOS, Info -> Attendees on Android) | mobile/sched-app (Maestro) | ✅ iOS and Android (Android has no Directory tab; ENG-2591 aligns the tabs) |
 | APP-13: an event without registration (qa reminders 2) opens straight to its schedule | mobile/sched-app (Maestro) | ✅ iOS and Android |
-| ENG-183: Android check-in: undoing an event check-in in Name Search is saved | eph/checkin-android | ✅ (open bug: the circle unticks but no request is sent; the attendee stays checked in, also on qaengreminders in production) |
+| ENG-183: Android check-in: undoing an event check-in in Name Search is saved | eph/checkin-android | ✅ (open bug, marked with openBug: the circle unticks but no request is sent; the attendee stays checked in, also on qaengreminders in production) |
 | Android check-in: undoing a session check-in is saved (SC-06 on Android) | eph/checkin-android | ✅ |
 | TC-F3-02: /password-reset and /password-reset/ show the reset form (main site; email, link and new password stay manual: captcha, no email on eph) | eph/f3-login | ✅ |
 | TC-F3-08: editor -> Dashboard -> back without logging in again; logout ends both | eph/f3-login | ✅ (on eph the logout lands on qa.eph.sched.co, which loops; noted in the report) |
 | TC-F2-04: a taken or reserved URL disables Create in the Dashboard's Create New Event | eph/f2-events | ✅ |
 | TC-F10-01: a time zone change saves and shows on the public site; sessions keep their clock time (name and dates stay manual) | eph/f10-control-panel | ✅ |
 | TC-F10-02: "Add" and "Add + Send Invite" add the attendee (the invite email stays manual) | eph/f10-control-panel | ✅ |
-| TC-F10-06: Reports -> XLS Attendees has every attendee and the expected columns | eph/f10-control-panel | ✅ (fails on eph 2026-11-09: the export is 0 bytes) |
+| TC-F10-06: Reports -> XLS Attendees has every attendee and the expected columns | eph/f10-control-panel | ✅ (skips on eph while exports come back empty, blocker #3 in ENG-2665) |
 | REG-112: the CFP portal opens from the editor | eph/f10-control-panel | ✅ |
-| REG-120: a sponsor photo's crop Accept works and the photo saves and loads | eph/f9-sessions | ✅ (on eph photos point to the production avatars host: 403, or another person's photo when a production id matches; not verifiable on eph) |
-| REG-222: two attendees keep their own photos (updating one stays manual) | eph/feedback-profiles | ✅ (same avatars-host problem on eph; not verifiable there) |
+| REG-120: a sponsor photo's crop Accept works and the photo saves and loads | eph/f9-sessions | ✅ (on eph the photo-loading step is skipped: photos point to production's avatars host, blocker #5 in ENG-2665; Accept and the save are checked) |
+| REG-222: two attendees keep their own photos (updating one stays manual) | eph/feedback-profiles | ✅ (skips on eph: photos point to production's avatars host, so they can't be compared there; blocker #5 in ENG-2665) |
 | ENG-2217: with only one Speaker Tools option on, a speaker attached to a session gets the matching tool and fields | eph/feedback-profiles | ✅ (closed 2026-11-13 with the names switched; passes on eph 2026-11-13. Before the fix, on eph 2026-11-12, "Edit session description" gave Edit Session (title, video stream, button link, photo) and "Edit session details" gave Edit Description. Gives demofriendsspeaker a name first: with none, Attach People breaks for every session) |
 
 ## Skipped on eph until their precondition is met

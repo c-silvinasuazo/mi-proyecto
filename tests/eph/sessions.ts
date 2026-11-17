@@ -96,6 +96,22 @@ export async function publishNewSession(page: Page) {
   return body(response.request()) ?? '';
 }
 
+// The ids of the sessions titled exactly `title`, from the editor's session list.
+export async function findSessions(page: Page, title: string) {
+  await page.goto('/editor/schedule');
+  const hrefs = await page.getByRole('link', { name: title, exact: true }).evaluateAll((links) => links.map((a) => a.getAttribute('href')!));
+  return [...new Set(hrefs.map((href) => new URL(href, page.url()).searchParams.get('id')!))];
+}
+
+// Takes over a session something else created during the test (a CFP sync), so openEditSession finds it and the eph
+// fixtures delete it afterwards. Fails unless exactly one session has that title.
+export async function adoptSession(page: Page, title: string) {
+  const ids = await findSessions(page, title);
+  expect(ids, `Expected one session titled "${title}"`).toHaveLength(1);
+  created.set(title, ids[0]);
+  return ids[0];
+}
+
 // Deletes a session the way the editor's Delete link does.
 export async function deleteSession(page: Page, id: string) {
   const response = await retryRequest(() => page.request.post('/editor/schedule', { form: { what: 'delete', data: id } }));

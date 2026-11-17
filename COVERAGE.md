@@ -19,6 +19,9 @@ Status: ✅ automated · 🟡 placeholder (`test.fixme`, to record) · 👤 stay
 | TC-F7-02 (eph): a CFP form is closed before it opens and after it closes (forms created and archived by the test) | eph/f7-cfp | ✅ |
 | ENG-2091: logging in from a CFP form with a Sched account keeps you on the form | eph/f7-cfp | ✅ (open bug, marked with openBug; on the PR's eph, pr-309, it already passes) |
 | REG-215 / TC-F7-01 (part): an application with a co-speaker reaches the organizer | eph/f7-cfp | ✅ (opt-in: EPH_ALLOW_CFP_APPLICATIONS=1, since it leaves an applicant account and an application on eph) |
+| REG-108 / TC-F7-05 / ENG-1565: Sync with Sched with only Sync Applicants brings in the speaker and no session; a full sync keeps the title and formatted description and attaches the speaker (the session's date is the sync time, ENG-2072; re-sync of an existing session not covered) | eph/f7-cfp | ✅ (opt-in: EPH_ALLOW_CFP_APPLICATIONS=1, since it leaves an applicant account and applications on eph; the synced sessions and speaker are deleted) |
+| REG-214: two proposals from one applicant sync with that speaker attached to both, and the speaker once | eph/f7-cfp | ✅ (opt-in: EPH_ALLOW_CFP_APPLICATIONS=1, since it leaves an applicant account and applications on eph; the synced sessions and speaker are deleted) |
+| REG-216 / ENG-157, ENG-158, ENG-159: Messages: recipients found by speaker name, the list scrolls by dragging its scrollbar and stays open, Cancel clears the recipients (nothing is sent) | eph/f7-cfp | ✅ (opt-in: EPH_ALLOW_CFP_APPLICATIONS=1, since it leaves an applicant account and applications on eph) |
 | REG-208 / TC-F9-01: a multi-day session keeps its dates after save, reopen and a description-only edit (eph, writes) | eph/f9-sessions | ✅ |
 | REG-209 / TC-F9-02: description formatting persists in the editor and on the public page (apps, print and PDF stay manual) | eph/f9-sessions | ✅ |
 | ENG-2244: a long description pasted with heavy markup is not cut off and renders cleanly | eph/f9-sessions | ✅ |
@@ -85,7 +88,7 @@ fails with "steps not recorded yet", so it gets written against the real screens
 | Target | File | Checks |
 | --- | --- | --- |
 | dev2 | dev2/f4-payments | REG-001 to REG-006, REG-017, REG-202 to REG-205, TC-F4-03/07/09, SCH-16 |
-| eph CFP (needs EPH_ALLOW_CFP_APPLICATIONS=1) | eph/f7-cfp | REG-108 / TC-F7-05 / ENG-1565, REG-214, REG-216, REG-213 / TC-F7-03, REG-212 / TC-F7-06 (also a paid plan), REG-109; TC-F7-04 / REG-111 is a security case, checked by review |
+| eph CFP (needs EPH_ALLOW_CFP_APPLICATIONS=1) | eph/f7-cfp | REG-213 / TC-F7-03, REG-212 / TC-F7-06 (also a paid plan), REG-109; TC-F7-04 / REG-111 is a security case, checked by review |
 
 Open bugs kept as checks (expected to fail until fixed): ENG-241, ENG-87, ENG-2091, ENG-2293, ENG-183, ENG-2784.
 
@@ -100,6 +103,6 @@ Open bugs kept as checks (expected to fail until fixed): ENG-241, ENG-87, ENG-20
 | REG-119 | Push needs an event with its own app |
 | REG-201, REG-110, ENG-1328 email part, reminders (TC-F9-04) | Email delivery |
 | REG-016 | Covered by the existing screenshot tests in eph |
-| ENG-2221 to ENG-2224 | Security findings: verify fixes only |
+| ENG-1087, ENG-2220 to ENG-2224 | Security findings: verify fixes only |
 | ENG-2633 | Anti-abuse limit; needs an account at the limit |
 | REG-128, REG-224, F5 cases | Billing not testable yet |

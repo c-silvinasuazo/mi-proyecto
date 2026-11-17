@@ -6,7 +6,7 @@ type: Positive
 env: cfp-staging
 bugs: [ENG-33, ENG-2072]
 last_run: passed
-automation: 🟡 placeholder — `tests/eph/f7-cfp.spec.ts` (needs applications on eph: EPH_ALLOW_CFP_APPLICATIONS=1)
+automation: ✅ automated — `tests/eph/f7-cfp.spec.ts` (eph; opt-in with EPH_ALLOW_CFP_APPLICATIONS=1, since it leaves an applicant account and applications)
 ---
 
 # TC-F7-05 — Sync to Sched
@@ -21,9 +21,11 @@ Title and formatting OK; speaker on the session (ENG-33). New sessions get today
 
 ## Automation
 
-🟡 placeholder — `tests/eph/f7-cfp.spec.ts` (needs applications on eph: EPH_ALLOW_CFP_APPLICATIONS=1)
+✅ automated — `tests/eph/f7-cfp.spec.ts` (eph; opt-in with EPH_ALLOW_CFP_APPLICATIONS=1, since it leaves an applicant account and applications)
 
 ## Last run
+
+✅ 2026-11-16 (automated, pr-309 eph): Sync Applicants alone brings in the speaker and creates no session (ENG-1565); a full sync creates the session with its title and bold text kept and the speaker attached; the date is the sync time (ENG-2072)
 
 ✅ 2026-10-21 (cfp-staging → qaengreminders): with the Applications status filter on "Final Confirmation", Sync with Sched completes (Sync Applicants, Sync Sessions and Attach Applicants to Sessions on). The session is created (unpublished) with its title and description, the speaker is created and attached, and the application in "Initial Submission" isn't synced. The new session gets the sync time as its date (Oct 21, 3:56–3:56 PM): expected per Marko in ENG-2072 (the API doesn't allow TBA when creating a session). Re-sync of an existing session not checked. Earlier block ("Please select at least one status") was because no status filter was set (Gabriel Mago)
 

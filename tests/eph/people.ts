@@ -50,6 +50,26 @@ export async function removeAddedAttendees(page: Page) {
   }
 }
 
+const addedSpeakers: string[] = [];
+
+// The event's speakers named exactly `name`. They are removed after the test (removeAddedSpeakers), since they come
+// from something the test did (a CFP sync).
+export async function speakersNamed(page: Page, name: string) {
+  const response = await retryRequest(() => page.request.post('/editor/schedule?compact=y', { form: { what: 'actionGetRoleMembers' } }));
+  const speakers = Object.values((await editorJson(response, 'Listing the speakers')).results?.speakers ?? {}) as { id: string; name: string | null }[];
+  const named = speakers.filter((speaker) => speaker.name === name);
+  for (const { id } of named) if (!addedSpeakers.includes(id)) addedSpeakers.push(id);
+  return named;
+}
+
+// Removes the speakers the running test brought in, the way Speakers -> Bulk Actions -> Remove does.
+export async function removeAddedSpeakers(page: Page) {
+  for (const id of addedSpeakers.splice(0)) {
+    const response = await retryRequest(() => page.request.post('/editor/speakers', { form: { what: 'deleteMulti', 'data[]': id } }));
+    expect(response.ok(), `Could not remove speaker ${id}`).toBeTruthy();
+  }
+}
+
 // Returns the display name of a speaker account, giving it one first if it has none. On demofriends the seed speaker
 // (demofriendsspeaker) had no name, and a nameless speaker breaks the session form's Attach People list for every
 // session ("Cannot read properties of null (reading 'toLowerCase')" while the editor sorts people by name).

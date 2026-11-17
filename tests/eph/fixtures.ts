@@ -1,6 +1,6 @@
 import { test as base, BrowserContextOptions, Page } from '@playwright/test';
 import { logInToEphEditor } from '../helpers';
-import { removeAddedAttendees } from './people';
+import { removeAddedAttendees, removeAddedSpeakers } from './people';
 import { deleteCreatedSessions } from './sessions';
 import { CfpOrganizer } from './pages/cfp';
 
@@ -75,6 +75,7 @@ export const test = base.extend<EphFixtures>({
     // With a dead session the deletes below would answer 200 and do nothing.
     if (editorSession.isEnded()) await editorSession.logBackIn();
     await removeAddedAttendees(page);
+    await removeAddedSpeakers(page);
     await deleteCreatedSessions(page);
   }, { auto: true }],
 });

@@ -22,6 +22,9 @@ filed yet.
 | Main login form fields (sched.com/login) | the first and second textbox in `main`: their labels aren't linked to the inputs | helpers (`login`), auth setup | link the labels (`for` / `id`) |
 | Editor login form fields (/editor/login) | the first textbox of the form that has a password field | helpers (`logInToEph`) | link the labels |
 | CFP application form fields (speaker and session steps) | Each field's position in the speaker block (Name, Email, Company, Position, LinkedIn, Instagram), since the labels aren't linked to the inputs | eph/f7-cfp (`CfpForm.apply`) | link the labels, or `cfp-speaker-<n>-name` and so on |
+| Form and status filters on the CFP organizer's Applications page | Naive UI's `.n-base-selection`, told apart by their placeholder text ("All forms", "All statuses") | eph/f7-cfp (`CfpOrganizer.sync`) | `applications-form-filter`, `applications-status-filter` |
+| Switches in the CFP "Sync with Sched" dialog | `.n-switch`, found through the row that holds its label; the switches have no accessible name | eph/f7-cfp (`CfpOrganizer.sync`) | accessible names ("Sync Applicants" and so on), or `sync-applicants`, `sync-sessions`, `sync-attach-applicants` |
+| "To" field of a new CFP message, its recipients and its list | `.n-base-selection`, `.n-tag`, `.n-base-select-option` and the list's scrollbar `.n-scrollbar-rail__scrollbar` | eph/f7-cfp (REG-216) | `message-recipients` on the field, `message-recipient` on each tag |
 | "Log in" and "Forgot password?" in the CFP login modal | A plain div found by its text (it isn't a button or link, so the keyboard can't reach it either; noted in ENG-2091's review) | eph/f7-cfp (`CfpForm.logIn`) | make them buttons |
 
 ## Sched app (iOS)

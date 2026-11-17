@@ -63,6 +63,38 @@ export class CfpOrganizer {
     return data as Record<string, unknown>[];
   }
 
+  // The ids of the applications sent to one form.
+  async applicationIds(formId: number) {
+    return (await this.applications()).filter((application) => application.form_id === formId).map((application) => String(application.id));
+  }
+
+  // Applications -> filter by the form and "Initial Submission" (the sync is disabled until a status is picked) -> Sync
+  // with Sched, with the dialog's switches set as given and the role left on Speaker. Resolves with the sync's answer
+  // ({ success, speakerSuccess, sessionSuccess, ... }); the sync runs while the request is open, about 20 seconds on eph.
+  async sync(formName: string, switches: { 'Sync Applicants': boolean; 'Sync Sessions': boolean; 'Attach Applicants to Sessions': boolean }) {
+    const page = this.page;
+    await page.goto(`${this.origin}/organizer/${this.confId}/applications`);
+    for (const [filter, option] of [['All forms', formName], ['All statuses', 'Initial Submission']]) {
+      await page.locator('.n-base-selection').filter({ hasText: filter }).click();
+      await page.locator('.n-base-select-option').filter({ hasText: option }).click();
+      await page.keyboard.press('Escape');
+    }
+    await page.getByText('Sync with Sched', { exact: true }).click();
+    const dialog = page.locator('.n-modal').last();
+    await expect(dialog, 'The sync dialog did not offer to sync').toContainText('Ready to sync with Sched?');
+    for (const [label, on] of Object.entries(switches)) {
+      // The innermost block that holds both the label and a switch is that label's row.
+      const toggle = dialog.locator('div').filter({ has: page.getByText(label, { exact: true }) }).filter({ has: page.locator('.n-switch') }).last().locator('.n-switch');
+      if ((await toggle.getAttribute('aria-checked')) !== String(on)) await toggle.click();
+      await expect(toggle, `The "${label}" switch`).toHaveAttribute('aria-checked', String(on));
+    }
+    const answer = page.waitForResponse((r) => r.url().includes('/api/organizer/forms/submission/send'), { timeout: 120_000 });
+    await dialog.getByRole('button', { name: 'Start Sync' }).click();
+    const response = await answer;
+    expect(response.ok(), `The sync answered ${response.status()}`).toBe(true);
+    return response.json();
+  }
+
   // Archives every form this organizer created.
   async archiveForms() {
     for (const id of this.forms.splice(0)) await this.api('PATCH', '/api/organizer/forms/archive', { id: String(id) });
@@ -114,6 +146,24 @@ export class CfpForm {
     const response = this.page.waitForResponse((r) => r.url().includes('/api/auth/email/registration'));
     await this.modal.getByRole('button', { name: 'Create', exact: true }).click();
     return response;
+  }
+
+  // Sends an application to this form as the signed-in applicant, with the request "Finish and send" sends (the app
+  // keeps the applicant's token in localStorage). For tests that need several applications; `apply` covers the form.
+  async send(speakers: CfpSpeaker[], session: { title: string; description: string }) {
+    const readToken = () => this.page.evaluate(() => localStorage.getItem('speaker_auth_token')).catch(() => null);
+    await expect.poll(readToken, { message: 'The applicant is not signed in to the CFP' }).toBeTruthy();
+    const field = (id: string, value: string) => ({ id, value, conditionals: [] });
+    const response = await retryRequest(async () => this.page.request.post(`${new URL(this.url).origin}/api/speaker/forms/submit`, {
+      headers: { Authorization: `Bearer ${await readToken()}`, Accept: 'application/json' },
+      data: {
+        form_token: this.url.split('/speaker/')[1],
+        session_data: [field('sessionTitle', session.title), field('sessionDescription', session.description)],
+        speaker_data: speakers.map((s) => [field('speakerPhoto', ''), field('speakerName', s.name), field('speakerAbout', `<p>${s.about}</p>`), field('speakerEmail', s.email),
+          field('speakerCompany', s.company), field('speakerPosition', s.position), field('speakerLinkedin', ''), field('speakerSocialLink', '')]),
+      },
+    }));
+    expect(await response.json(), `Sending the application "${session.title}" failed`).toMatchObject({ success: true });
   }
 
   // Fills the default form (speaker form, then session form) and sends it. Resolves with the submit response.

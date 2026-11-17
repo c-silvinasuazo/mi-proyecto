@@ -9,7 +9,7 @@
 | [REG-105](REG-105-unfreezing-sessions-unlocks-the-list.md) | Unfreezing sessions unlocks the list | High | passed | 🟡 placeholder |
 | [REG-106](REG-106-session-import-doesn-t-get-stuck.md) | Session import doesn't get stuck | High | passed | 🟡 placeholder |
 | [REG-107](REG-107-event-and-attendee-schedule-pdfs-contain-data.md) | Event and attendee schedule PDFs contain data | High | passed | ✅ automated |
-| [REG-108](REG-108-cfp-sched-sync-keeps-titles-descriptions-and-the-tba-date.md) | CFP → Sched sync keeps titles, descriptions and the TBA date | High | passed | 🟡 placeholder |
+| [REG-108](REG-108-cfp-sched-sync-keeps-titles-descriptions-and-the-tba-date.md) | CFP → Sched sync keeps titles, descriptions and the TBA date | High | passed | ✅ automated |
 | [REG-109](REG-109-a-file-within-the-recommended-size-can-be-uploaded-in-cfp.md) | A file within the recommended size can be uploaded in CFP | High | passed | 🟡 placeholder |
 | [REG-110](REG-110-view-application-accepts-valid-credentials-and-cfp-emails-ar.md) | "View application" accepts valid credentials and CFP emails arrive | High | passed | 👤 manual |
 | [REG-111](REG-111-changing-the-submission-id-doesn-t-give-access-to-other-prop.md) | Changing the submission ID doesn't give access to other proposals | High | partial | 🟡 placeholder |

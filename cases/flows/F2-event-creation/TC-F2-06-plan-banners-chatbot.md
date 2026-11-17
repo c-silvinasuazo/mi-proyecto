@@ -6,7 +6,7 @@ type: Edge
 env: Local + production
 bugs: [ENG-1556, ENG-1997]
 last_run: partial
-automation: not mapped yet
+automation: 🟡 partly automated — `tests/eph/public-site.spec.ts` (REG-129 on eph: the chatbot and banners don't cover the editor's menus and buttons; the plan check isn't automated)
 ---
 
 # TC-F2-06 — Plan, banners, chatbot
@@ -21,7 +21,7 @@ Plan correct; nothing covers menus (ENG-1556, ENG-1997)
 
 ## Automation
 
-not mapped yet
+🟡 partly automated — `tests/eph/public-site.spec.ts` (REG-129 on eph: the chatbot and banners don't cover the editor's menus and buttons; the plan check isn't automated)
 
 ## Last run
 

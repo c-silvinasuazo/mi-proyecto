@@ -6,7 +6,7 @@ area: Mobile
 priority: High
 bugs: [ENG-1272]
 last_run: passed
-automation: 👤 manual — Native apps (Sched)
+automation: ✅ automated — `mobile/sched-app-dark/APP-15-dark-mode.yaml` (APP-15, Maestro, iOS and Android; screenshots for the visual check)
 ---
 
 # REG-122 — iOS dark mode doesn't hide information
@@ -19,9 +19,11 @@ Prevents the return of: ENG-1272
 
 ## Automation
 
-👤 manual — Native apps (Sched)
+✅ automated — `mobile/sched-app-dark/APP-15-dark-mode.yaml` (APP-15, Maestro, iOS and Android; screenshots for the visual check)
 
 ## Last run
+
+✅ 2026-11-17 (automated, APP-15): iOS (Sched Dev 2.16.2 simulator) stays in light mode, as on Oct 28, and everything shows; Android 1.63.1 turns dark and everything reads well
 
 ✅ 2026-10-28 (iOS, Sched 2.16 from the App Store): with the iPhone in dark mode, the app stays in light mode and all information is visible (schedule, session description, attendees, profile)
 

@@ -6,7 +6,7 @@ area: Mobile
 priority: High
 bugs: [ENG-1951]
 last_run: passed
-automation: 👤 manual — Native apps (Sched)
+automation: ✅ automated — `mobile/sched-app/APP-16-no-download-banner.yaml` (APP-16, Maestro, iOS and Android)
 ---
 
 # REG-123 — The "Download Sched app" banner doesn't appear inside the app
@@ -19,9 +19,11 @@ Prevents the return of: ENG-1951
 
 ## Automation
 
-👤 manual — Native apps (Sched)
+✅ automated — `mobile/sched-app/APP-16-no-download-banner.yaml` (APP-16, Maestro, iOS and Android)
 
 ## Last run
+
+✅ 2026-11-17 (automated, APP-16): no download banner on the schedule, a session or an attendee's profile, on iOS and Android
 
 ✅ 2026-10-28 (iOS, Sched 2.16 from the App Store): no download banner on the schedule, session, attendee or profile screens
 

@@ -6,7 +6,7 @@ type: Negative
 env: Local + App
 bugs: [ENG-547]
 last_run: passed
-automation: not mapped yet
+automation: 🟡 partly automated — `mobile/sched-app/APP-13-registration-disabled.yaml` (APP-13 / REG-126: the app on iOS and Android; the web half isn't automated)
 ---
 
 # TC-F6-03 — Registration disabled
@@ -21,7 +21,7 @@ No redirect to the form (ENG-547)
 
 ## Automation
 
-not mapped yet
+🟡 partly automated — `mobile/sched-app/APP-13-registration-disabled.yaml` (APP-13 / REG-126: the app on iOS and Android; the web half isn't automated)
 
 ## Last run
 

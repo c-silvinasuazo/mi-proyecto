@@ -23,11 +23,11 @@
 | [REG-119](REG-119-push-notifications-arrive-no-invalid-grant.md) | Push notifications arrive (no invalid_grant) | High — ⛔ Blocked by design (2026-10-28): push notifications are sent from Messages and only available to events with their own native (branded) app; QA test events don't have one | not run | 👤 manual |
 | [REG-120](REG-120-the-accept-button-works-when-uploading-a-sponsor-photo.md) | The Accept button works when uploading a sponsor photo | High | passed | ✅ automated |
 | [REG-121](REG-121-in-the-global-app-attendees-can-make-their-profile-public-an.md) | In the global app, attendees can make their profile public and edit it | High | passed | 👤 manual |
-| [REG-122](REG-122-ios-dark-mode-doesn-t-hide-information.md) | iOS dark mode doesn't hide information | High | passed | 👤 manual |
-| [REG-123](REG-123-the-download-sched-app-banner-doesn-t-appear-inside-the-app.md) | The "Download Sched app" banner doesn't appear inside the app | High | passed | 👤 manual |
+| [REG-122](REG-122-ios-dark-mode-doesn-t-hide-information.md) | iOS dark mode doesn't hide information | High | passed | ✅ automated |
+| [REG-123](REG-123-the-download-sched-app-banner-doesn-t-appear-inside-the-app.md) | The "Download Sched app" banner doesn't appear inside the app | High | passed | ✅ automated |
 | [REG-124](REG-124-pd-hours-enabling-doesn-t-fail-the-rollup-shows-hours-the-ba.md) | PD Hours: enabling doesn't fail, the rollup shows hours, the badge appears in the tooltip | High | blocked | 🟡 placeholder |
 | [REG-125](REG-125-a-session-with-no-sign-ups-isn-t-shown-as-full.md) | A session with no sign-ups isn't shown as full | Reopened | passed | 🟡 placeholder |
-| [REG-126](REG-126-with-registration-disabled-the-app-doesn-t-redirect-to-regis.md) | With registration disabled, the app doesn't redirect to registration | Reopened | passed | 👤 manual |
+| [REG-126](REG-126-with-registration-disabled-the-app-doesn-t-redirect-to-regis.md) | With registration disabled, the app doesn't redirect to registration | Reopened | passed | ✅ automated |
 | [REG-127](REG-127-turning-chat-on-or-off-doesn-t-throw-a-parsererror.md) | Turning chat on or off doesn't throw a parsererror | Reopened | passed | ✅ automated |
 | [REG-128](REG-128-the-overage-banner-disappears-after-a-waiver.md) | The overage banner disappears after a waiver | Reopened | not run | 👤 manual |
 | [REG-129](REG-129-the-chatbot-doesn-t-cover-editor-buttons-or-dropdowns.md) | The chatbot doesn't cover editor buttons or dropdowns | Reopened | passed | ✅ automated |

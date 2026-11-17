@@ -7,7 +7,7 @@ priority: Reopened
 base_case: TC-F6-03
 bugs: [ENG-547, ENG-652, ENG-734]
 last_run: passed
-automation: 👤 manual — Native apps (Sched)
+automation: ✅ automated — `mobile/sched-app/APP-13-registration-disabled.yaml` (APP-13, Maestro, iOS and Android; the web half of TC-F6-03 isn't automated)
 ---
 
 # REG-126 — With registration disabled, the app doesn't redirect to registration
@@ -22,9 +22,11 @@ Prevents the return of: ENG-547, ENG-652, ENG-734
 
 ## Automation
 
-👤 manual — Native apps (Sched)
+✅ automated — `mobile/sched-app/APP-13-registration-disabled.yaml` (APP-13, Maestro, iOS and Android; the web half of TC-F6-03 isn't automated)
 
 ## Last run
+
+✅ 2026-11-17 (automated, APP-13): qa reminders 2, which has no registration, opens straight to its schedule on iOS and Android
 
 ✅ 2026-10-22 (Android 1.63.0, without event password)
 

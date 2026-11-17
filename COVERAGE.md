@@ -37,7 +37,7 @@ Status: ✅ automated · 🟡 placeholder (`test.fixme`, to record) · 👤 stay
 | ENG-2762 (part of REG-105): a page opened before the freeze can't remove the frozen session | eph/f9-sessions | ✅ (fixed 2026-11-13: the removal now gets "frozen" and the session stays; before the fix it was removed, 6 of 6 runs on eph) |
 | REG-220: the embed loads, scrolls and stays centered | eph/public-site | ✅ (Chrome; Safari with the eph-safari project, needs `npx playwright install webkit`) |
 | ENG-1568: /print/all shows descriptions | eph/public-site | ✅ |
-| REG-129: chatbot and banners don't cover editor menus or buttons | eph/public-site | ✅ |
+| REG-129 / TC-F2-06 (part): chatbot and banners don't cover editor menus or buttons | eph/public-site | ✅ (TC-F2-06's plan check isn't automated) |
 | TC-F8-05: /checkin records a session check-in (Check-In App, saved after reload) | eph/f8-checkin | ✅ |
 | REG-113 / TC-F8-03 (ENG-194, ENG-770, ENG-544, ENG-545, ENG-546): with Self Check-in on, the session QR export has only the selected published sessions, 3 per page | eph/f8-checkin | ✅ (on eph the "Export all (PDF)" step is skipped while PDFs aren't generated, blocker #2 in ENG-2832; the selection and the 3-per-page paging are checked) |
 | Android check-in (/checkin at Pixel 7 size; Sched Count is iOS only): an attendee without an admin or check-in role can't log in (SC-03 on Android) | eph/checkin-android | ✅ (the app goes back to its login form with no message, unlike Sched Count's "No events assigned yet": ENG-2785) |
@@ -52,7 +52,7 @@ Status: ✅ automated · 🟡 placeholder (`test.fixme`, to record) · 👤 stay
 | APP-07: the event's search finds a session by one word and hides the others | mobile/sched-app (Maestro) | ✅ iOS and Android |
 | APP-09: a session opens to its title, time, speaker and description | mobile/sched-app (Maestro) | ✅ iOS and Android (the description of qa publico was added on 2026-11-17) |
 | APP-10: the attendee list isn't blank (Directory -> Attendees on iOS, Info -> Attendees on Android) | mobile/sched-app (Maestro) | ✅ iOS and Android (Android has no Directory tab; ENG-2591 aligns the tabs) |
-| APP-13: an event without registration (qa reminders 2) opens straight to its schedule | mobile/sched-app (Maestro) | ✅ iOS and Android |
+| APP-13 / REG-126 / TC-F6-03 (app half): an event without registration (qa reminders 2) opens straight to its schedule | mobile/sched-app (Maestro) | ✅ iOS and Android |
 | APP-16 / REG-123: no "Download the Sched app" banner on the schedule, a session or an attendee's profile | mobile/sched-app (Maestro) | ✅ iOS and Android |
 | APP-15 / REG-122: in dark mode the schedule, a session and the attendee list show their content | mobile/sched-app-dark (Maestro) | ✅ iOS and Android, with screenshots for the visual check (Android 1.63.1 turns dark and reads well; Sched Dev 2.16.2 on iOS stays light, so dark mode isn't really exercised there) |
 | ENG-183: Android check-in: undoing an event check-in in Name Search is saved | eph/checkin-android | ✅ (open bug, marked with openBug: the circle unticks but no request is sent; the attendee stays checked in, also on qaengreminders in production) |
@@ -102,7 +102,7 @@ Open bugs kept as checks (expected to fail until fixed): ENG-241, ENG-87, ENG-20
 | --- | --- |
 | REG-009, REG-010, TC-F1-09, TC-F3-04/05 (Google and Microsoft SSO) | Third-party login; doesn't work on eph |
 | ENG-2267 (the CFP form title is left-aligned on iOS) | Only shows in real iOS Safari: Playwright's WebKit at iPhone size centers the title, as Android does (checked on eph, 2026-11-16) |
-| REG-011, REG-015, REG-121, REG-126, REG-217, REG-218, REG-219, REG-225, ENG-2228, ENG-2253, APP-03 to APP-06, APP-08, APP-11, APP-12, APP-14, APP-17, APP-18 | Native apps (Sched); phase 1 (APP-01, 02, 07, 09, 10), APP-13, APP-15 and APP-16 run with Maestro above, the rest is phase 2 or stays manual (mobile/README.md) |
+| REG-011, REG-015, REG-121, REG-217, REG-218, REG-219, REG-225, ENG-2228, ENG-2253, APP-03 to APP-06, APP-08, APP-11, APP-12, APP-14, APP-17, APP-18 | Native apps (Sched); phase 1 (APP-01, 02, 07, 09, 10), APP-13, APP-15 and APP-16 run with Maestro above, the rest is phase 2 or stays manual (mobile/README.md) |
 | REG-114, REG-115, REG-116, SC-01 to SC-12 | Sched Count app and camera (to automate with Maestro, see mobile/README.md: the simulator build we have is 1.6.3, the production app, not the β 1.8.3; the Android equivalents on the web Check-In App are automated above) |
 | REG-119 | Push needs an event with its own app |
 | REG-201, REG-110, ENG-1328 email part, reminders (TC-F9-04) | Email delivery |

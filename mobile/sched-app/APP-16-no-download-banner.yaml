@@ -16,7 +16,7 @@ appId: ${MAESTRO_APP_ID}
       platform: Android
     commands:
       - tapOn: {id: "${MAESTRO_SESSION}"}
-      - assertVisible: "${MAESTRO_SESSION_DATE}"
+      - assertVisible: "${MAESTRO_SESSION_DAY} ${MAESTRO_SESSION_DATE}"
 - assertNotVisible: ".*[Dd]ownload.*"
 # Maestro's back is Android only; on iOS the session page closes with the edge swipe (its back button has no label).
 - runFlow:
@@ -44,6 +44,8 @@ appId: ${MAESTRO_APP_ID}
       platform: Android
     commands:
       - tapOn: "Info"
+      # The Info menu animates in; a tap on Attendees before it settles is lost (APP-10 stayed on Info once, 2026-11-17).
+      - waitForAnimationToEnd
       - tapOn: "Attendees"
       - hideKeyboard
 - tapOn: ${MAESTRO_ATTENDEE}

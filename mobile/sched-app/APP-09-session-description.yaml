@@ -22,4 +22,5 @@ appId: ${MAESTRO_APP_ID}
     when:
       true: ${MAESTRO_SESSION_DESCRIPTION}
     commands:
-      - assertVisible: ${MAESTRO_SESSION_DESCRIPTION}
+      # iOS reports the description with more text around it than the page shows, so match it inside a longer text.
+      - assertVisible: ".*${MAESTRO_SESSION_DESCRIPTION}.*"

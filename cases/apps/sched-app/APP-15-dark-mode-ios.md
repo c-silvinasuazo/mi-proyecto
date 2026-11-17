@@ -28,7 +28,8 @@ Nothing is hidden (REG-122)
 | iOS test build: Sched Dev 2.16.0 (7712) | Not run |
 | iOS App Store 2.16 | ✅ 2026-10-28 |
 | Android Google Play 1.63.0 | N/A |
-| iOS simulator build: Sched Dev 2.16.2 (7698) | ✅ 2026-11-17 (automated, qa reminders 2). Note: this build stays light with the simulator in dark mode (Settings turns dark, the app doesn't), so nothing is hidden, but dark mode isn't really exercised. To ask Diego whether the app opts out of dark mode on purpose |
+| Android 1.63.1 (APK from Diego) | ✅ 2026-11-17 (automated): the app follows the system's dark mode, and the schedule, session and attendee list read well |
+| iOS simulator build: Sched Dev 2.16.2 (7698) | ✅ 2026-11-17 (automated, qa reminders 2). Note: this build stays light with the simulator in dark mode (Settings turns dark, the app doesn't), so nothing is hidden, but dark mode isn't really exercised. |
 
 ---
 

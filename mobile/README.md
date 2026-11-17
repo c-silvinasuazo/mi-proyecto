@@ -11,16 +11,20 @@ list), on Diego's builds: Sched Dev 2.16.2 (7698) on an iPhone 17 simulator with
 1.63.1 (`com.sched`, prod APK) on the Android emulator (same flows; on Android the attendee list is at Info ->
 Attendees, as the app has no Directory tab, ENG-2591). APP-13 (phase 2, read-only) was added the same day and passes
 on both. Both platforms run the same 6 flows. Still to do:
-- APP-09 checks the title, time and speaker, but not a description: no session in qa reminders 2 has one. Add a
-  description to "qa publico" and run with `MAESTRO_SESSION_DESCRIPTION="<the text>"`.
+- APP-09 checks the description too since 2026-11-17: "qa publico" got one ("QA session for the mobile app checks."),
+  now the default `MAESTRO_SESSION_DESCRIPTION` in run.sh.
 - Sched Count (SC-01 to SC-04): the build Diego sent is 1.6.3 (1688), the production app, not the β 1.8.3 that points
   to dev2, and it closes as soon as it opens on the iOS 27.2 simulator (UIKit stops apps that don't adopt the scene
   life cycle on iOS 27; ENG-754 moved the β to the Xcode 27 tool chain). SC-01 to SC-04 need a β 1.8.3 simulator build.
 - Phase 2: APP-13 (an event without registration opens straight to its schedule) passes on both platforms.
-- 2026-11-17 (iOS): APP-16 (no download banner on the schedule, a session or an attendee's profile) passes; its
-  Android branch isn't run yet. APP-15 is in `mobile/sched-app-dark` (`npm run test:ios:dark`): run.sh turns dark mode
+- 2026-11-17 (iOS): APP-16 (no download banner on the schedule, a session or an attendee's profile) passes, and
+  on Android too. APP-15 is in `mobile/sched-app-dark` (`npm run test:ios:dark`): run.sh turns dark mode
   on, runs it, and turns it back off. It passes, but Sched Dev 2.16.2 stays light with the simulator in dark mode, so
-  it only shows nothing is hidden; whether the app opts out of dark mode is a question for Diego.
+  it only shows nothing is hidden. On Android 1.63.1
+  the app turns dark and every screen checked reads well. All 7 flows in `mobile/sched-app` pass on both platforms.
+  Right after a session in qa reminders 2 was saved in the editor, the first iOS run showed "Schedule has not yet been
+  published" in the event for a moment (APP-09 failed; the next flows and the next run passed). After editing the
+  event, give it a few minutes before running the flows.
 - APP-08 and APP-11 need a logged-in account in the app, and are blocked: on Sched Dev 2.16.2 (7698) in the
   simulator, signing in with Sched closes the sign-in screen with no error and no session, by hand and with the login
   flow (2026-11-13). The simulator's log shows why: the app's keychain read fails with -34018 ("Client has neither

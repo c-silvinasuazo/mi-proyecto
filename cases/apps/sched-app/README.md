@@ -28,13 +28,13 @@ Test build Sched 2.16.2 (7726), iOS, 2026-11-03 (fix for ENG-2228, foreground re
 | [APP-06](APP-06-forgot-password.md) | Forgot password |  | see builds | 👤 manual |
 | [APP-07](APP-07-search-sessions.md) | Search sessions |  | see builds | ✅ automated |
 | [APP-08](APP-08-add-to-my-schedule.md) | Add to My Schedule |  | see builds | 👤 manual |
-| [APP-09](APP-09-session-description.md) | Session description |  | see builds | 🟡 partly automated |
+| [APP-09](APP-09-session-description.md) | Session description |  | see builds | ✅ automated |
 | [APP-10](APP-10-attendee-list.md) | Attendee list |  | see builds | ✅ automated |
 | [APP-11](APP-11-session-feedback.md) | Session feedback |  | see builds | 👤 manual |
 | [APP-12](APP-12-registration-in-the-app.md) | Registration in the app |  | see builds | 👤 manual |
 | [APP-13](APP-13-registration-disabled.md) | Registration disabled |  | see builds | ✅ automated |
 | [APP-14](APP-14-public-profile.md) | Public profile |  | see builds | 👤 manual |
 | [APP-15](APP-15-dark-mode-ios.md) | Dark mode (iOS) |  | see builds | ✅ automated |
-| [APP-16](APP-16-no-download-banner.md) | No download banner |  | see builds | ✅ automated (iOS) |
+| [APP-16](APP-16-no-download-banner.md) | No download banner |  | see builds | ✅ automated |
 | [APP-17](APP-17-chat.md) | Chat |  | see builds | 👤 manual |
 | [APP-18](APP-18-push-notifications.md) | Push notifications |  | see builds | 👤 manual |

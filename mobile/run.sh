@@ -16,6 +16,8 @@ export MAESTRO_SESSION="${MAESTRO_SESSION:-qa publico}" MAESTRO_SPEAKER="${MAEST
 # (APP-07). Change them together with the event's data.
 export MAESTRO_SESSION_DAY="${MAESTRO_SESSION_DAY:-Wednesday}" MAESTRO_SESSION_DATE="${MAESTRO_SESSION_DATE:-October 21, 2026}"
 export MAESTRO_SESSION_START="${MAESTRO_SESSION_START:-10:00}"
+# MAESTRO_SESSION's description (APP-09), added in the editor on 2026-11-17.
+export MAESTRO_SESSION_DESCRIPTION="${MAESTRO_SESSION_DESCRIPTION:-QA session for the mobile app checks.}"
 export MAESTRO_OTHER_SESSION="${MAESTRO_OTHER_SESSION:-qa capacity}" MAESTRO_OTHER_SESSION_WORD="${MAESTRO_OTHER_SESSION_WORD:-capacity}"
 # mobile/login logs the QA account in, so only that folder gets it from .env (SCHED_EMAIL, SCHED_PASSWORD). Run it
 # yourself; the logged-in flows (APP-08 and APP-11, in mobile/sched-app-logged-in once they're written) won't clear the
@@ -48,8 +50,9 @@ maestro=$(command -v maestro || echo "$HOME/.maestro/maestro/bin/maestro")
 # to light when the run ends, whatever the result.
 if [ "$app" = sched-app-dark ]; then
   if [ "$platform" = android ]; then
-    adb shell cmd uimode night yes >/dev/null
-    trap 'adb shell cmd uimode night no >/dev/null' EXIT
+    adb=$(command -v adb || echo "$HOME/Library/Android/sdk/platform-tools/adb")
+    "$adb" shell cmd uimode night yes >/dev/null
+    trap '"$adb" shell cmd uimode night no >/dev/null' EXIT
   else
     xcrun simctl ui booted appearance dark
     trap 'xcrun simctl ui booted appearance light' EXIT

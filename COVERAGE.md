@@ -50,11 +50,11 @@ Status: ✅ automated · 🟡 placeholder (`test.fixme`, to record) · 👤 stay
 | APP-01: the Sched app opens on a fresh install to the events list, no login wall | mobile/sched-app (Maestro) | ✅ iOS (Sched Dev 2.16.2 simulator) and Android (1.63.1) |
 | APP-02: the app's search finds qa reminders 2 and it opens to its schedule and tabs | mobile/sched-app (Maestro) | ✅ iOS and Android |
 | APP-07: the event's search finds a session by one word and hides the others | mobile/sched-app (Maestro) | ✅ iOS and Android |
-| APP-09: a session opens to its title, time and speaker (and its description, once a session has one) | mobile/sched-app (Maestro) | ✅ iOS and Android (description not checked: no session in qa reminders 2 has one) |
+| APP-09: a session opens to its title, time, speaker and description | mobile/sched-app (Maestro) | ✅ iOS and Android (the description of qa publico was added on 2026-11-17) |
 | APP-10: the attendee list isn't blank (Directory -> Attendees on iOS, Info -> Attendees on Android) | mobile/sched-app (Maestro) | ✅ iOS and Android (Android has no Directory tab; ENG-2591 aligns the tabs) |
 | APP-13: an event without registration (qa reminders 2) opens straight to its schedule | mobile/sched-app (Maestro) | ✅ iOS and Android |
-| APP-16 / REG-123: no "Download the Sched app" banner on the schedule, a session or an attendee's profile | mobile/sched-app (Maestro) | ✅ iOS (Android branch written, not run yet) |
-| APP-15 / REG-122: in dark mode the schedule, a session and the attendee list show their content | mobile/sched-app-dark (Maestro) | ✅ iOS, with screenshots for the visual check (Sched Dev 2.16.2 stays light in dark mode, so dark mode isn't really exercised; asked of Diego) |
+| APP-16 / REG-123: no "Download the Sched app" banner on the schedule, a session or an attendee's profile | mobile/sched-app (Maestro) | ✅ iOS and Android |
+| APP-15 / REG-122: in dark mode the schedule, a session and the attendee list show their content | mobile/sched-app-dark (Maestro) | ✅ iOS and Android, with screenshots for the visual check (Android 1.63.1 turns dark and reads well; Sched Dev 2.16.2 on iOS stays light, so dark mode isn't really exercised there) |
 | ENG-183: Android check-in: undoing an event check-in in Name Search is saved | eph/checkin-android | ✅ (open bug, marked with openBug: the circle unticks but no request is sent; the attendee stays checked in, also on qaengreminders in production) |
 | Android check-in: undoing a session check-in is saved (SC-06 on Android) | eph/checkin-android | ✅ |
 | TC-F3-02: /password-reset and /password-reset/ show the reset form (main site; email, link and new password stay manual: captcha, no email on eph) | eph/f3-login | ✅ |

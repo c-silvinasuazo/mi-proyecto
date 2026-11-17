@@ -1,0 +1,45 @@
+# APP-15: with the device in dark mode (mobile/run.sh switches it for this folder), the event's main screens still show
+# their content (REG-122): the schedule, a session's title and speaker, and the attendee list. Maestro reads the
+# accessibility tree, so it can't tell text drawn in the background's color; the screenshots (in Maestro's run folder,
+# ~/.maestro/tests) are for that visual check.
+appId: ${MAESTRO_APP_ID}
+---
+- runFlow: ../sched-app/common/open-event.yaml
+- assertVisible: ${MAESTRO_OTHER_SESSION}
+- takeScreenshot: APP-15-schedule
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn: ${MAESTRO_SESSION}
+      - assertVisible: {id: "session title", text: "${MAESTRO_SESSION}"}
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - tapOn: {id: "${MAESTRO_SESSION}"}
+      - assertVisible: "${MAESTRO_SESSION_DATE}"
+- assertVisible: ${MAESTRO_SPEAKER}
+- takeScreenshot: APP-15-session
+# Back to the event (as in APP-16: the edge swipe on iOS, back on Android).
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - swipe:
+          start: "1%,50%"
+          end: "90%,50%"
+          duration: 300
+      - waitForAnimationToEnd
+      - tapOn: "Directory"
+      - tapOn: "Attendees"
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - back
+      - tapOn: "Info"
+      - tapOn: "Attendees"
+      - hideKeyboard
+- assertVisible: ${MAESTRO_ATTENDEE}
+- takeScreenshot: APP-15-attendees

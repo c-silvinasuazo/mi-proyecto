@@ -14,6 +14,7 @@
     "test:android": "sh mobile/run.sh sched-app --platform android",
     "test:ios": "sh mobile/run.sh sched-app --platform ios",
     "test:ios:login": "sh mobile/run.sh login --platform ios",
+    "test:ios:dark": "sh mobile/run.sh sched-app-dark --platform ios",
     "typecheck": "tsc -p .",
     "lint": "eslint .",
     "record": "playwright codegen",

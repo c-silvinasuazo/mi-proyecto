@@ -4,7 +4,7 @@ title: No download banner
 flow: Sched app regression (iOS and Android)
 bugs: []
 last_run: see builds
-automation: 👤 manual — Native apps (Sched)
+automation: ✅ automated — `mobile/sched-app/APP-16-no-download-banner.yaml` (Maestro, iOS; the Android branch isn't run yet)
 ---
 
 # APP-16 — No download banner
@@ -19,7 +19,7 @@ No "Download Sched app" banner inside the app (REG-123)
 
 ## Automation
 
-👤 manual — Native apps (Sched)
+✅ automated — `mobile/sched-app/APP-16-no-download-banner.yaml` (Maestro, iOS; the Android branch isn't run yet)
 
 ## Results by build
 
@@ -28,6 +28,7 @@ No "Download Sched app" banner inside the app (REG-123)
 | iOS test build: Sched Dev 2.16.0 (7712) | Not run |
 | iOS App Store 2.16 | ✅ 2026-10-28 |
 | Android Google Play 1.63.0 | Not run |
+| iOS simulator build: Sched Dev 2.16.2 (7698) | ✅ 2026-11-17 (automated, qa reminders 2: schedule, session and an attendee's profile) |
 
 ---
 

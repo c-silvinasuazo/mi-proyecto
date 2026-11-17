@@ -38,12 +38,26 @@ for arg in "$@"; do
   prev="$arg"
 done
 case "$app" in
-  sched-app|login|sched-app-logged-in)
+  sched-app|login|sched-app-logged-in|sched-app-dark)
     if [ "$platform" = android ]; then default_app=com.sched; else default_app=com.sched.attendeeappbeta; fi
     export MAESTRO_APP_ID="${MAESTRO_APP_ID:-$default_app}" ;;
 esac
 mkdir -p mobile/results
 maestro=$(command -v maestro || echo "$HOME/.maestro/maestro/bin/maestro")
+# mobile/sched-app-dark (APP-15) runs with the device in dark mode, which Maestro can't switch: turn it on here and back
+# to light when the run ends, whatever the result.
+if [ "$app" = sched-app-dark ]; then
+  if [ "$platform" = android ]; then
+    adb shell cmd uimode night yes >/dev/null
+    trap 'adb shell cmd uimode night no >/dev/null' EXIT
+  else
+    xcrun simctl ui booted appearance dark
+    trap 'xcrun simctl ui booted appearance light' EXIT
+  fi
+  status=0
+  "$maestro" test --format junit --output "mobile/results/$app.xml" "$@" "mobile/$app" || status=$?
+  exit $status
+fi
 if [ "$app" != login ]; then
   exec "$maestro" test --format junit --output "mobile/results/$app.xml" "$@" "mobile/$app"
 fi

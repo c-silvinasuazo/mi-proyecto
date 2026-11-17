@@ -53,6 +53,8 @@ Status: ✅ automated · 🟡 placeholder (`test.fixme`, to record) · 👤 stay
 | APP-09: a session opens to its title, time and speaker (and its description, once a session has one) | mobile/sched-app (Maestro) | ✅ iOS and Android (description not checked: no session in qa reminders 2 has one) |
 | APP-10: the attendee list isn't blank (Directory -> Attendees on iOS, Info -> Attendees on Android) | mobile/sched-app (Maestro) | ✅ iOS and Android (Android has no Directory tab; ENG-2591 aligns the tabs) |
 | APP-13: an event without registration (qa reminders 2) opens straight to its schedule | mobile/sched-app (Maestro) | ✅ iOS and Android |
+| APP-16 / REG-123: no "Download the Sched app" banner on the schedule, a session or an attendee's profile | mobile/sched-app (Maestro) | ✅ iOS (Android branch written, not run yet) |
+| APP-15 / REG-122: in dark mode the schedule, a session and the attendee list show their content | mobile/sched-app-dark (Maestro) | ✅ iOS, with screenshots for the visual check (Sched Dev 2.16.2 stays light in dark mode, so dark mode isn't really exercised; asked of Diego) |
 | ENG-183: Android check-in: undoing an event check-in in Name Search is saved | eph/checkin-android | ✅ (open bug, marked with openBug: the circle unticks but no request is sent; the attendee stays checked in, also on qaengreminders in production) |
 | Android check-in: undoing a session check-in is saved (SC-06 on Android) | eph/checkin-android | ✅ |
 | TC-F3-02: /password-reset and /password-reset/ show the reset form (main site; email, link and new password stay manual: captcha, no email on eph) | eph/f3-login | ✅ |
@@ -100,7 +102,7 @@ Open bugs kept as checks (expected to fail until fixed): ENG-241, ENG-87, ENG-20
 | --- | --- |
 | REG-009, REG-010, TC-F1-09, TC-F3-04/05 (Google and Microsoft SSO) | Third-party login; doesn't work on eph |
 | ENG-2267 (the CFP form title is left-aligned on iOS) | Only shows in real iOS Safari: Playwright's WebKit at iPhone size centers the title, as Android does (checked on eph, 2026-11-16) |
-| REG-011, REG-015, REG-121, REG-122, REG-123, REG-126, REG-217, REG-218, REG-219, REG-225, ENG-2228, ENG-2253, APP-03 to APP-06, APP-08, APP-11, APP-12, APP-14 to APP-18 | Native apps (Sched); phase 1 (APP-01, 02, 07, 09, 10) and APP-13 run with Maestro above, the rest is phase 2 or stays manual (mobile/README.md) |
+| REG-011, REG-015, REG-121, REG-126, REG-217, REG-218, REG-219, REG-225, ENG-2228, ENG-2253, APP-03 to APP-06, APP-08, APP-11, APP-12, APP-14, APP-17, APP-18 | Native apps (Sched); phase 1 (APP-01, 02, 07, 09, 10), APP-13, APP-15 and APP-16 run with Maestro above, the rest is phase 2 or stays manual (mobile/README.md) |
 | REG-114, REG-115, REG-116, SC-01 to SC-12 | Sched Count app and camera (to automate with Maestro, see mobile/README.md: the simulator build we have is 1.6.3, the production app, not the β 1.8.3; the Android equivalents on the web Check-In App are automated above) |
 | REG-119 | Push needs an event with its own app |
 | REG-201, REG-110, ENG-1328 email part, reminders (TC-F9-04) | Email delivery |

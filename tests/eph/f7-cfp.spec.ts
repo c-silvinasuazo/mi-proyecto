@@ -50,14 +50,14 @@ test.describe('F7 CFP', () => {
     }
   });
 
-  // ENG-2091 (in review, PR #309): logging in from a form with a Sched-linked account that has no CFP password sends
-  // the applicant to Sched's My Events and then to Sched's login with a link back to My Events. With the fix, the form
-  // sends them straight to Sched's login with a link back to the form (linkback=cfp, path=/speaker/<form token>). The
-  // eph admin is such an account, and not @sched.com, like the customer's applicant. Whether Sched's login honors the
-  // link back can't be checked from eph: the form sends you to production's sched.com, where the eph account and form
-  // don't exist. Passes on the PR's eph (pr-309) and fails elsewhere until the fix ships.
-  test('ENG-2091: logging in from a CFP form with a Sched-linked account sends you to Sched\'s login with a link back to the form (open bug: expected to fail until fixed)', async ({ page, cfp, newPage, editorSession }) => {
-    openBug('ENG-2091', 'the login sends a Sched-linked account without a CFP password to My Events, not back to the form');
+  // PR #309 (ENG-2091, partial): logging in from a form with a Sched-linked account that has no CFP password sends the
+  // applicant to Sched's My Events and then to Sched's login with a link back to My Events. PR #309 makes the form
+  // send them straight to Sched's login with a link back to the form (linkback=cfp, path=/speaker/<form token>). It
+  // doesn't fix ENG-2091 (see the placeholder below): on production Sched's login ignores linkback=cfp and lands on the
+  // Directory, and no CFP session is created. The eph admin is such an account, and not @sched.com, like the
+  // customer's applicant. Passes on the PR's eph (pr-309) and fails elsewhere until the PR ships.
+  test('PR #309: logging in from a CFP form with a Sched-linked account sends you to Sched\'s login with a link back to the form (expected to fail until the PR ships)', async ({ page, cfp, newPage, editorSession }) => {
+    openBug('PR #309 (ENG-2091)', 'the form sends a Sched-linked account without a CFP password to My Events, not to Sched\'s login with a link back to the form');
     // The admin's email, from their profile on the event site.
     await page.goto('/profile');
     const email = await page.locator('input[name="email"]').inputValue();
@@ -79,6 +79,11 @@ test.describe('F7 CFP', () => {
     expect(login.searchParams.get('path'), 'Sched\'s login doesn\'t link back to the form').toBe(new URL(url).pathname);
     expect(alerts, 'The login showed a browser alert').toEqual([]);
   });
+
+  // ENG-2091: a Sched-linked applicant with no CFP password who logs in from a form ends up back on the form, signed in
+  // to the CFP. The fix moves to a follow-up ticket not created yet (2026-11-17); record it once that ticket says how
+  // (Sched's login honoring the link back with a CFP session, an emailed sign-in link, or "Sign in with Sched").
+  test.fixme('ENG-2091: a Sched-linked applicant who logs in from a form lands back on it, signed in to the CFP', async () => stepsNotRecordedYet());
 
   // REG-215 / TC-F7-01 (part): an applicant signs up from the form, applies with a co-speaker, and the organizer sees
   // the application with both speakers. The file (REG-109), conditional answers and the confirmation email (ENG-1328)

@@ -17,7 +17,8 @@ Status: ✅ automated · 🟡 placeholder (`test.fixme`, to record) · 👤 stay
 | TC-F7-01 (organizer): the CFP portal opens from the editor and lists the QA form | cfp-readonly/cfp-organizer | ✅ (to confirm on first run) |
 | TC-F7-06: on Free Trial, Download all asks to upgrade | cfp-readonly/cfp-organizer | ✅ (to confirm on first run) |
 | TC-F7-02 (eph): a CFP form is closed before it opens and after it closes (forms created and archived by the test) | eph/f7-cfp | ✅ |
-| ENG-2091: logging in from a CFP form with a Sched account keeps you on the form | eph/f7-cfp | ✅ (open bug, marked with openBug; on the PR's eph, pr-309, it already passes) |
+| PR #309 (ENG-2091, partial): logging in from a CFP form with a Sched-linked account sends you to Sched's login with a link back to the form | eph/f7-cfp | ✅ (marked with openBug until the PR ships; on the PR's eph, pr-309, it already passes) |
+| ENG-2091: a Sched-linked applicant lands back on the form, signed in to the CFP | eph/f7-cfp | 🟡 (the fix moves to a follow-up ticket, not created yet) |
 | REG-215 / TC-F7-01 (part): an application with a co-speaker reaches the organizer | eph/f7-cfp | ✅ (opt-in: EPH_ALLOW_CFP_APPLICATIONS=1, since it leaves an applicant account and an application on eph) |
 | REG-108 / TC-F7-05 / ENG-1565: Sync with Sched with only Sync Applicants brings in the speaker and no session; a full sync keeps the title and formatted description and attaches the speaker (the session's date is the sync time, ENG-2072; re-sync of an existing session not covered) | eph/f7-cfp | ✅ (opt-in: EPH_ALLOW_CFP_APPLICATIONS=1, since it leaves an applicant account and applications on eph; the synced sessions and speaker are deleted) |
 | REG-214: two proposals from one applicant sync with that speaker attached to both, and the speaker once | eph/f7-cfp | ✅ (opt-in: EPH_ALLOW_CFP_APPLICATIONS=1, since it leaves an applicant account and applications on eph; the synced sessions and speaker are deleted) |

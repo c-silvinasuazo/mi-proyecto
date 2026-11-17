@@ -20,6 +20,16 @@ export async function requireRegistration(page: Page) {
   test.skip(notSetUp > 0, 'Registration is not set up on this event, and its setup doesn\'t stick on this plan (needs a plan with registration, such as Boost)');
 }
 
+// Ticket sales (F4) need registration with paid tickets and Stripe in test mode connected to the event. On eph neither
+// is set up yet: Registration -> Payments sends you back to the editor while registration is off. Requested in ENG-2832.
+export async function requireTicketPayments(page: Page) {
+  await page.goto('/editor/registration/payments');
+  const onPayments = new URL(page.url()).pathname.startsWith('/editor/registration/payments');
+  test.skip(!onPayments, 'Ticket payments aren\'t available on eph: registration isn\'t set up, so Registration -> Payments opens the editor instead (Stripe test mode requested in ENG-2832)');
+  const stripe = await page.getByText(/stripe/i).count();
+  test.skip(stripe === 0, 'No Stripe account is connected to this event\'s payments (Stripe test mode requested in ENG-2832)');
+}
+
 export async function requireSecretSessions(page: Page) {
   await page.goto('/editor/schedule');
   await page.getByRole('button', { name: 'Add New' }).click();

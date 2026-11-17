@@ -6,7 +6,7 @@ type: Edge
 env: dev2
 bugs: [ENG-946, SCH-16]
 last_run: partial
-automation: 🟡 placeholder — `tests/dev2/f4-payments.spec.ts`
+automation: 🟡 placeholder — `tests/eph/f4-payments.spec.ts` (skips until eph has Stripe test mode, ENG-2832)
 ---
 
 # TC-F4-04 — Price and currency
@@ -21,7 +21,7 @@ Same price and currency everywhere (ENG-946, SCH-16)
 
 ## Automation
 
-🟡 placeholder — `tests/dev2/f4-payments.spec.ts`
+🟡 placeholder — `tests/eph/f4-payments.spec.ts` (skips until eph has Stripe test mode, ENG-2832)
 
 ## Last run
 

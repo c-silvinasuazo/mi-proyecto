@@ -7,7 +7,7 @@ priority: High
 base_case: TC-F4-01
 bugs: [ENG-1005, ENG-1420]
 last_run: passed
-automation: 🟡 placeholder — `tests/dev2/f4-payments.spec.ts`
+automation: 🟡 placeholder — `tests/eph/f4-payments.spec.ts` (skips until eph has Stripe test mode, ENG-2832)
 ---
 
 # REG-005 — Ticket warnings show and long messages scroll
@@ -22,7 +22,7 @@ Prevents the return of: ENG-1005, ENG-1420
 
 ## Automation
 
-🟡 placeholder — `tests/dev2/f4-payments.spec.ts`
+🟡 placeholder — `tests/eph/f4-payments.spec.ts` (skips until eph has Stripe test mode, ENG-2832)
 
 ## Last run
 

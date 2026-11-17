@@ -5,7 +5,7 @@ level: Extended
 area: Tickets
 bugs: [ENG-232, ENG-291]
 last_run: passed
-automation: 🟡 placeholder — `tests/dev2/f4-payments.spec.ts`
+automation: 🟡 placeholder — `tests/eph/f4-payments.spec.ts` (skips until eph has Stripe test mode, ENG-2832)
 ---
 
 # REG-205 — The purchased ticket appears in the profile
@@ -18,7 +18,7 @@ Prevents the return of: ENG-232, ENG-291
 
 ## Automation
 
-🟡 placeholder — `tests/dev2/f4-payments.spec.ts`
+🟡 placeholder — `tests/eph/f4-payments.spec.ts` (skips until eph has Stripe test mode, ENG-2832)
 
 ## Last run
 

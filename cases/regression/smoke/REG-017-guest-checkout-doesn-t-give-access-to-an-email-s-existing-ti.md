@@ -7,7 +7,7 @@ priority: High
 base_case: TC-F4-08, TC-F4-09
 bugs: [ENG-2281]
 last_run: passed
-automation: 🟡 placeholder — `tests/dev2/f4-payments.spec.ts`
+automation: 🟡 placeholder — `tests/eph/f4-payments.spec.ts` (skips until eph has Stripe test mode, ENG-2832)
 ---
 
 # REG-017 — Guest checkout doesn't give access to an email's existing tickets before payment
@@ -22,7 +22,7 @@ Prevents the return of: ENG-2281
 
 ## Automation
 
-🟡 placeholder — `tests/dev2/f4-payments.spec.ts`
+🟡 placeholder — `tests/eph/f4-payments.spec.ts` (skips until eph has Stripe test mode, ENG-2832)
 
 ## Last run
 

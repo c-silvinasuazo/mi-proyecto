@@ -1,6 +1,6 @@
 # Runs the eph suite (desktop, the Android Check-In App and the event site on an iPhone) against the QA eph, which runs
 # the latest master: every weekday morning, and by hand from the Actions tab (with the slow cases too, if asked).
-# Production checks, the CFP and dev2 never run here. The Maestro flows need simulator builds and stay local for now.
+# Production checks and the CFP never run here. The Maestro flows need simulator builds and stay local for now.
 #
 # Needs these repository secrets (Settings -> Secrets and variables -> Actions): EPH_BASE_URL, EPH_USERNAME,
 # EPH_PASSWORD, and optionally EPH_SPEAKER_USERNAME, EPH_SPEAKER_PASSWORD, EPH_ATTENDEE_USERNAME, EPH_ATTENDEE_PASSWORD

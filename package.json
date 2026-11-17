@@ -10,7 +10,6 @@
     "test:eph:quick": "playwright test --project=eph --grep-invert @slow",
     "test:eph:headed": "playwright test --project=eph --headed",
     "test:eph:iphone": "playwright test --project=eph-iphone",
-    "test:dev2": "playwright test --project=dev2",
     "test:android": "sh mobile/run.sh sched-app --platform android",
     "test:ios": "sh mobile/run.sh sched-app --platform ios",
     "test:ios:login": "sh mobile/run.sh login --platform ios",

@@ -86,12 +86,12 @@ fails with "steps not recorded yet", so it gets written against the real screens
 | REG-223 | eph/feedback-profiles | sponsor levels can't be added on the event's plan |
 | REG-124, ENG-1543 (regression of the designed behavior, closed 2026-11-04: a timed session earns credit for its duration, TBA and ineligible sessions earn none) | eph/feedback-profiles | PD Hours isn't enabled on the event (the pdhours tag, blocker #11) |
 | ENG-2641 | eph/feedback-profiles | the event's dates don't include today |
+| REG-001 to REG-006, REG-017, REG-202 to REG-205, TC-F4-01 to TC-F4-09, SCH-16 (steps not recorded yet) | eph/f4-payments | eph has no ticket payments: registration isn't set up and no Stripe test account is connected (requested in ENG-2832) |
 
 ## Placeholders by target
 
 | Target | File | Checks |
 | --- | --- | --- |
-| dev2 | dev2/f4-payments | REG-001 to REG-006, REG-017, REG-202 to REG-205, TC-F4-03/07/09, SCH-16 |
 | eph CFP (needs EPH_ALLOW_CFP_APPLICATIONS=1) | eph/f7-cfp | REG-212 / TC-F7-06 (also a paid plan), REG-109; TC-F7-04 / REG-111 is a security case, checked by review |
 
 Open bugs kept as checks (expected to fail until fixed): ENG-241, ENG-87, ENG-2091, ENG-2293, ENG-183, ENG-2784.

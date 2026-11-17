@@ -6,7 +6,7 @@ type: Positive
 env: dev2
 bugs: [ENG-2281]
 last_run: passed
-automation: 🟡 placeholder — `tests/dev2/f4-payments.spec.ts`
+automation: 🟡 placeholder — `tests/eph/f4-payments.spec.ts` (skips until eph has Stripe test mode, ENG-2832)
 ---
 
 # TC-F4-09 — Manage Tickets link by email type
@@ -21,7 +21,7 @@ Token link for guest emails (never in Sched, or never signed in); login link for
 
 ## Automation
 
-🟡 placeholder — `tests/dev2/f4-payments.spec.ts`
+🟡 placeholder — `tests/eph/f4-payments.spec.ts` (skips until eph has Stripe test mode, ENG-2832)
 
 ## Last run
 

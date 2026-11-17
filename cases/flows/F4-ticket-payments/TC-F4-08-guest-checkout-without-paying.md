@@ -6,7 +6,7 @@ type: Negative
 env: dev2
 bugs: [ENG-2281]
 last_run: passed
-automation: 🟡 placeholder — `tests/dev2/f4-payments.spec.ts`
+automation: 🟡 placeholder — `tests/eph/f4-payments.spec.ts` (skips until eph has Stripe test mode, ENG-2832)
 ---
 
 # TC-F4-08 — Guest checkout without paying
@@ -21,7 +21,7 @@ The browser gets no access to that email's tickets (ENG-2281)
 
 ## Automation
 
-🟡 placeholder — `tests/dev2/f4-payments.spec.ts`
+🟡 placeholder — `tests/eph/f4-payments.spec.ts` (skips until eph has Stripe test mode, ENG-2832)
 
 ## Last run
 

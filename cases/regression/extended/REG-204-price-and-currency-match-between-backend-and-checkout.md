@@ -5,7 +5,7 @@ level: Extended
 area: Tickets
 bugs: [ENG-914, ENG-946, SCH-16]
 last_run: passed
-automation: 🟡 placeholder — `tests/dev2/f4-payments.spec.ts`
+automation: 🟡 placeholder — `tests/eph/f4-payments.spec.ts` (skips until eph has Stripe test mode, ENG-2832)
 ---
 
 # REG-204 — Price and currency match between backend and checkout
@@ -18,7 +18,7 @@ Prevents the return of: ENG-946, ENG-914 (SCH-16 open)
 
 ## Automation
 
-🟡 placeholder — `tests/dev2/f4-payments.spec.ts`
+🟡 placeholder — `tests/eph/f4-payments.spec.ts` (skips until eph has Stripe test mode, ENG-2832)
 
 ## Last run
 

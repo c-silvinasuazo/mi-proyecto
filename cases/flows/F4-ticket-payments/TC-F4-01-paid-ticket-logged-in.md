@@ -6,7 +6,7 @@ type: Positive
 env: dev2
 bugs: [ENG-273]
 last_run: passed
-automation: 🟡 placeholder — `tests/dev2/f4-payments.spec.ts`
+automation: 🟡 placeholder — `tests/eph/f4-payments.spec.ts` (skips until eph has Stripe test mode, ENG-2832)
 ---
 
 # TC-F4-01 — Paid ticket, logged in
@@ -21,7 +21,7 @@ Order OK; email with ticket name; ticket in profile (ENG-273)
 
 ## Automation
 
-🟡 placeholder — `tests/dev2/f4-payments.spec.ts`
+🟡 placeholder — `tests/eph/f4-payments.spec.ts` (skips until eph has Stripe test mode, ENG-2832)
 
 ## Last run
 

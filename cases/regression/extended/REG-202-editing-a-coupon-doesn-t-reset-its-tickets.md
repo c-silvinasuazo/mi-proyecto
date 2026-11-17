@@ -5,7 +5,7 @@ level: Extended
 area: Tickets
 bugs: [ENG-266]
 last_run: passed
-automation: 🟡 placeholder — `tests/dev2/f4-payments.spec.ts`
+automation: 🟡 placeholder — `tests/eph/f4-payments.spec.ts` (skips until eph has Stripe test mode, ENG-2832)
 ---
 
 # REG-202 — Editing a coupon doesn't reset its tickets
@@ -18,7 +18,7 @@ Prevents the return of: ENG-266
 
 ## Automation
 
-🟡 placeholder — `tests/dev2/f4-payments.spec.ts`
+🟡 placeholder — `tests/eph/f4-payments.spec.ts` (skips until eph has Stripe test mode, ENG-2832)
 
 ## Last run
 

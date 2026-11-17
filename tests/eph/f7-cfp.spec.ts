@@ -51,9 +51,12 @@ test.describe('F7 CFP', () => {
   });
 
   // ENG-2091 (in review, PR #309): logging in from a form with a Sched-linked account that has no CFP password sends
-  // the applicant to Sched's My Events and then the sched.com login page, instead of keeping them on the form. The eph
-  // admin is such an account. On the PR's eph the applicant stays on the form, so this passes there.
-  test('ENG-2091: logging in from a CFP form with a Sched account keeps you on the form (open bug: expected to fail until fixed)', async ({ page, cfp, newPage, editorSession }) => {
+  // the applicant to Sched's My Events and then the sched.com login page, instead of keeping them on the form. With
+  // the fix, the applicant stays on the form, the login answers {"data":{"link_sent":true}} and a notice says a
+  // sign-in link is emailed if the address is linked to Sched. The eph admin is such an account, and not @sched.com,
+  // like the customer's applicant. Whether the link is emailed and where it lands can't be checked: eph doesn't
+  // deliver email. Both ENG-2091 checks pass on the PR's eph (pr-309) and fail elsewhere until the fix ships.
+  test('ENG-2091: logging in from a CFP form with a Sched-linked account keeps you on the form and offers a sign-in link (open bug: expected to fail until fixed)', async ({ page, cfp, newPage, editorSession }) => {
     openBug('ENG-2091', 'the login sends a Sched-linked account without a CFP password to the Sched login page');
     // The admin's email, from their profile on the event site.
     await page.goto('/profile');
@@ -62,15 +65,39 @@ test.describe('F7 CFP', () => {
     const organizer = await cfp();
     const { url } = await organizer.createForm(`QA ENG-2091 ${runId()}`);
     const visitor = await newPage(visitorState);
+    const alerts: string[] = [];
+    visitor.on('dialog', (dialog) => { alerts.push(dialog.message()); void dialog.dismiss(); });
     const form = new CfpForm(visitor, url);
     await form.open();
     // Without the fix, the login goes through Sched as the admin, which ends the editor session.
     editorSession.ended();
-    await form.logIn(email, requireEnv('EPH_PASSWORD'));
+    const response = await form.logIn(email, requireEnv('EPH_PASSWORD'));
     // Without the fix the page leaves the CFP a moment after the login answers; give it time to.
     const cfpOrigin = new URL(url).origin;
     await visitor.waitForURL((u) => u.origin !== cfpOrigin, { timeout: 8_000 }).catch(() => {});
     expect(visitor.url(), 'Logging in left the CFP form').toContain(`${cfpOrigin}/speaker/`);
+    expect(await response.json(), 'The login didn\'t answer that a sign-in link was sent').toMatchObject({ data: { link_sent: true } });
+    await expect(form.loginNotice('We couldn\'t sign you in'), 'No notice about the sign-in link').toBeVisible();
+    await expect(visitor.getByText(/we'll send the login link to your inbox/i)).toBeVisible();
+    expect(alerts, 'The login showed a browser alert').toEqual([]);
+  });
+
+  // ENG-2091: an @sched.com address gets no password field, only "Request login link", and the same answer whether or
+  // not the account exists. The address used here has no account, so nothing is sent.
+  test('ENG-2091: an @sched.com email requests a sign-in link instead of a password (open bug: expected to fail until fixed)', async ({ cfp, newPage }) => {
+    openBug('ENG-2091', 'the login has no sign-in link for @sched.com addresses');
+    const organizer = await cfp();
+    const { url } = await organizer.createForm(`QA ENG-2091 sched ${runId()}`);
+    const visitor = await newPage(visitorState);
+    const alerts: string[] = [];
+    visitor.on('dialog', (dialog) => { alerts.push(dialog.message()); void dialog.dismiss(); });
+    const form = new CfpForm(visitor, url);
+    await form.open();
+    const response = await form.requestLoginLink(`qa-eng2091-${runId()}@sched.com`);
+    expect(await response.json(), 'The request didn\'t answer that a sign-in link was sent').toMatchObject({ data: { link_sent: true } });
+    await expect(form.loginNotice('Check your email'), 'No "Check your email" notice').toBeVisible();
+    expect(visitor.url(), 'Requesting the link left the CFP form').toContain(`${new URL(url).origin}/speaker/`);
+    expect(alerts, 'The request showed a browser alert').toEqual([]);
   });
 
   // REG-215 / TC-F7-01 (part): an applicant signs up from the form, applies with a co-speaker, and the organizer sees

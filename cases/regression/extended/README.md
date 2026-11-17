@@ -14,7 +14,7 @@
 | [REG-210](REG-210-images-save-and-files-don-t-download-as-zip-bin.md) | Images save and files don't download as zip/bin |  | passed | ✅ automated |
 | [REG-211](REG-211-enrolling-attendees-in-a-session-by-tag-works.md) | Enrolling attendees in a session by tag works |  | passed | 🟡 placeholder |
 | [REG-212](REG-212-conditional-questions-appear-in-the-report-and-the-spreadshe.md) | Conditional questions appear in the report and the spreadsheet (✅ 2026-10-21, cfp-staging on Boost: the export includes the conditional answer) |  | not run | 🟡 placeholder |
-| [REG-213](REG-213-ratings-average-correctly-and-the-file-field-shows-in-the-gr.md) | Ratings average correctly and the file field shows in the group |  | passed | 🟡 placeholder |
+| [REG-213](REG-213-ratings-average-correctly-and-the-file-field-shows-in-the-gr.md) | Ratings average correctly and the file field shows in the group |  | passed | ✅ automated (ratings) |
 | [REG-214](REG-214-a-speaker-with-several-proposals-is-assigned-to-all-of-them.md) | A speaker with several proposals is assigned to all of them |  | passed | ✅ automated |
 | [REG-215](REG-215-a-proposal-can-be-submitted-with-a-co-speaker.md) | A proposal can be submitted with a co-speaker |  | passed | ✅ automated |
 | [REG-225](REG-225-the-speaker-list-in-the-apps-keeps-the-same-order-as-on-the.md) | The speaker list in the apps keeps the same order as on the web |  | passed | 👤 manual |

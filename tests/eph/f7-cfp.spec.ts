@@ -1,7 +1,7 @@
 import { BrowserContextOptions, Page } from '@playwright/test';
 import { test, expect } from './fixtures';
 import { requireEnv, runId } from '../helpers';
-import { CfpForm, CfpSpeaker } from './pages/cfp';
+import { CfpForm, CfpReviewer, CfpSpeaker } from './pages/cfp';
 import { speakersNamed } from './people';
 import { openBug, requireCfpApplications, stepsNotRecordedYet } from './preconditions';
 import { adoptSession, editDescription, findSessions, openEditSession } from './sessions';
@@ -242,9 +242,39 @@ test.describe('F7 CFP', () => {
     expect(sends, 'A message request was sent').toEqual([]);
   });
 
+  // REG-213 / TC-F7-03 (ENG-30, part): two reviewers join a reviewer group through its link (each with a new CFP account)
+  // and rate the same application 2 and 4 stars; the organizer's Applications list shows the average, 3 stars from 2
+  // ratings, and the application lists both reviews. Each run leaves a reviewer group behind (the CFP can't delete
+  // them). The file field in the group (ENG-237) needs file uploads, which fail on eph (see REG-109).
+  test('REG-213 / TC-F7-03: two reviewers rate an application; the organizer sees the average of their ratings', async ({ cfp, newPage }) => {
+    requireCfpApplications();
+    const organizer = await cfp();
+    const run = runId();
+    const { id, url } = await organizer.createForm(`QA F7 review ${run}`);
+    const { form, speaker } = await newApplicant(newPage, url, run);
+    const title = `QA F7 review session ${run}`;
+    await form.send([speaker], { title, description: 'Sent by the QA suite.' });
+    const link = await organizer.createReviewerGroup(`QA F7 group ${run}`, await organizer.applicationIds(id));
+
+    for (const [n, stars] of [[1, 2], [2, 4]]) {
+      await test.step(`reviewer ${n} rates it ${stars} stars`, async () => {
+        const reviewer = new CfpReviewer(await newPage(visitorState), link);
+        await reviewer.join(`qa-cfp-rev${n}-${run}@nomail.sched.co`, `Qa-${run}-rev`);
+        await reviewer.review(title, stars, `Reviewer ${n}: ${stars} stars.`);
+      });
+    }
+
+    const page = organizer.page;
+    await page.goto(`${organizer.origin}/organizer/${organizer.confId}/applications`);
+    const card = page.locator('.data-table-card').filter({ hasText: title });
+    await expect(card, 'The organizer\'s Applications list doesn\'t show the average rating').toContainText('Rated 3 stars out of 5');
+    await expect(card, 'The organizer\'s Applications list doesn\'t count both ratings').toContainText('( 2 )');
+    await card.getByText(title, { exact: true }).click();
+    await expect(page.getByText('Reviews (2)'), 'The application doesn\'t list both reviews').toBeVisible();
+  });
+
   // Placeholders: they need applications on eph (EPH_ALLOW_CFP_APPLICATIONS=1), and REG-212 a paid plan. Their steps
   // get recorded next; until then they show as fixme, also when applications are allowed.
-  test.fixme('REG-213 / TC-F7-03: a reviewer rates an application; the organizer sees the rating', async () => stepsNotRecordedYet());
   test.fixme('REG-212 / TC-F7-06: the export includes conditional answers (needs a paid plan)', async () => stepsNotRecordedYet());
   test.fixme('REG-109: a file within the recommended size can be uploaded in a CFP application', async () => stepsNotRecordedYet());
   // Security: verified by reviewing the fix, never by exploiting it.

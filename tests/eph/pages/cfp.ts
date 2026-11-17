@@ -95,6 +95,21 @@ export class CfpOrganizer {
     return response.json();
   }
 
+  // Creates a reviewer group for the given applications, with the review form the "Add Reviewer Group" builder starts
+  // with (a required 1-5 Score and a required short Review), and returns its join link. The CFP has no way to delete
+  // or archive a reviewer group, so each run leaves one behind.
+  async createReviewerGroup(name: string, applicationIds: string[]) {
+    const token = `qa${Date.now()}`;
+    const field = (id: string, label: string, type: string) => ({
+      id, name: `<h2 style="font-size: 14px">${label}</h2>`, required: true, type, options: [], conditional: false, parentId: null, optionId: null, description: null,
+    });
+    await this.api('POST', '/api/organizer/forms/reviewer_group/create', {
+      name, token, conf_id: this.confId, min_reviews: 1, review_limit: 10, continuous: false, application_ids: applicationIds.map(Number),
+      fields_to_hide: [], session_fields_to_hide: [], hide_form_name: false, review_schema: [field('1', 'Score', 'Rating'), field('2', 'Review', 'ShortAnswer')],
+    });
+    return `${this.origin}/speaker/reviewGroup/${token}`;
+  }
+
   // Archives every form this organizer created.
   async archiveForms() {
     for (const id of this.forms.splice(0)) await this.api('PATCH', '/api/organizer/forms/archive', { id: String(id) });
@@ -192,5 +207,37 @@ export class CfpForm {
     const response = this.page.waitForResponse((r) => r.url().includes('/api/speaker/forms/submit'));
     await this.page.getByRole('button', { name: 'Finish and send' }).click();
     return response;
+  }
+}
+
+// A reviewer group as a reviewer sees it, from the group's join link.
+export class CfpReviewer {
+  constructor(readonly page: Page, readonly link: string) {}
+
+  // Join -> "Sign up with Email" -> email and password twice: a new CFP account that is a reviewer of the group. Lands
+  // on the group's applications.
+  async join(email: string, password: string) {
+    await this.page.goto(this.link);
+    await this.page.getByRole('button', { name: 'Join' }).click();
+    await this.page.getByText('Sign up with Email', { exact: true }).click();
+    await this.page.getByRole('textbox').first().fill(email);
+    for (const box of await this.page.locator('input[type="password"]').all()) await box.fill(password);
+    const response = this.page.waitForResponse((r) => r.url().includes('/api/auth/email/registration'));
+    await this.page.getByRole('button', { name: 'Create', exact: true }).click();
+    expect((await response).ok(), 'Signing up as a reviewer failed').toBe(true);
+    await expect(this.page, 'The reviewer did not land on the group\'s applications').toHaveURL(/\/reviewGroup\/[^/]+\/applications/);
+  }
+
+  // Opens the application titled `title` -> "Add review" -> the Score stars and the Review text -> "Send Review".
+  async review(title: string, stars: number, text: string) {
+    await this.page.getByText(title, { exact: true }).click();
+    await this.page.getByRole('button', { name: 'Add review' }).click();
+    // Each star is a span with an svg inside, and both have the star class: the spans are the stars.
+    await this.page.locator('span.vue-star-rating-star').nth(stars - 1).click();
+    await expect(this.page.locator('.sr-only').first(), 'The Score did not take the stars clicked').toHaveText(`Rated ${stars} stars out of 5`);
+    await this.page.getByRole('textbox').last().fill(text);
+    const response = this.page.waitForResponse((r) => r.url().includes('/api/speaker/reviewer_group/applications/reviews/create'));
+    await this.page.getByRole('button', { name: 'Send Review' }).click();
+    expect((await response).ok(), 'Sending the review failed').toBe(true);
   }
 }

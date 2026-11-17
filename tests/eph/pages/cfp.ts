@@ -136,23 +136,6 @@ export class CfpForm {
     return response;
   }
 
-  // Submit -> "Log in" -> an @sched.com email, which hides the password and offers a sign-in link instead (ENG-2091).
-  // Resolves with the login response.
-  async requestLoginLink(email: string): Promise<Response> {
-    await this.submit.click();
-    await this.modal.getByText('Log in', { exact: true }).click();
-    await this.modal.getByRole('textbox').first().fill(email);
-    await expect(this.modal.locator('input[type="password"]'), 'An @sched.com email still asks for a password').toHaveCount(0);
-    const response = this.page.waitForResponse((r) => r.url().includes('/api/auth/email/login'));
-    await this.modal.getByRole('button', { name: 'Request login link', exact: true }).click();
-    return response;
-  }
-
-  // The notice the login shows instead of signing in: "We couldn't sign you in" or "Check your email" (ENG-2091).
-  loginNotice(title: string) {
-    return this.page.getByText(title, { exact: true });
-  }
-
   // Submit -> "Sign up with Email" -> email and password twice. Resolves with the registration response; no email
   // verification is asked at this point, so the applicant is signed in right away.
   async signUp(email: string, password: string): Promise<Response> {

@@ -6,7 +6,7 @@ type: Positive
 env: Local
 bugs: [ENG-181, ENG-2050]
 last_run: partial
-automation: 🟡 placeholder — `tests/eph/f9-sessions.spec.ts`
+automation: 🟡 written in full, skips while the import queue isn't processing on eph — `tests/eph/f9-sessions.spec.ts`
 ---
 
 # TC-F9-03 — Import
@@ -21,7 +21,7 @@ Completes; flags respected (ENG-181, ENG-2050; ✅ ENG-2050 verified fixed on 20
 
 ## Automation
 
-🟡 placeholder — `tests/eph/f9-sessions.spec.ts`
+🟡 written in full, skips while the import queue isn't processing on eph — `tests/eph/f9-sessions.spec.ts`
 
 ## Last run
 

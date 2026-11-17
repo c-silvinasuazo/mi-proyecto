@@ -6,7 +6,7 @@ type: Positive
 env: Production
 bugs: [ENG-446]
 last_run: passed
-automation: 🟡 placeholder — `tests/eph/f2-events.spec.ts`
+automation: 🟡 written in full, opt-in with EPH_ALLOW_EVENT_CREATION=1 (each run creates an event that can't be deleted) — `tests/eph/f2-events.spec.ts`
 ---
 
 # TC-F2-08 — Create from the Dashboard
@@ -21,7 +21,7 @@ Event created in the selected org; opens the event editor, logged in; no redirec
 
 ## Automation
 
-🟡 placeholder — `tests/eph/f2-events.spec.ts`
+🟡 written in full, opt-in with EPH_ALLOW_EVENT_CREATION=1 (each run creates an event that can't be deleted) — `tests/eph/f2-events.spec.ts`
 
 ## Last run
 

@@ -8,7 +8,7 @@ One Markdown file per test case, grouped by flow, app and regression level. Expo
 - Type: Positive, Negative or Edge.
 - Env: Local = local Docker; Production = own "qa" test event on production; dev2 = only F4 (Stripe test mode; set up with Bill; payments and web questions now go to Rodolfo); cfp-staging = via /editor/callforpapers on a dev domain; App = store app or test build. Where to test is defined in the Protected Flows page.
 - Notes: ✅ OK, ⚠️ partial or observation, ❌ failed. Numbers in parentheses (1.1, 2.1…) match the execution doc.
-- Automation: ✅ automated · 🟡 placeholder (`test.fixme`, to record) · 👤 stays manual. Taken from `COVERAGE.md` and the test titles in `tests/`.
+- Automation: ✅ automated · 🟡 placeholder (`test.fixme`, to record) · 🟡 written, gated (the test is written and skips until eph meets its precondition, see COVERAGE.md) · 👤 stays manual. Taken from `COVERAGE.md` and the test titles in `tests/`.
 - Last run: `passed`, `partial`, `failed`, `blocked`, `inconclusive` or `not run`, taken from the latest notes.
 
 To add a case, copy [TEMPLATE.md](TEMPLATE.md) into the right folder.

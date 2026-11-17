@@ -7,7 +7,7 @@ priority: High
 base_case: TC-F9-03
 bugs: [ENG-181]
 last_run: passed
-automation: 🟡 placeholder — `tests/eph/f9-sessions.spec.ts`
+automation: 🟡 written in full, skips while the import queue isn't processing on eph — `tests/eph/f9-sessions.spec.ts`
 ---
 
 # REG-106 — Session import doesn't get stuck
@@ -22,7 +22,7 @@ Prevents the return of: ENG-181
 
 ## Automation
 
-🟡 placeholder — `tests/eph/f9-sessions.spec.ts`
+🟡 written in full, skips while the import queue isn't processing on eph — `tests/eph/f9-sessions.spec.ts`
 
 ## Last run
 

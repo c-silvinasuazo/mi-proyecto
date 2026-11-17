@@ -6,7 +6,7 @@ type: Positive
 env: Local
 bugs: []
 last_run: passed
-automation: 🟡 placeholder — `tests/eph/f10-control-panel.spec.ts`
+automation: 🟡 written in full, skips while the import queue isn't processing on eph — `tests/eph/f10-control-panel.spec.ts`
 ---
 
 # TC-F10-04 — Import attendees
@@ -21,7 +21,7 @@ Adds or updates without duplicates
 
 ## Automation
 
-🟡 placeholder — `tests/eph/f10-control-panel.spec.ts`
+🟡 written in full, skips while the import queue isn't processing on eph — `tests/eph/f10-control-panel.spec.ts`
 
 ## Last run
 

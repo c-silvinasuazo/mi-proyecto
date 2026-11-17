@@ -6,15 +6,15 @@
 | [REG-102](REG-102-my-schedule-print-isn-t-blank.md) | "My Schedule > Print" isn't blank | High | passed | ✅ automated |
 | [REG-103](REG-103-filtering-sessions-by-date-doesn-t-redirect-to-the-landing-p.md) | Filtering sessions by date doesn't redirect to the landing page | High | passed | ✅ automated |
 | [REG-104](REG-104-secret-sessions-don-t-appear-in-reminders-or-the-public-sche.md) | Secret sessions don't appear in reminders or the public schedule, and the label updates | High (reopened) | passed | 🟡 placeholder |
-| [REG-105](REG-105-unfreezing-sessions-unlocks-the-list.md) | Unfreezing sessions unlocks the list | High | passed | 🟡 placeholder |
-| [REG-106](REG-106-session-import-doesn-t-get-stuck.md) | Session import doesn't get stuck | High | passed | 🟡 placeholder |
+| [REG-105](REG-105-unfreezing-sessions-unlocks-the-list.md) | Unfreezing sessions unlocks the list | High | passed | ✅ automated |
+| [REG-106](REG-106-session-import-doesn-t-get-stuck.md) | Session import doesn't get stuck | High | passed | 🟡 written, gated |
 | [REG-107](REG-107-event-and-attendee-schedule-pdfs-contain-data.md) | Event and attendee schedule PDFs contain data | High | passed | ✅ automated |
 | [REG-108](REG-108-cfp-sched-sync-keeps-titles-descriptions-and-the-tba-date.md) | CFP → Sched sync keeps titles, descriptions and the TBA date | High | passed | ✅ automated |
 | [REG-109](REG-109-a-file-within-the-recommended-size-can-be-uploaded-in-cfp.md) | A file within the recommended size can be uploaded in CFP | High | passed | 🟡 placeholder |
 | [REG-110](REG-110-view-application-accepts-valid-credentials-and-cfp-emails-ar.md) | "View application" accepts valid credentials and CFP emails arrive | High | passed | 👤 manual |
 | [REG-111](REG-111-changing-the-submission-id-doesn-t-give-access-to-other-prop.md) | Changing the submission ID doesn't give access to other proposals | High | partial | 🟡 placeholder |
 | [REG-112](REG-112-a-cfp-portal-can-be-added-to-an-event.md) | A CFP portal can be added to an event | High | passed | ✅ automated |
-| [REG-113](REG-113-the-qr-export-downloads-only-the-selected-sessions-with-the.md) | The QR export downloads only the selected sessions, with the right layout | High (reopened) | passed | 🟡 placeholder |
+| [REG-113](REG-113-the-qr-export-downloads-only-the-selected-sessions-with-the.md) | The QR export downloads only the selected sessions, with the right layout | High (reopened) | passed | ✅ automated |
 | [REG-114](REG-114-the-check-in-camera-scans-qr-codes.md) | The check-in camera scans QR codes | High | passed | 👤 manual |
 | [REG-115](REG-115-the-check-in-app-doesn-t-crash-when-checking-in-from-search.md) | The check-in app doesn't crash when checking in from search | High | passed | 👤 manual |
 | [REG-116](REG-116-sched-count-shows-full-ticket-details.md) | Sched Count shows full ticket details | High | passed | 👤 manual |

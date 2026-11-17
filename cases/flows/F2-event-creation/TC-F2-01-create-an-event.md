@@ -6,7 +6,7 @@ type: Positive
 env: Local
 bugs: [ENG-446]
 last_run: passed
-automation: 🟡 placeholder — `tests/eph/f2-events.spec.ts`
+automation: 🟡 the Dashboard half is written (TC-F2-08); the /signup half stays manual while /signup has a captcha on eph — `tests/eph/f2-events.spec.ts`
 ---
 
 # TC-F2-01 — Create an event
@@ -21,7 +21,7 @@ No redirect to Contact Us; opens the event Dashboard, logged in (ENG-446)
 
 ## Automation
 
-🟡 placeholder — `tests/eph/f2-events.spec.ts`
+🟡 the Dashboard half is written (TC-F2-08); the /signup half stays manual while /signup has a captcha on eph — `tests/eph/f2-events.spec.ts`
 
 ## Last run
 

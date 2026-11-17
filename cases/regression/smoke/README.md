@@ -15,7 +15,7 @@
 | [REG-011](REG-011-native-sso-works-on-android-and-opens-the-right-event-on-ios.md) | Native SSO works on Android and opens the right event on iOS | High | passed | 👤 manual |
 | [REG-012](REG-012-email-signup-generates-a-valid-username-and-profile-link.md) | Email signup generates a valid username and profile link | High | passed | 🟡 placeholder |
 | [REG-013](REG-013-signup-detects-the-user-type-planner-or-attendee.md) | Signup detects the user type (planner or attendee) | High | passed | 🟡 placeholder |
-| [REG-014](REG-014-duplicating-an-event-doesn-t-switch-registration-to-eventbri.md) | Duplicating an event doesn't switch registration to Eventbrite | High | passed | 🟡 placeholder |
+| [REG-014](REG-014-duplicating-an-event-doesn-t-switch-registration-to-eventbri.md) | Duplicating an event doesn't switch registration to Eventbrite | High | failed | 🟡 placeholder |
 | [REG-015](REG-015-the-ios-app-opens-an-event-without-crashing.md) | The iOS app opens an event without crashing | High | passed | 👤 manual |
 | [REG-016](REG-016-main-editor-and-public-site-buttons-and-styles-look-right.md) | Main editor and public site buttons and styles look right | High | see notes | 👤 manual |
 | [REG-017](REG-017-guest-checkout-doesn-t-give-access-to-an-email-s-existing-ti.md) | Guest checkout doesn't give access to an email's existing tickets before payment | High | passed | 🟡 placeholder |

@@ -25,7 +25,7 @@ not mapped yet
 
 ## Last run
 
-❌ 2026-10-14 (2.5): registration form not copied → ENG-2240. ENG-84 OK, ENG-2022 not reproduced, ENG-271 inconclusive. 2026-11-04 (production, qaengreminders duplicated into qaeng2233 with all options): ENG-2022 inconclusive (Eventbrite stays off, as on the original, but the original doesn't use Sched Ticketing, the reported case); ENG-2240 reproduced (the copy's Registration Form has none of the original's questions). Note: on Free Trial and Boost the editor now shows only "Registration Form", not the full Registration section seen on 2026-10-21
+❌ 2026-10-14 (2.5): registration form not copied → ENG-2240. ENG-84 OK, ENG-2022 not reproduced, ENG-271 inconclusive. 2026-11-04 (production, qaengreminders duplicated into qaeng2233 with all options): ENG-2022 inconclusive (Eventbrite stays off, as on the original, but the original doesn't use Sched Ticketing, the reported case); ENG-2240 reproduced (the copy's Registration Form has none of the original's questions). Note: on Free Trial and Boost the editor now shows only "Registration Form", not the full Registration section seen on 2026-10-21. 2026-10-30 (production, qaengf6app duplicated from the Dashboard): ENG-271 not reproduced (the copy's Settings show Session Visibility and Attendee Settings, the same as the original). 2026-11-09: ENG-2022 marked reproducible: Support reproduced it with a customer event that uses Sched Ticketing (nils2025 → nils2026), and the copy defaults to Eventbrite
 
 ---
 

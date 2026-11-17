@@ -23,7 +23,7 @@ To add a case, copy [TEMPLATE.md](TEMPLATE.md) into the right folder.
 
 Rules: every Urgent / High bug that gets closed adds a REG check to Smoke or Core, and a bug that gets reopened moves up one level. A bug marked "Closed" in Linear doesn't mean the fix was verified: the first run is the verification.
 
-Known issues (open bugs whose checks will fail until fixed): ENG-286, ENG-271, ENG-2240, ENG-589, ENG-40, ENG-2220, ENG-2221, ENG-241, ENG-544, ENG-545, ENG-546, ENG-774, ENG-1302, ENG-1568. Not reproduced in the October 2026 run (still open in Linear when checked): ENG-606, ENG-894, ENG-2169, ENG-1328, ENG-1565, ENG-2165, SCH-16.
+Known issues (open bugs whose checks will fail until fixed): ENG-2022, ENG-286, ENG-2240, ENG-589, ENG-40, ENG-2220, ENG-2221, ENG-241, ENG-774, ENG-1302, ENG-1568. Not reproduced in the October–November 2026 runs (still open in Linear when checked): ENG-606, ENG-894, ENG-2169, ENG-1328, ENG-1565, SCH-16, ENG-271, ENG-544, ENG-545, ENG-546.
 
 ## Contents
 

@@ -6,7 +6,7 @@ area: F2
 priority: High
 base_case: TC-F2-03
 bugs: [ENG-2022]
-last_run: passed
+last_run: failed
 automation: 🟡 placeholder — `tests/eph/f2-events.spec.ts`
 ---
 
@@ -26,7 +26,7 @@ Prevents the return of: ENG-2022
 
 ## Last run
 
-✅ 2026-10-14 locally (see ENG-2240); ⚪ 2026-11-04 production inconclusive (the original didn't use Sched Ticketing)
+✅ 2026-10-14 locally (see ENG-2240); ⚪ 2026-11-04 production inconclusive (the original didn't use Sched Ticketing); ❌ 2026-11-09 reproducible: Support reproduced it with a customer event that uses Sched Ticketing (nils2025 → nils2026), and the copy defaults to Eventbrite
 
 ---
 

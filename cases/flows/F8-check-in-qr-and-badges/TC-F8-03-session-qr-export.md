@@ -25,7 +25,7 @@ Only selected sessions; consistent layout and orientation (ENG-544, ENG-545, ENG
 
 ## Last run
 
-✅ 2026-10-14 locally (2 of 4 sessions). ✅ 2026-10-21 production (qaengreminders): exporting 1 of 2 sessions shows only that session; exporting both shows both. Notes: the QR alternates sides between sessions (right, then left; intended?) and the divider lines extend past the right edge of the page
+✅ 2026-10-14 locally (2 of 4 sessions). ✅ 2026-10-21 production (qaengreminders): exporting 1 of 2 sessions shows only that session; exporting both shows both. Notes: the QR alternates sides between sessions (right, then left; intended?) and the divider lines extend past the right edge of the page. ✅ 2026-11-02 production (qaengreminders): ENG-544 not reproduced (5 selected sessions export 4 QR codes, one per published session, not only the first 3; Print → Save as PDF not checked); ENG-545 not reproduced (8 sessions come out 3 per page: 3, 3 and 2); ENG-546 not reproduced (switching Portrait to Landscape keeps the QR codes and text upright and aligned)
 
 ---
 

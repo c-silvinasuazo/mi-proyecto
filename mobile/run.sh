@@ -16,6 +16,9 @@ export MAESTRO_SESSION="${MAESTRO_SESSION:-qa publico}" MAESTRO_SPEAKER="${MAEST
 # (APP-07). Change them together with the event's data.
 export MAESTRO_SESSION_DAY="${MAESTRO_SESSION_DAY:-Wednesday}" MAESTRO_SESSION_DATE="${MAESTRO_SESSION_DATE:-October 21, 2026}"
 export MAESTRO_SESSION_START="${MAESTRO_SESSION_START:-10:00}"
+# The event's speakers in the web's order (REG-225): the featured one first, then by last name.
+export MAESTRO_SPEAKER_ORDER_1="${MAESTRO_SPEAKER_ORDER_1:-qa F7 propuesta 2}" MAESTRO_SPEAKER_ORDER_2="${MAESTRO_SPEAKER_ORDER_2:-QaSpeaker}"
+export MAESTRO_SPEAKER_ORDER_3="${MAESTRO_SPEAKER_ORDER_3:-qa sp 2217}" MAESTRO_SPEAKER_ORDER_4="${MAESTRO_SPEAKER_ORDER_4:-qa speaker 2228}"
 # MAESTRO_SESSION's description (APP-09), added in the editor on 2026-11-17.
 export MAESTRO_SESSION_DESCRIPTION="${MAESTRO_SESSION_DESCRIPTION:-QA session for the mobile app checks.}"
 export MAESTRO_OTHER_SESSION="${MAESTRO_OTHER_SESSION:-qa capacity}" MAESTRO_OTHER_SESSION_WORD="${MAESTRO_OTHER_SESSION_WORD:-capacity}"

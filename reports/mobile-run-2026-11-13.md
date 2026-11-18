@@ -4,7 +4,8 @@
 (APP-01, 02, 07, 09, 10), plus APP-13, APP-15 (dark mode) and APP-16 (no download banner) from phase 2. APP-09 now
 also checks the session's description. In the eph suite, 5 more regression cases are automated, all on the CFP
 (REG-108, REG-213, REG-214, REG-215, REG-216), and 3 app regression cases are now mapped to the app flows that
-cover them (REG-122, REG-123, REG-126), so regression coverage goes from 23% to 34%. The logged-in cases
+cover them (REG-122, REG-123, REG-126). On Nov 18, REG-225 (the app keeps the web's speaker order) was added on both
+platforms, so regression coverage goes from 23% to 35%. The logged-in cases
 (APP-08, APP-11) and Sched Count still wait on new builds from Diego, and none of the eph blockers in ENG-2832 has been
 fixed yet.
 
@@ -22,17 +23,17 @@ size wasn't run again; it passed 4 of 4 on Nov 13. On Nov 13 the total was 54 (4
 
 ## Coverage
 
-24 of the 71 regression cases (34%) are automated, up from 16 (23%) on Nov 13. One more (REG-106) is written in full
-and waits for eph's import queue, 28 have a placeholder test whose steps aren't recorded yet, and 18 are manual or not
+25 of the 71 regression cases (35%) are automated, up from 16 (23%) on Nov 13. One more (REG-106) is written in full
+and waits for eph's import queue, 28 have a placeholder test whose steps aren't recorded yet, and 17 are manual or not
 mapped yet. Of the 18 Sched app cases, 8 are automated (APP-01, 02, 07, 09, 10, 13, 15, 16), up from 6; the 12 Sched
 Count cases wait for a working build, and their Android equivalents run on the web Check-In App.
 
 | Regression cases (REG) | Nov 13 | Nov 17 | Share (Nov 17) |
 | --- | --- | --- | --- |
-| Automated | 16 | 24 | 34% |
+| Automated | 16 | 25 | 35% |
 | Written in full, waits for an eph precondition | 1 | 1 | 1% |
 | Placeholder test (steps not recorded yet) | 33 | 28 | 39% |
-| Manual or not mapped yet | 21 | 18 | 25% |
+| Manual or not mapped yet | 21 | 17 | 24% |
 | Total | 71 | 71 | 100% |
 
 New since Nov 13 (all on eph's CFP, opt-in with `EPH_ALLOW_CFP_APPLICATIONS=1`): REG-215 (an application with a
@@ -64,6 +65,7 @@ through the app's event search, and opens it.
 | APP-10 Attendee list | The attendee list isn't blank (ENG-2213): Directory → Attendees on iOS, Info → Attendees on Android | Pass | Pass |
 | APP-13 Registration disabled | An event without registration opens straight to its schedule, with no registration step | Pass | Pass |
 | APP-16 No download banner (Nov 17) | No "Download the Sched app" banner on the schedule, a session or an attendee's profile | Pass | Pass |
+| REG-225 Speaker order (Nov 18) | The speaker list keeps the web's order: featured first, then by last name | Pass | Pass |
 | APP-15 Dark mode (Nov 17) | With the device in dark mode, the schedule, a session and the attendee list show their content | Pass (the app stays light) | Pass |
 
 APP-09 checks the description "QA session for the mobile app checks.", added to "qa publico" on Nov 17. APP-15 is in

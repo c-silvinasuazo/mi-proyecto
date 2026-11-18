@@ -25,6 +25,11 @@ on both. Both platforms run the same 6 flows. Still to do:
   Right after a session in qa reminders 2 was saved in the editor, the first iOS run showed "Schedule has not yet been
   published" in the event for a moment (APP-09 failed; the next flows and the next run passed). After editing the
   event, give it a few minutes before running the flows.
+- 2026-11-18: REG-225 (`mobile/sched-app/REG-225-speaker-order.yaml`) checks the speaker list keeps the web's order,
+  on both platforms. The list is at Directory -> Speakers on iOS and Info -> Speakers on Android, and only shows while
+  the event's directory shows speakers (turned on for qa reminders 2 on Nov 18). qa reminders 2 is on a Free Trial, so
+  Sched hides it from the public now and then; while it's hidden the app's search can't find it and every flow but
+  APP-01 fails at the search, until it's made public again.
 - APP-08 and APP-11 need a logged-in account in the app, and are blocked: on Sched Dev 2.16.2 (7698) in the
   simulator, signing in with Sched closes the sign-in screen with no error and no session, by hand and with the login
   flow (2026-11-13). The simulator's log shows why: the app's keychain read fails with -34018 ("Client has neither

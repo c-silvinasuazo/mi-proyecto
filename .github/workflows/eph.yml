@@ -29,8 +29,8 @@ jobs:
   typecheck:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: 22
           cache: npm
@@ -43,6 +43,11 @@ jobs:
     # A push only type-checks; the suite itself runs on the schedule or by hand.
     if: github.event_name != 'push'
     runs-on: ubuntu-latest
+    # Playwright's image comes with Chromium, WebKit and their system packages. Installing them on the runner took 14
+    # minutes on 2026-11-19 (a slow Ubuntu mirror). Keep the tag on the @playwright/test version in package-lock.json.
+    container:
+      image: mcr.microsoft.com/playwright:v1.64.1-noble
+      options: --user 1001
     timeout-minutes: 60
     env:
       EPH_BASE_URL: ${{ secrets.EPH_BASE_URL }}
@@ -53,18 +58,13 @@ jobs:
       EPH_ATTENDEE_USERNAME: ${{ secrets.EPH_ATTENDEE_USERNAME }}
       EPH_ATTENDEE_PASSWORD: ${{ secrets.EPH_ATTENDEE_PASSWORD }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
+      - uses: actions/checkout@v5
       - run: npm ci
-      - run: npx playwright install --with-deps chromium webkit
       - name: Run the eph suite
         run: npx playwright test --project=eph --project=eph-iphone ${{ inputs.include_slow && ' ' || '--grep-invert @slow' }}
       # The report has traces and screenshots of failures. It also holds the eph pages the tests opened, so it stays a
       # private artifact for 14 days. .auth/ (the saved eph session) is never uploaded.
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         if: ${{ !cancelled() }}
         with:
           name: playwright-report

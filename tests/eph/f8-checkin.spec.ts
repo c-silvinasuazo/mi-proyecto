@@ -95,8 +95,12 @@ test.describe('F8 check-in, QR and badges', () => {
     await expect(app.sessionCount(title, 0, 1), 'The session should start with its one attendee not checked in').toBeVisible();
     // The admin is the session's one attendee, so its list has one check-in circle.
     await expect(app.circles, 'The session should list one attendee (the admin)').toHaveCount(1);
+    // The app shows the new count before the save (/api/v2.0/checkin/put) answers, and on eph that can take seconds.
+    // Reloading before it answers can lose the check-in (TC-F8-05 failed that way in CI, run #5 on 2026-11-19).
+    const saved = app.page.waitForResponse((r) => r.url().includes('/api/v2.0/checkin/put'));
     await app.circles.click();
     await expect(app.sessionCount(title, 1, 1), 'The check-in count did not go up').toBeVisible();
+    expect((await saved).ok(), 'Saving the check-in failed').toBeTruthy();
     // Reopen the app: the count must come back from the server, not just from the screen.
     await app.reopen();
     await app.openSession(title);

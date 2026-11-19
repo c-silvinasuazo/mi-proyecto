@@ -1,0 +1,72 @@
+import { defineConfig, devices } from '@playwright/test';
+import 'dotenv/config';
+
+// Targets (see README):
+// - prod: read-only checks against production. Never writes.
+// - cfp-readonly: read-only checks on public QA CFP forms (production CFP). Never writes.
+// - eph:  read-only checks plus every flow that creates data, against an isolated eph environment.
+// Payments (F4) run on eph too, once eph has Stripe test mode (tests/eph/f4-payments.spec.ts); never on dev2 or production.
+// The CFP flows (F7) run in the eph project, on the eph event's own CFP (tests/eph/f7-cfp.spec.ts).
+// Credentials and URLs come from .env (git-ignored).
+export default defineConfig({
+  timeout: 90_000,
+  // In CI a check that fails once is retried, and the report marks it flaky (eph sometimes drops requests under load).
+  // Locally a failure stays a failure, so nothing is hidden while writing a check.
+  retries: process.env.CI ? 1 : 0,
+  workers: 1,
+  reporter: [['list'], ['html', { open: 'never' }]],
+  use: {
+    // A click or a page load that can't happen fails on its own instead of using up the whole test timeout, which
+    // would leave the fixtures no time to clean up. Steps that need longer pass their own timeout.
+    actionTimeout: 15_000,
+    navigationTimeout: 30_000,
+    screenshot: 'only-on-failure',
+    trace: 'retain-on-failure',
+  },
+  projects: [
+    {
+      name: 'prod-setup',
+      testDir: './tests/setup',
+      testMatch: /^(?!.*eph-auth).*\.setup\.ts$/,
+      use: { ...devices['Desktop Chrome'] },
+    },
+    {
+      name: 'prod',
+      testDir: './tests/readonly',
+      dependencies: ['prod-setup'],
+      use: { ...devices['Desktop Chrome'], baseURL: process.env.SCHED_BASE_URL || 'https://sched.com', storageState: '.auth/prod.json' },
+    },
+    {
+      name: 'cfp-readonly',
+      testDir: './tests/cfp-readonly',
+      dependencies: ['prod-setup'],
+      use: { ...devices['Desktop Chrome'], baseURL: 'https://cfp.sched.com', storageState: '.auth/prod.json' },
+    },
+    {
+      name: 'eph-setup',
+      testDir: './tests/setup',
+      testMatch: /eph-auth\.setup\.ts/,
+      use: { ...devices['Desktop Chrome'] },
+    },
+    {
+      name: 'eph',
+      testDir: './tests/eph',
+      dependencies: ['eph-setup'],
+      use: { ...devices['Desktop Chrome'], baseURL: process.env.EPH_BASE_URL, storageState: '.auth/eph.json' },
+    },
+    {
+      name: 'eph-safari',
+      testDir: './tests/eph',
+      grep: /REG-220/,
+      dependencies: ['eph-setup'],
+      use: { ...devices['Desktop Safari'], baseURL: process.env.EPH_BASE_URL, storageState: '.auth/eph.json' },
+    },
+    {
+      // The event site on an iPhone (WebKit): the web side of the Sched app's checks. Needs `npx playwright install webkit`.
+      name: 'eph-iphone',
+      testDir: './tests/eph-iphone',
+      dependencies: ['eph-setup'],
+      use: { ...devices['iPhone 15'], baseURL: process.env.EPH_BASE_URL, storageState: '.auth/eph.json' },
+    },
+  ],
+});

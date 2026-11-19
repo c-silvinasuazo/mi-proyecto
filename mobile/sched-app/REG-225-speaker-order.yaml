@@ -1,0 +1,32 @@
+# REG-225 (ENG-2172): the event's speaker list in the app keeps the web's order: featured speakers first, then the
+# others by last name (MAESTRO_SPEAKER_ORDER_1 to _4, as the editor's Speakers page lists them). The list is at
+# Directory -> Speakers on iOS and Info -> Speakers on Android, and only shows while the event's directory shows
+# speakers.
+appId: ${MAESTRO_APP_ID}
+---
+- runFlow: common/open-event.yaml
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn: "Directory"
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - tapOn: "Info"
+# The menu animates in; a tap on Speakers before it settles is lost (as with Attendees in APP-10).
+- waitForAnimationToEnd
+- tapOn: "Speakers"
+- extendedWaitUntil:
+    visible: ${MAESTRO_SPEAKER_ORDER_1}
+    timeout: 15000
+- assertVisible:
+    text: ${MAESTRO_SPEAKER_ORDER_2}
+    below: ${MAESTRO_SPEAKER_ORDER_1}
+- assertVisible:
+    text: ${MAESTRO_SPEAKER_ORDER_3}
+    below: ${MAESTRO_SPEAKER_ORDER_2}
+- assertVisible:
+    text: ${MAESTRO_SPEAKER_ORDER_4}
+    below: ${MAESTRO_SPEAKER_ORDER_3}

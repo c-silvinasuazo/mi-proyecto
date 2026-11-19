@@ -1,0 +1,243 @@
+import { expect, Page, Response } from '@playwright/test';
+import { retryRequest } from '../../helpers';
+
+// The eph event's CFP app (cfp.<env>.eph.sched.co), as the organizer opens it from the editor's Call For Papers page.
+// The app keeps the organizer's API token in localStorage; the tests use it to create their own forms and archive them
+// afterwards (forms can be archived, not deleted). The eph fixtures archive every form a test created.
+export class CfpOrganizer {
+  private readonly forms: number[] = [];
+
+  private constructor(readonly page: Page, private readonly token: string, readonly confId: string) {}
+
+  // Opens the CFP portal from the editor in a new tab and waits until it has signed the organizer in.
+  static async open(editor: Page) {
+    await editor.goto('/editor/callforpapers');
+    const tab = editor.context().waitForEvent('page');
+    await editor.getByRole('link', { name: 'Call For Papers (CFP) portal' }).click();
+    const page = await tab;
+    // The sign-in step (/organizer/auth/<token>) can take a while on eph.
+    await expect(page, 'The CFP portal stayed on the sign-in step').not.toHaveURL(/\/organizer\/auth\//, { timeout: 90_000 });
+    await expect(page).toHaveURL(/\/organizer\/[^/]+\//, { timeout: 30_000 });
+    const readToken = () => page.evaluate(() => localStorage.getItem('organizer_auth_token'));
+    await expect.poll(readToken, { message: 'The CFP portal did not sign the organizer in', timeout: 30_000 }).toBeTruthy();
+    const token = (await readToken())!;
+    const confId = page.url().match(/\/organizer\/([^/]+)\//)![1];
+    return new CfpOrganizer(page, token, confId);
+  }
+
+  get origin() {
+    return new URL(this.page.url()).origin;
+  }
+
+  // A request to the organizer API, as the app sends it.
+  async api(method: 'GET' | 'POST' | 'PATCH', path: string, data?: object) {
+    const response = await retryRequest(() => this.page.request.fetch(this.origin + path, {
+      method, data, headers: { Authorization: `Bearer ${this.token}`, Accept: 'application/json' },
+    }));
+    expect(response.ok(), `CFP ${method} ${path} answered ${response.status()}`).toBe(true);
+    return response.json();
+  }
+
+  // Creates a form (published, like the "Create new form" button does), optionally with dates (YYYY-MM-DD), and returns
+  // its id and public link.
+  async createForm(name: string, dates: { start?: string; end?: string } = {}) {
+    const { form_id: id } = await this.api('POST', '/api/organizer/forms/create', { conf_id: this.confId });
+    this.forms.push(id);
+    await this.api('POST', '/api/organizer/forms/save', { id, name });
+    await this.setDates(id, dates);
+    const { data } = await this.api('GET', `/api/organizer/forms/list?conf_id=${this.confId}&archived=false`);
+    const form = (data as { id: number; token: string }[]).find((f) => f.id === id);
+    expect(form, `Form ${id} is not in the list of active forms`).toBeTruthy();
+    return { id, url: `${this.origin}/speaker/${form!.token}` };
+  }
+
+  // Sets a form's application start and end dates, the way the Form details step saves them.
+  async setDates(id: number, { start, end }: { start?: string; end?: string }) {
+    if (start) await this.api('POST', '/api/organizer/forms/save', { id, start_at: start });
+    if (end) await this.api('POST', '/api/organizer/forms/save', { id, end_at: end });
+  }
+
+  // The applications sent to the event's forms.
+  async applications() {
+    const { data } = await this.api('GET', `/api/organizer/forms/submission/list?conf_id=${this.confId}&page=1&per_page=100`);
+    return data as Record<string, unknown>[];
+  }
+
+  // The ids of the applications sent to one form.
+  async applicationIds(formId: number) {
+    return (await this.applications()).filter((application) => application.form_id === formId).map((application) => String(application.id));
+  }
+
+  // Applications -> filter by the form and "Initial Submission" (the sync is disabled until a status is picked) -> Sync
+  // with Sched, with the dialog's switches set as given and the role left on Speaker. Resolves with the sync's answer
+  // ({ success, speakerSuccess, sessionSuccess, ... }); the sync runs while the request is open, about 20 seconds on eph.
+  async sync(formName: string, switches: { 'Sync Applicants': boolean; 'Sync Sessions': boolean; 'Attach Applicants to Sessions': boolean }) {
+    const page = this.page;
+    await page.goto(`${this.origin}/organizer/${this.confId}/applications`);
+    for (const [filter, option] of [['All forms', formName], ['All statuses', 'Initial Submission']]) {
+      await page.locator('.n-base-selection').filter({ hasText: filter }).click();
+      await page.locator('.n-base-select-option').filter({ hasText: option }).click();
+      await page.keyboard.press('Escape');
+    }
+    await page.getByText('Sync with Sched', { exact: true }).click();
+    const dialog = page.locator('.n-modal').last();
+    await expect(dialog, 'The sync dialog did not offer to sync').toContainText('Ready to sync with Sched?');
+    for (const [label, on] of Object.entries(switches)) {
+      // The innermost block that holds both the label and a switch is that label's row.
+      const toggle = dialog.locator('div').filter({ has: page.getByText(label, { exact: true }) }).filter({ has: page.locator('.n-switch') }).last().locator('.n-switch');
+      if ((await toggle.getAttribute('aria-checked')) !== String(on)) await toggle.click();
+      await expect(toggle, `The "${label}" switch`).toHaveAttribute('aria-checked', String(on));
+    }
+    const answer = page.waitForResponse((r) => r.url().includes('/api/organizer/forms/submission/send'), { timeout: 120_000 });
+    await dialog.getByRole('button', { name: 'Start Sync' }).click();
+    const response = await answer;
+    expect(response.ok(), `The sync answered ${response.status()}`).toBe(true);
+    return response.json();
+  }
+
+  // Creates a reviewer group for the given applications, with the review form the "Add Reviewer Group" builder starts
+  // with (a required 1-5 Score and a required short Review), and returns its join link. The CFP has no way to delete
+  // or archive a reviewer group, so each run leaves one behind.
+  async createReviewerGroup(name: string, applicationIds: string[]) {
+    const token = `qa${Date.now()}`;
+    const field = (id: string, label: string, type: string) => ({
+      id, name: `<h2 style="font-size: 14px">${label}</h2>`, required: true, type, options: [], conditional: false, parentId: null, optionId: null, description: null,
+    });
+    await this.api('POST', '/api/organizer/forms/reviewer_group/create', {
+      name, token, conf_id: this.confId, min_reviews: 1, review_limit: 10, continuous: false, application_ids: applicationIds.map(Number),
+      fields_to_hide: [], session_fields_to_hide: [], hide_form_name: false, review_schema: [field('1', 'Score', 'Rating'), field('2', 'Review', 'ShortAnswer')],
+    });
+    return `${this.origin}/speaker/reviewGroup/${token}`;
+  }
+
+  // Archives every form this organizer created.
+  async archiveForms() {
+    for (const id of this.forms.splice(0)) await this.api('PATCH', '/api/organizer/forms/archive', { id: String(id) });
+  }
+}
+
+export type CfpSpeaker = { name: string; email: string; company: string; position: string; about: string };
+
+// A CFP form's public page, as an applicant sees it.
+export class CfpForm {
+  constructor(readonly page: Page, readonly url: string) {}
+
+  async open() {
+    await this.page.goto(this.url);
+    await expect(this.page.getByText('Application start'), 'The CFP form did not load').toBeVisible({ timeout: 20_000 });
+  }
+
+  get submit() {
+    return this.page.getByRole('button', { name: 'Submit', exact: true });
+  }
+
+  get closedNotice() {
+    return this.page.getByText('Submissions are currently closed');
+  }
+
+  private get modal() {
+    return this.page.locator('.n-modal, [role="dialog"]').last();
+  }
+
+  // Submit -> "Log in" -> email and password. Resolves with the login response.
+  async logIn(email: string, password: string): Promise<Response> {
+    await this.submit.click();
+    // "Log in" in the first modal is a plain div (it can't be reached with the keyboard; noted in ENG-2091's review).
+    await this.modal.getByText('Log in', { exact: true }).click();
+    await this.modal.getByRole('textbox').first().fill(email);
+    await this.modal.locator('input[type="password"]').fill(password);
+    const response = this.page.waitForResponse((r) => r.url().includes('/api/auth/email/login'));
+    await this.modal.getByRole('button', { name: /^log in$/i }).click();
+    return response;
+  }
+
+  // Submit -> "Sign up with Email" -> email and password twice. Resolves with the registration response; no email
+  // verification is asked at this point, so the applicant is signed in right away.
+  async signUp(email: string, password: string): Promise<Response> {
+    await this.submit.click();
+    await this.modal.getByText('Sign up with Email', { exact: true }).click();
+    await this.modal.getByRole('textbox').first().fill(email);
+    for (const box of await this.modal.locator('input[type="password"]').all()) await box.fill(password);
+    const response = this.page.waitForResponse((r) => r.url().includes('/api/auth/email/registration'));
+    await this.modal.getByRole('button', { name: 'Create', exact: true }).click();
+    return response;
+  }
+
+  // Sends an application to this form as the signed-in applicant, with the request "Finish and send" sends (the app
+  // keeps the applicant's token in localStorage). For tests that need several applications; `apply` covers the form.
+  async send(speakers: CfpSpeaker[], session: { title: string; description: string }) {
+    const readToken = () => this.page.evaluate(() => localStorage.getItem('speaker_auth_token')).catch(() => null);
+    await expect.poll(readToken, { message: 'The applicant is not signed in to the CFP' }).toBeTruthy();
+    const field = (id: string, value: string) => ({ id, value, conditionals: [] });
+    const response = await retryRequest(async () => this.page.request.post(`${new URL(this.url).origin}/api/speaker/forms/submit`, {
+      headers: { Authorization: `Bearer ${await readToken()}`, Accept: 'application/json' },
+      data: {
+        form_token: this.url.split('/speaker/')[1],
+        session_data: [field('sessionTitle', session.title), field('sessionDescription', session.description)],
+        speaker_data: speakers.map((s) => [field('speakerPhoto', ''), field('speakerName', s.name), field('speakerAbout', `<p>${s.about}</p>`), field('speakerEmail', s.email),
+          field('speakerCompany', s.company), field('speakerPosition', s.position), field('speakerLinkedin', ''), field('speakerSocialLink', '')]),
+      },
+    }));
+    expect(await response.json(), `Sending the application "${session.title}" failed`).toMatchObject({ success: true });
+  }
+
+  // Fills the default form (speaker form, then session form) and sends it. Resolves with the submit response.
+  // Each speaker block has, in order, the text fields Name, Email, Company, Position, LinkedIn and Instagram, and an
+  // About editor; the labels aren't linked to the fields, so they're found by position (see TEST-IDS.md).
+  async apply(speakers: CfpSpeaker[], session: { title: string; description: string }): Promise<Response> {
+    await this.submit.click();
+    await expect(this.page).toHaveURL(/\/form\/speaker$/);
+    for (let n = 2; n <= speakers.length; n++) await this.page.getByRole('button', { name: `Add Speaker ${n}` }).first().click();
+    const fields = this.page.locator('input[type="text"]:visible');
+    const abouts = this.page.locator('[contenteditable="true"]:visible');
+    for (const [i, speaker] of speakers.entries()) {
+      const [name, email, company, position] = [0, 1, 2, 3].map((k) => fields.nth(i * 6 + k));
+      await name.fill(speaker.name);
+      await email.fill(speaker.email);
+      await company.fill(speaker.company);
+      await position.fill(speaker.position);
+      await abouts.nth(i).click();
+      await this.page.keyboard.type(speaker.about);
+    }
+    await this.page.getByRole('button', { name: 'Next step' }).click();
+    await expect(this.page).toHaveURL(/\/form\/session$/);
+    await this.page.locator('input[type="text"]:visible').first().fill(session.title);
+    await this.page.locator('[contenteditable="true"]:visible').first().click();
+    await this.page.keyboard.type(session.description);
+    const response = this.page.waitForResponse((r) => r.url().includes('/api/speaker/forms/submit'));
+    await this.page.getByRole('button', { name: 'Finish and send' }).click();
+    return response;
+  }
+}
+
+// A reviewer group as a reviewer sees it, from the group's join link.
+export class CfpReviewer {
+  constructor(readonly page: Page, readonly link: string) {}
+
+  // Join -> "Sign up with Email" -> email and password twice: a new CFP account that is a reviewer of the group. Lands
+  // on the group's applications.
+  async join(email: string, password: string) {
+    await this.page.goto(this.link);
+    await this.page.getByRole('button', { name: 'Join' }).click();
+    await this.page.getByText('Sign up with Email', { exact: true }).click();
+    await this.page.getByRole('textbox').first().fill(email);
+    for (const box of await this.page.locator('input[type="password"]').all()) await box.fill(password);
+    const response = this.page.waitForResponse((r) => r.url().includes('/api/auth/email/registration'));
+    await this.page.getByRole('button', { name: 'Create', exact: true }).click();
+    expect((await response).ok(), 'Signing up as a reviewer failed').toBe(true);
+    await expect(this.page, 'The reviewer did not land on the group\'s applications').toHaveURL(/\/reviewGroup\/[^/]+\/applications/);
+  }
+
+  // Opens the application titled `title` -> "Add review" -> the Score stars and the Review text -> "Send Review".
+  async review(title: string, stars: number, text: string) {
+    await this.page.getByText(title, { exact: true }).click();
+    await this.page.getByRole('button', { name: 'Add review' }).click();
+    // Each star is a span with an svg inside, and both have the star class: the spans are the stars.
+    await this.page.locator('span.vue-star-rating-star').nth(stars - 1).click();
+    await expect(this.page.locator('.sr-only').first(), 'The Score did not take the stars clicked').toHaveText(`Rated ${stars} stars out of 5`);
+    await this.page.getByRole('textbox').last().fill(text);
+    const response = this.page.waitForResponse((r) => r.url().includes('/api/speaker/reviewer_group/applications/reviews/create'));
+    await this.page.getByRole('button', { name: 'Send Review' }).click();
+    expect((await response).ok(), 'Sending the review failed').toBe(true);
+  }
+}

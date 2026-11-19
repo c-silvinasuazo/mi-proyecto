@@ -1,0 +1,72 @@
+# Runs the eph suite (desktop, the Android Check-In App and the event site on an iPhone) against the QA eph, which runs
+# the latest master: every weekday morning, and by hand from the Actions tab (with the slow cases too, if asked).
+# Production checks and the CFP never run here. The Maestro flows need simulator builds and stay local for now.
+#
+# Needs these repository secrets (Settings -> Secrets and variables -> Actions): EPH_BASE_URL, EPH_USERNAME,
+# EPH_PASSWORD, and optionally EPH_SPEAKER_USERNAME, EPH_SPEAKER_PASSWORD, EPH_ATTENDEE_USERNAME, EPH_ATTENDEE_PASSWORD
+# (the docker-cd test accounts; see .env.example).
+name: eph regression
+
+on:
+  schedule:
+    - cron: '0 10 * * 1-5'
+  workflow_dispatch:
+    inputs:
+      include_slow:
+        description: 'Also run the @slow cases (the freeze wait and the attendee import, up to 15 minutes each)'
+        type: boolean
+        default: false
+  push:
+    paths: ['tests/**', 'playwright.config.ts', 'package*.json', 'tsconfig.json', '.github/workflows/eph.yml']
+
+# The eph event is shared: never two runs at once.
+concurrency:
+  group: eph-demofriends
+  cancel-in-progress: false
+
+jobs:
+  # Type-check and lint (errors fail the job; warnings are conditionals kept on purpose, see eslint.config.mjs).
+  typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+
+  eph:
+    needs: typecheck
+    # A push only type-checks; the suite itself runs on the schedule or by hand.
+    if: github.event_name != 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      EPH_BASE_URL: ${{ secrets.EPH_BASE_URL }}
+      EPH_USERNAME: ${{ secrets.EPH_USERNAME }}
+      EPH_PASSWORD: ${{ secrets.EPH_PASSWORD }}
+      EPH_SPEAKER_USERNAME: ${{ secrets.EPH_SPEAKER_USERNAME }}
+      EPH_SPEAKER_PASSWORD: ${{ secrets.EPH_SPEAKER_PASSWORD }}
+      EPH_ATTENDEE_USERNAME: ${{ secrets.EPH_ATTENDEE_USERNAME }}
+      EPH_ATTENDEE_PASSWORD: ${{ secrets.EPH_ATTENDEE_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium webkit
+      - name: Run the eph suite
+        run: npx playwright test --project=eph --project=eph-iphone ${{ inputs.include_slow && ' ' || '--grep-invert @slow' }}
+      # The report has traces and screenshots of failures. It also holds the eph pages the tests opened, so it stays a
+      # private artifact for 14 days. .auth/ (the saved eph session) is never uploaded.
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 14

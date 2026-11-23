@@ -32,7 +32,7 @@ Known issues (open bugs whose checks will fail until fixed): ENG-2022, ENG-286, 
 | [F1 — Free trial signup](flows/F1-free-trial-signup/README.md) | 9 |
 | [F2 — Event creation](flows/F2-event-creation/README.md) | 8 |
 | [F3 — Login and SSO](flows/F3-login-and-sso/README.md) | 8 |
-| [F4 — Ticket payments](flows/F4-ticket-payments/README.md) | 11 |
+| [F4 — Ticket payments](flows/F4-ticket-payments/README.md) | 24 |
 | [F5 — Sched subscription billing](flows/F5-sched-subscription-billing/README.md) | 25 |
 | [F6 — Registration and RSVP](flows/F6-registration-and-rsvp/README.md) | 5 |
 | [F7 — CFP](flows/F7-cfp/README.md) | 6 |
@@ -45,4 +45,4 @@ Known issues (open bugs whose checks will fail until fixed): ENG-2022, ENG-286, 
 | [Core](regression/core/README.md) | 29 |
 | [Extended](regression/extended/README.md) | 25 |
 
-Total: 189 cases.
+Total: 202 cases.

@@ -4,7 +4,7 @@
 #
 # Needs these repository secrets (Settings -> Secrets and variables -> Actions): EPH_BASE_URL, EPH_USERNAME,
 # EPH_PASSWORD, and optionally EPH_SPEAKER_USERNAME, EPH_SPEAKER_PASSWORD, EPH_ATTENDEE_USERNAME, EPH_ATTENDEE_PASSWORD
-# (the docker-cd test accounts; see .env.example).
+# (the docker-cd test accounts) and EPH_SCHEDMIN_USERNAME, EPH_SCHEDMIN_PASSWORD (eph Schedmin; see .env.example).
 name: eph regression
 
 on:
@@ -57,6 +57,9 @@ jobs:
       EPH_SPEAKER_PASSWORD: ${{ secrets.EPH_SPEAKER_PASSWORD }}
       EPH_ATTENDEE_USERNAME: ${{ secrets.EPH_ATTENDEE_USERNAME }}
       EPH_ATTENDEE_PASSWORD: ${{ secrets.EPH_ATTENDEE_PASSWORD }}
+      EPH_PAYMENTS_URL: ${{ secrets.EPH_PAYMENTS_URL }}
+      EPH_SCHEDMIN_USERNAME: ${{ secrets.EPH_SCHEDMIN_USERNAME }}
+      EPH_SCHEDMIN_PASSWORD: ${{ secrets.EPH_SCHEDMIN_PASSWORD }}
     steps:
       - uses: actions/checkout@v5
       - run: npm ci

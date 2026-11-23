@@ -41,7 +41,7 @@ export const test = base.extend<EphFixtures>({
     for (const context of contexts) await context.close();
   },
 
-  editorSession: async ({ page }, use) => {
+  editorSession: async ({ page, baseURL }, use) => {
     let ended = false;
     await use({
       ended: () => { ended = true; },
@@ -49,7 +49,7 @@ export const test = base.extend<EphFixtures>({
         // The browser keeps the dead session's cookies, and with them the editor's requests still answer 200 without
         // doing anything, so clear them first.
         await page.context().clearCookies();
-        await logInToEphEditor(page);
+        await logInToEphEditor(page, baseURL);
         ended = false;
       },
       isEnded: () => ended,

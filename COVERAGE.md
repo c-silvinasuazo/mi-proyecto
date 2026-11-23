@@ -87,7 +87,10 @@ fails with "steps not recorded yet", so it gets written against the real screens
 | REG-223 | eph/feedback-profiles | sponsor levels can't be added on the event's plan |
 | REG-124, ENG-1543 (regression of the designed behavior, closed 2026-11-04: a timed session earns credit for its duration, TBA and ineligible sessions earn none) | eph/feedback-profiles | PD Hours isn't enabled on the event (the pdhours tag, blocker #11) |
 | ENG-2641 | eph/feedback-profiles | the event's dates don't include today |
-| REG-001 to REG-006, REG-017, REG-202 to REG-205, TC-F4-01 to TC-F4-09, SCH-16 (steps not recorded yet) | eph/f4-payments | eph has no ticket payments: registration isn't set up and no Stripe test account is connected (requested in ENG-2832) |
+| REG-001 to REG-006, REG-017, REG-202 to REG-205, TC-F4-01 to TC-F4-09, SCH-16 (steps not recorded yet) | eph/f4-payments | needs the eph payments event (EPH_PAYMENTS_URL) with Stripe connected and registration on; the one on pr-1906 (qaeng2884vat) has Stripe, but on Free Trial registration doesn't stay on (plan change requested 2026-11-23) |
+| ENG-2884 / TC-F4-12: Schedmin saves and clears the VAT rate and merchant tax IDs, other taxes untouched; TC-F4-21: it rejects IDs without txr_ / txi_ (pending D7) | eph/eng-2884-vat | written in full; skips until ENG-2884 is on eph and EPH_SCHEDMIN_USERNAME / EPH_SCHEDMIN_PASSWORD are set (field names per decision D3) |
+| ENG-2884 / TC-F4-13 to TC-F4-20, TC-F4-23, TC-F4-24 (steps not recorded yet) | eph/eng-2884-vat | same as F4: needs the eph payments event with registration on and EUR |
+| ENG-2884 / TC-F4-22 (M10: new PHP with the old payment binary) | eph/eng-2884-vat | always: needs eph deployed with the old binary, stays manual |
 
 ## Placeholders by target
 

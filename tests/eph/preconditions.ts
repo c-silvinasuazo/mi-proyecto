@@ -20,14 +20,28 @@ export async function requireRegistration(page: Page) {
   test.skip(notSetUp > 0, 'Registration is not set up on this event, and its setup doesn\'t stick on this plan (needs a plan with registration, such as Boost)');
 }
 
-// Ticket sales (F4) need registration with paid tickets and Stripe in test mode connected to the event. On eph neither
-// is set up yet: Registration -> Payments sends you back to the editor while registration is off. Requested in ENG-2832.
+// Ticket sales (F4, and ENG-2884's checkout cases) run on an eph event of their own, EPH_PAYMENTS_URL: demofriends
+// can't sell tickets. A spec that uses it calls test.use(paymentsEvent). Setting the event up is manual: create it in
+// the Dashboard, connect Stripe in test mode (Registration -> Payments; Stripe's onboarding ends on sched.com, so open
+// /editor/registration/stripe-connected-account?onboard_result=return on the event to activate it), and turn
+// registration on.
+const paymentsUrl = process.env.EPH_PAYMENTS_URL;
+export const paymentsEvent = paymentsUrl ? { baseURL: paymentsUrl, storageState: '.auth/eph-payments.json' } : {};
+
+// Skips with what's missing on the payments event, in setup order. Once all of it is there, the case fails with
+// "steps not recorded yet" so it gets recorded.
 export async function requireTicketPayments(page: Page) {
+  test.skip(!paymentsUrl, 'Needs an eph event that can sell tickets: set EPH_PAYMENTS_URL (see .env.example)');
   await page.goto('/editor/registration/payments');
   const onPayments = new URL(page.url()).pathname.startsWith('/editor/registration/payments');
-  test.skip(!onPayments, 'Ticket payments aren\'t available on eph: registration isn\'t set up, so Registration -> Payments opens the editor instead (Stripe test mode requested in ENG-2832)');
-  const stripe = await page.getByText(/stripe/i).count();
-  test.skip(stripe === 0, 'No Stripe account is connected to this event\'s payments (Stripe test mode requested in ENG-2832)');
+  test.skip(!onPayments, 'Registration -> Payments opens the editor instead: the payments event has no registration');
+  const connected = await page.getByText('Stripe account is connected').count();
+  test.skip(connected === 0, 'Stripe isn\'t connected to the payments event, or its onboarding didn\'t finish (Registration -> Payments)');
+  await page.goto('/editor/registration/tickets');
+  const registrationOff = await page.getByText(/Enable Registration\s+to sell tickets/).count();
+  // On a Free Trial event the registration form's setup doesn't stick (pr-1906, 2026-11-23), and the currency only
+  // offers USD: both need a plan with registration, set in Schedmin.
+  test.skip(registrationOff > 0, 'Registration isn\'t on for the payments event ("Enable Registration to sell tickets"): its Free Trial plan doesn\'t keep it (needs a plan with registration, set in Schedmin)');
 }
 
 export async function requireSecretSessions(page: Page) {

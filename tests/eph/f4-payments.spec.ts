@@ -1,10 +1,12 @@
 import { test } from './fixtures';
-import { requireTicketPayments, stepsNotRecordedYet } from './preconditions';
+import { paymentsEvent, requireTicketPayments, stepsNotRecordedYet } from './preconditions';
 
-// F4 ticket payments, on eph. They need registration with paid tickets and Stripe in test mode, which eph doesn't have
-// yet (requested in ENG-2832): each case skips with that reason until it does, then fails with "steps not recorded yet"
-// so it gets recorded (see README: Recording a flow). Payments are always tested on eph, never on dev2 or production.
-test.describe('F4 ticket payments (needs Stripe test mode on eph)', () => {
+// F4 ticket payments, on eph's payments event (EPH_PAYMENTS_URL, with Stripe connected in test mode). Each case skips
+// with what the event is missing, then fails with "steps not recorded yet" so it gets recorded (see README: Recording
+// a flow). Payments are always tested on eph, never on dev2 or production.
+test.use(paymentsEvent);
+
+test.describe('F4 ticket payments (needs the eph payments event)', () => {
   // REG-001 / TC-F4-01
   test('REG-001 / TC-F4-01: buying a paid ticket completes; email names the ticket', async ({ page }) => {
     await requireTicketPayments(page);

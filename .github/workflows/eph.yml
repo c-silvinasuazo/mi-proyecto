@@ -4,7 +4,8 @@
 #
 # Needs these repository secrets (Settings -> Secrets and variables -> Actions): EPH_BASE_URL, EPH_USERNAME,
 # EPH_PASSWORD, and optionally EPH_SPEAKER_USERNAME, EPH_SPEAKER_PASSWORD, EPH_ATTENDEE_USERNAME, EPH_ATTENDEE_PASSWORD
-# (the docker-cd test accounts) and EPH_SCHEDMIN_USERNAME, EPH_SCHEDMIN_PASSWORD (eph Schedmin; see .env.example).
+# (the docker-cd test accounts), EPH_PAYMENTS_URL, EPH_CAPACITY_URL, EPH_REGISTRATION_URL and EPH_PD_URL (eph events of their own) and
+# EPH_SCHEDMIN_USERNAME, EPH_SCHEDMIN_PASSWORD (eph Schedmin; see .env.example).
 name: eph regression
 
 on:
@@ -58,6 +59,9 @@ jobs:
       EPH_ATTENDEE_USERNAME: ${{ secrets.EPH_ATTENDEE_USERNAME }}
       EPH_ATTENDEE_PASSWORD: ${{ secrets.EPH_ATTENDEE_PASSWORD }}
       EPH_PAYMENTS_URL: ${{ secrets.EPH_PAYMENTS_URL }}
+      EPH_CAPACITY_URL: ${{ secrets.EPH_CAPACITY_URL }}
+      EPH_REGISTRATION_URL: ${{ secrets.EPH_REGISTRATION_URL }}
+      EPH_PD_URL: ${{ secrets.EPH_PD_URL }}
       EPH_SCHEDMIN_USERNAME: ${{ secrets.EPH_SCHEDMIN_USERNAME }}
       EPH_SCHEDMIN_PASSWORD: ${{ secrets.EPH_SCHEDMIN_PASSWORD }}
     steps:

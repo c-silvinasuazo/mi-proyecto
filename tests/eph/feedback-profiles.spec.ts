@@ -2,8 +2,8 @@ import { Page } from '@playwright/test';
 import { test, expect } from './fixtures';
 import { logInToEph, runId } from '../helpers';
 import { addAttendee, attendeePhoto, ensureSpeakerName, setAttendeePhoto, solidPng } from './people';
-import { requireAccount, requireEventFeedback, requireEventRunningToday, requirePdHours, requireSponsorLevelEditing, stepsNotRecordedYet } from './preconditions';
-import { eventFirstDay, openAddSession, publishNewSession, sessionId } from './sessions';
+import { pdEvent, requireAccount, requireEventFeedback, requireEventRunningToday, requirePdEvent, requireSponsorLevelEditing, stepsNotRecordedYet } from './preconditions';
+import { createSession, eventFirstDay, openAddSession, publishNewSession, sessionId } from './sessions';
 
 type SpeakerTools = { 'Edit session details': boolean; 'Edit session description': boolean };
 const speakerToolSwitch = (page: Page, name: keyof SpeakerTools) => page.locator('#speaker-tools').getByRole('switch', { name, exact: true });
@@ -68,19 +68,6 @@ test.describe('feedback, profiles, sponsors and PD', () => {
   // REG-223
   test('REG-223: a sponsor level can be created and deleted (needs a paid plan)', async ({ page }) => {
     await requireSponsorLevelEditing(page);
-    stepsNotRecordedYet();
-  });
-  // REG-124 / ENG-2068 / ENG-1214
-  test('REG-124 / ENG-2068 / ENG-1214: PD setup and approval work; the PD badge shows (needs the pdhours tag)', async ({ page }) => {
-    await requirePdHours(page);
-    stepsNotRecordedYet();
-  });
-  // ENG-1543 (closed 2026-11-04, working as designed): once PD Hours is set up, every session with a start and end time
-  // earns credit for its duration (1.00 credit per hour by default) unless the planner overrides it or marks the
-  // session ineligible; TBA sessions get none. After PD setup: a timed session's credit equals its duration, a TBA
-  // session has none, and a session marked ineligible has none.
-  test('ENG-1543: after PD setup, a timed session earns credit for its duration; TBA and ineligible sessions earn none', async ({ page }) => {
-    await requirePdHours(page);
     stepsNotRecordedYet();
   });
   // ENG-2641
@@ -158,5 +145,56 @@ test.describe('feedback, profiles, sponsors and PD', () => {
     } finally {
       await setSpeakerTools(page, before);
     }
+  });
+});
+
+// PD Hours, on the PD event (EPH_PD_URL), which has PD Hours set up with Session-Level Credit. Each session's credit is
+// on PD Hours -> Sessions: an Eligible switch and a credit field ("Auto" until the planner overrides it).
+test.describe('PD Hours (needs the eph PD event)', () => {
+  test.use(pdEvent);
+
+  // A session's row on PD Hours -> Sessions: its Eligible switch and its credit hours.
+  async function credit(page: Page, title: string) {
+    await page.goto('/editor/ce-compliance/sessions/');
+    const row = page.getByRole('row').filter({ hasText: title });
+    return { eligible: row.locator('input[type=checkbox]'), hours: row.locator('input[type=number]') };
+  }
+
+  // REG-124 / ENG-1214 (ENG-2068): with PD Hours set up, a session that earns credit shows its PD badge ("1.50 PD") on its
+  // public page and in the schedule. Setting PD Hours up without "Failed to create prerequisite" (ENG-2068) was checked
+  // when the PD event was set up (2026-11-25); the org rollup (ENG-2058) isn't available yet ("Coming soon").
+  test('REG-124 / ENG-2068 / ENG-1214: PD setup and approval work; the PD badge shows (needs the pdhours tag)', async ({ page }) => {
+    await requirePdEvent(page);
+    const title = `QA PD badge ${runId()}`;
+    const id = await createSession(page, title, { start: '10:00', end: '11:30' });
+    await page.goto(`/event/${id}`);
+    await expect(page.getByText('1.50 PD').first(), 'The session page should show its PD badge').toBeVisible();
+    await page.goto('/list/simple');
+    await expect(page.locator('body'), 'The schedule should show the session\'s PD badge').toContainText(new RegExp(`${title}[\\s\\S]{0,40}1\\.50 PD`));
+  });
+
+  // ENG-1543 (closed 2026-11-04, working as designed): once PD Hours is set up, a session with a start and end time earns
+  // credit for its duration (1.00 per hour); a TBA session has none; a session marked ineligible earns none, and its
+  // PD badge doesn't show.
+  test('ENG-1543: after PD setup, a timed session earns credit for its duration; TBA and ineligible sessions earn none', async ({ page }) => {
+    await requirePdEvent(page);
+    const run = runId();
+    await createSession(page, `QA PD timed ${run}`, { start: '10:00', end: '11:30' });
+    await createSession(page, `QA PD tba ${run}`, { tba: true });
+    const ineligibleId = await createSession(page, `QA PD ineligible ${run}`, { start: '12:00', end: '13:00' });
+
+    const timed = await credit(page, `QA PD timed ${run}`);
+    await expect(timed.hours, 'A 90-minute session should earn 1.50 credit hours').toHaveValue('1.50');
+    const tba = await credit(page, `QA PD tba ${run}`);
+    await expect(tba.hours, 'A TBA session should earn no credit').toHaveValue('');
+
+    const ineligible = await credit(page, `QA PD ineligible ${run}`);
+    // The switch saves on its own (saveSessionCredit).
+    const saved = page.waitForResponse((r) => r.request().method() === 'POST' && /saveSessionCredit/.test(r.request().postData() ?? ''));
+    await ineligible.eligible.evaluate((box) => (box as HTMLInputElement).click());
+    expect((await saved).ok(), 'Marking the session ineligible did not save').toBe(true);
+    await expect((await credit(page, `QA PD ineligible ${run}`)).eligible, 'The session should stay ineligible').not.toBeChecked();
+    await page.goto(`/event/${ineligibleId}`);
+    await expect(page.getByText(/\d\.\d\d PD/), 'An ineligible session should show no PD badge').toHaveCount(0);
   });
 });

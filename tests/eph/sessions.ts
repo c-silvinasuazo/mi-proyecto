@@ -7,27 +7,30 @@ import { editorJson, retryRequest } from '../helpers';
 // Opens the editor's "Add New" session form.
 export async function openAddSession(page: Page) {
   await page.goto('/editor/schedule');
-  await page.getByRole('button', { name: 'Add New' }).click();
+  // "Add New", or "Add Sessions" while the event has no sessions.
+  await page.locator('button[data-rel="#add"]:visible').first().click();
   await expect(page.locator('#add-session-title')).toBeVisible();
 }
 
 // The event's first and last days (YYYY-MM-DD), as Settings shows them. Sessions outside the event's dates don't show
 // on the public site, and eph's data (the event's dates with it) can change when eph is rebuilt: on 2026-11-15
 // demofriends ran on January 31, 2018 only. So the tests put their sessions on the first day instead of a fixed date.
-// Read once per run.
-let dates: { first: string; last: string } | undefined;
+// Parsed once per run and event: some specs run on other eph events (test.use with another baseURL). Settings shows
+// "January 25, 2027" for a one-day event and "January 25, 2027 to January 26, 2027" otherwise.
+const dates = new Map<string, { first: string; last: string }>();
 export async function eventDates(page: Page) {
-  if (!dates) {
-    const html = await (await page.request.get('/editor/settings')).text();
-    const found = html.match(/(\w+ \d+, \d{4}) to (\w+ \d+, \d{4})/);
+  const response = await page.request.get('/editor/settings');
+  const host = new URL(response.url()).host;
+  if (!dates.has(host)) {
+    const found = (await response.text()).match(/id="dates-preformatted">\s*(\w+ \d+, \d{4})(?:\s+to\s+(\w+ \d+, \d{4}))?/);
     expect(found, 'Could not read the event\'s dates in Settings').toBeTruthy();
     const day = (text: string) => {
       const [, month, date, year] = text.match(/(\w+) (\d+), (\d{4})/)!;
       return `${year}-${String(new Date(`${month} 1, 2000`).getMonth() + 1).padStart(2, '0')}-${date.padStart(2, '0')}`;
     };
-    dates = { first: day(found![1]), last: day(found![2]) };
+    dates.set(host, { first: day(found![1]), last: day(found![2] ?? found![1]) });
   }
-  return dates;
+  return dates.get(host)!;
 }
 
 export async function eventFirstDay(page: Page) {
@@ -141,15 +144,16 @@ export async function deleteCreatedSessions(page: Page) {
 // Creates and publishes a session on the event's first day and returns its id. It sends the request the editor's
 // Publish button sends (what=saveSession), so a test that only needs a session to exist doesn't spend its time in the
 // form; the checks of the form itself (REG-208, REG-209, REG-210, ENG-2244) use openAddSession and publishNewSession.
-// The description is HTML, as the editor stores it.
-export async function createSession(page: Page, title: string, { start = '10:00', end = '10:30', description = '' } = {}) {
+// The description is HTML, as the editor stores it. Seats is the session's capacity (0: no limit); a secret session
+// (an Ultra feature) only shows to the people enrolled in it; a TBA session has no date or time.
+export async function createSession(page: Page, title: string, { start = '10:00', end = '10:30', description = '', seats = 0, secret = false, tba = false } = {}) {
   const day = await eventFirstDay(page);
   unconfirmed.add(title);
   const response = await retryRequest(() => page.request.post('/editor/schedule', {
     multipart: {
-      what: 'saveSession', 'data[name]': title, 'data[description]': description, 'data[seats]': '0',
-      'data[event_start]': `${day} ${start}:00`, 'data[event_end]': `${day} ${end}:00`,
-      'data[active]': 'Y', 'data[pinned]': 'N', 'data[frozen]': 'N', 'data[private]': 'N', 'data[moderators]': 'false',
+      what: 'saveSession', 'data[name]': title, 'data[description]': description, 'data[seats]': String(seats),
+      'data[event_start]': tba ? '' : `${day} ${start}:00`, 'data[event_end]': tba ? '' : `${day} ${end}:00`,
+      'data[active]': 'Y', 'data[pinned]': 'N', 'data[frozen]': 'N', 'data[private]': secret ? 'Y' : 'N', 'data[moderators]': 'false',
     },
   }));
   const result = await editorJson(response, `Creating "${title}"`);

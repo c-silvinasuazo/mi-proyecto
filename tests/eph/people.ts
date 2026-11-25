@@ -1,6 +1,6 @@
-import { test, expect, Page } from '@playwright/test';
+import { test, expect, BrowserContextOptions, Page } from '@playwright/test';
 import * as zlib from 'zlib';
-import { editorJson, retryRequest, runId } from '../helpers';
+import { editorJson, logInToEph, retryRequest, runId } from '../helpers';
 
 // Attendee helpers shared by the eph specs that add people. The eph fixtures (fixtures.ts) remove them after each test.
 
@@ -156,4 +156,35 @@ export async function expectImageLoads(page: Page, src: string) {
   test.info().annotations.push({ type: 'image', description: `${response.status()} ${src}` });
   expect(response.ok() && /^image\//.test(response.headers()['content-type'] ?? ''), `The photo doesn't load: HTTP ${response.status()} ${response.headers()['content-type']} from ${src}`).toBe(true);
   return response.body();
+}
+
+// Logs one of the optional accounts (EPH_ATTENDEE, EPH_SPEAKER) in to the event at baseURL in a browser of its own, and
+// joins the event if the account hasn't yet (an account has to join before it can build a schedule). Returns the page.
+export async function joinedAs(newPage: (options?: BrowserContextOptions) => Promise<Page>, baseURL: string, prefix: 'EPH_ATTENDEE' | 'EPH_SPEAKER') {
+  const page = await newPage({ baseURL, storageState: { cookies: [], origins: [] } });
+  await logInToEph(page, prefix, baseURL);
+  const join = page.getByRole('button', { name: 'Join Event' }).or(page.getByRole('link', { name: 'Join Event' }));
+  if (await join.count()) {
+    await join.first().click();
+    await expect(join, `${prefix}_USERNAME could not join the event`).toHaveCount(0);
+  }
+  return page;
+}
+
+// Adds or removes one of the event's People Tags (Settings -> People Tags) on an attendee, the request Attendees ->
+// Bulk Actions -> Tag sends (what=tagMulti). Returns the tag's id.
+export async function setPeopleTag(page: Page, userId: string, tag: string, on: boolean) {
+  await page.goto('/editor/attendees');
+  const options = await page.locator('#assign-multi-tags').evaluate((select) => Object.values((select as any).selectize.options) as { text: string; value: string }[]);
+  const id = options.find((option) => option.text === tag)?.value;
+  expect(id, `The event has no People Tag "${tag}" (Settings -> People Tags)`).toBeTruthy();
+  const response = await retryRequest(() => page.request.post('/editor/attendees', { form: { what: 'tagMulti', 'data[userIds]': userId, [on ? 'data[assign][]' : 'data[deAssign][]']: id! } }));
+  expect(response.ok(), `Could not ${on ? 'add' : 'remove'} the People Tag "${tag}"`).toBe(true);
+  return id!;
+}
+
+// The id of the event's attendee with this username, from Attendees.
+export async function attendeeId(page: Page, username: string) {
+  await page.goto('/editor/attendees');
+  return page.getByRole('row').filter({ hasText: username }).locator('input.row_checkbox').getAttribute('value');
 }

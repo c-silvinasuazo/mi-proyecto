@@ -14,17 +14,61 @@ export async function requirePdHours(page: Page) {
 
 export async function requireRegistration(page: Page) {
   await page.goto('/editor/registration');
-  const notSetUp = await page.getByText('Set Up Registration').count();
-  // On demofriends the setup wizard runs but registration doesn't stay on (tried 2026-11-10): the plan doesn't include
-  // it (the case notes say the Registration menu shows on Boost, not on the legacy Engage plan).
-  test.skip(notSetUp > 0, 'Registration is not set up on this event, and its setup doesn\'t stick on this plan (needs a plan with registration, such as Boost)');
+  // The setup wizard alone doesn't turn registration on: it needs an intro text, then the "Enable Sched Registration"
+  // switch, which only shows once the form is set up. demofriends has neither (its plan is changed in Schedmin, which
+  // would change other cases too). The empty-state page stays in the DOM, hidden, so check the switch, not that text.
+  const on = await page.locator('#enable-registration').isChecked().catch(() => false);
+  test.skip(!on, 'Registration is not on for this event: give the registration form an intro text and turn on "Enable Sched Registration"');
+}
+
+// Session capacity and the waitlist (F6) and secret sessions (F9) run on an eph event of their own on Ultra,
+// EPH_CAPACITY_URL: on demofriends' plan a session's capacity isn't enforced and secret sessions are locked, and on the
+// payments event attendees need a ticket before they can join a session. A spec that uses it calls
+// test.use(capacityEvent). Setup is manual (see .env.example): Ultra in Schedmin, the waitlist on, a People Tag
+// "QA enroll"; registration stays off.
+const capacityUrl = process.env.EPH_CAPACITY_URL;
+export const capacityEvent = capacityUrl ? { baseURL: capacityUrl, storageState: '.auth/eph-capacity.json' } : {};
+
+// The registration form cases (F6) run on an eph event of their own, EPH_REGISTRATION_URL, set up as .env.example says:
+// registration on, a free ticket and the QA form questions. A spec that uses it calls test.use(registrationEvent).
+const registrationUrl = process.env.EPH_REGISTRATION_URL;
+export const registrationEvent = registrationUrl ? { baseURL: registrationUrl, storageState: '.auth/eph-registration.json' } : {};
+
+export async function requireRegistrationEvent(page: Page) {
+  test.skip(!registrationUrl, 'Needs an eph event with the QA registration form: set EPH_REGISTRATION_URL (see .env.example)');
+  requireAccount('ATTENDEE');
+  await requireRegistration(page);
+}
+
+// PD Hours runs on an eph event of its own, EPH_PD_URL, with PD Hours set up once (see .env.example): setting it up
+// can't be undone and locks once the event starts, so the shared events stay without it. A spec that uses it calls
+// test.use(pdEvent).
+const pdUrl = process.env.EPH_PD_URL;
+export const pdEvent = pdUrl ? { baseURL: pdUrl, storageState: '.auth/eph-pd.json' } : {};
+
+export async function requirePdEvent(page: Page) {
+  test.skip(!pdUrl, 'Needs an eph event with PD Hours set up: set EPH_PD_URL (see .env.example)');
+  await requirePdHours(page);
+  await page.goto('/editor/ce-compliance/sessions/');
+  const setUp = await page.getByText('Set session eligibility and credit values').count();
+  test.skip(setUp === 0, 'PD Hours is on but not set up on the PD event: set it up once (Session-Level Credit, check-in required)');
+}
+
+export async function requireCapacityEvent(page: Page) {
+  test.skip(!capacityUrl, 'Needs an eph event with session capacity and the waitlist on: set EPH_CAPACITY_URL (see .env.example)');
+  requireAccount('ATTENDEE');
+  requireAccount('SPEAKER');
+  await page.goto('/editor/settings');
+  test.skip(!(await page.locator('#enable_waitlist').isChecked()), 'The waitlist is off on the capacity event (Settings -> Waitlist Settings -> Enable waitlist, then Save)');
 }
 
 // Ticket sales (F4, and ENG-2884's checkout cases) run on an eph event of their own, EPH_PAYMENTS_URL: demofriends
 // can't sell tickets. A spec that uses it calls test.use(paymentsEvent). Setting the event up is manual: create it in
-// the Dashboard, connect Stripe in test mode (Registration -> Payments; Stripe's onboarding ends on sched.com, so open
-// /editor/registration/stripe-connected-account?onboard_result=return on the event to activate it), and turn
-// registration on.
+// the Dashboard, put it on Boost in Schedmin, give the registration form an intro text and turn on "Enable Sched
+// Registration", connect Stripe in test mode (Registration -> Payments; typing an existing Stripe account's email in the
+// onboarding's first step lets you pick the country, and the onboarding ends on sched.com, so open
+// /editor/registration/stripe-connected-account?onboard_result=return on the event to activate it), then pick the
+// currency and add the paid tickets.
 const paymentsUrl = process.env.EPH_PAYMENTS_URL;
 export const paymentsEvent = paymentsUrl ? { baseURL: paymentsUrl, storageState: '.auth/eph-payments.json' } : {};
 
@@ -39,14 +83,14 @@ export async function requireTicketPayments(page: Page) {
   test.skip(connected === 0, 'Stripe isn\'t connected to the payments event, or its onboarding didn\'t finish (Registration -> Payments)');
   await page.goto('/editor/registration/tickets');
   const registrationOff = await page.getByText(/Enable Registration\s+to sell tickets/).count();
-  // On a Free Trial event the registration form's setup doesn't stick (pr-1906, 2026-11-23), and the currency only
-  // offers USD: both need a plan with registration, set in Schedmin.
-  test.skip(registrationOff > 0, 'Registration isn\'t on for the payments event ("Enable Registration to sell tickets"): its Free Trial plan doesn\'t keep it (needs a plan with registration, set in Schedmin)');
+  // The setup wizard alone leaves registration off: it needs an intro text, then the "Enable Sched Registration" switch.
+  test.skip(registrationOff > 0, 'Registration isn\'t on for the payments event ("Enable Registration to sell tickets"): give the registration form an intro text and turn on "Enable Sched Registration"');
 }
 
 export async function requireSecretSessions(page: Page) {
   await page.goto('/editor/schedule');
-  await page.getByRole('button', { name: 'Add New' }).click();
+  // "Add New", or "Add Sessions" while the event has no sessions.
+  await page.locator('button[data-rel="#add"]:visible').first().click();
   const disabled = await page.locator('#session-add-tab').getByRole('switch', { name: 'Secret session' }).isDisabled();
   test.skip(disabled, 'Secret sessions are disabled on this event\'s plan ("Upgrade to unlock"; needs Ultra)');
 }

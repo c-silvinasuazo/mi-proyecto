@@ -27,9 +27,11 @@ export class SalesTaxForm {
     return this.form.locator(`input[name="${name}"]`);
   }
 
+  // The form sits in a collapsed part of the event page, so it's in the page but hidden: the tests read and set its
+  // inputs without needing it on screen.
   async open() {
     await this.page.goto(`/package-single.php?conf=${this.confId}`);
-    await expect(this.form, `Schedmin has no "Set Sales Tax Stripe IDs" form for ${this.confId}`).toBeVisible();
+    await expect(this.form, `Schedmin has no "Set Sales Tax Stripe IDs" form for ${this.confId}`).toBeAttached();
   }
 
   // The names of the ENG-2884 rate and merchant tax ID inputs. Skips while the environment runs a build without
@@ -58,11 +60,11 @@ export class SalesTaxForm {
   // Fills the given fields, leaves the others as saved, and saves. Returns Schedmin's answer ({ result, message }).
   async save(values: Record<string, string>): Promise<{ result: string; message?: string }> {
     await this.open();
-    for (const [name, value] of Object.entries(values)) await this.field(name).fill(value);
+    for (const [name, value] of Object.entries(values)) await this.field(name).evaluate((input, v) => { (input as HTMLInputElement).value = v; }, value);
     // The form asks "Change sales tax settings for <event>?" and then opens the JSON answer as a page.
     this.page.once('dialog', (dialog) => dialog.accept());
     const answer = this.page.waitForResponse((r) => r.url().includes('/conf/setpaymentsalestax.php') && r.request().method() === 'POST');
-    await this.form.locator('input[type="submit"]').click();
+    await this.form.evaluate((form) => (form as HTMLFormElement).requestSubmit());
     const text = await (await answer).text();
     return JSON.parse(text.slice(text.search(/\{\s*"/)));
   }

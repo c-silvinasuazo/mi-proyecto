@@ -56,6 +56,27 @@ Status: ✅ automated · 🟡 placeholder (`test.fixme`, to record) · 👤 stay
 | APP-16 / REG-123: no "Download the Sched app" banner on the schedule, a session or an attendee's profile | mobile/sched-app (Maestro) | ✅ iOS and Android |
 | APP-15 / REG-122: in dark mode the schedule, a session and the attendee list show their content | mobile/sched-app-dark (Maestro) | ✅ iOS and Android, with screenshots for the visual check (Android 1.63.1 turns dark and reads well; Sched Dev 2.16.2 on iOS stays light, so dark mode isn't really exercised there) |
 | REG-225 (ENG-2172): the event's speaker list in the app keeps the web's order (featured first, then by last name) | mobile/sched-app (Maestro) | ✅ iOS and Android |
+| ENG-2884 / TC-F4-12: Schedmin saves and clears the VAT rate and merchant tax IDs, other taxes untouched | eph/eng-2884-vat | ✅ (payments event, master eph) |
+| ENG-2884 / TC-F4-21: Schedmin rejects a rate ID without txr_ and a tax ID without txi_, and says why | eph/eng-2884-vat | ✅ |
+| ENG-2884 / TC-F4-13: with only the rate ID there's no VAT notice and no VAT; with both IDs the order is taxed | eph/eng-2884-vat | ✅ |
+| ENG-2884 / TC-F4-14: the cart says "VAT will be added" on CHF and "Tax will be added" on NZD (where the rate also applies) | eph/eng-2884-vat | ✅ (switches the currency and puts it back) |
+| ENG-2884 / TC-F4-15: Stripe shows the VAT as its own line; total = net + VAT within a cent | eph/eng-2884-vat | ✅ (the Stripe page, without paying; the 4242 payment and receipt checked by hand) |
+| ENG-2884 / TC-F4-16: a passed-on fee is taxed; with the fee absorbed there's no fee line and only tickets are taxed | eph/eng-2884-vat | ✅ |
+| ENG-2884 / TC-F4-17: CAD, GBP, AUD and USD events ignore the new IDs (no notice, no tax) | eph/eng-2884-vat | ✅ |
+| REG-204 / SCH-16 / TC-F4-04: price, fee and currency match in the editor, ticket picker, cart and Stripe | eph/f4-payments | ✅ |
+| REG-004: a future sales start is saved, shows "Not On Sale" and isn't offered | eph/f4-payments | ✅ (sold out, TC-F4-05, needs a completed purchase) |
+| REG-202 / TC-F4-03 (ENG-266): editing a coupon's end date keeps its ticket; the code takes 20% off that ticket only | eph/f4-payments | ✅ (applying a code reprices the tickets and empties the cart) |
+| REG-005 (ENG-1005, ENG-1420): a four-line ticket message shows in full, not covering Place Order | eph/f4-payments | ✅ |
+| REG-101 / TC-F6-01 (ENG-1779): a logged-out visitor is offered Sign Up and Log In; required and conditional questions work; registering completes | eph/f6-registration | ✅ (registration event; the file question and signing up stay manual) |
+| REG-206: the custom answers, the conditional one included, show in the registrant's Registration tab | eph/f6-registration | ✅ (the Registrants export stays manual: exports are empty on eph) |
+| REG-207 / ENG-2169: a completed registrant isn't listed under Incomplete Registrations | eph/f6-registration | ✅ |
+| REG-125 / TC-F6-04: a 2-seat session with no sign-ups isn't full; the third attendee is waitlisted | eph/f6-registration | ✅ (capacity event, on Ultra) |
+| TC-F6-05: when an attendee leaves a full session, the first waitlisted attendee moves in | eph/f6-registration | ✅ (the email stays manual) |
+| REG-104: a secret session isn't in the public schedule for a non-enrolled attendee or a visitor; the admin sees SECRET | eph/f9-sessions | ✅ (capacity event, on Ultra; reminders stay manual) |
+| REG-211 / TC-F9-04 (ENG-536): Enroll by People Tag enrolls the tagged attendee in a secret session | eph/f9-sessions | ✅ (speaker PDF stays manual) |
+| REG-014 / TC-F2-03 (ENG-2022, ENG-271, ENG-2240): a copy of the payments event isn't switched to Eventbrite, keeps the registration form and shows current Settings | eph/f2-events | ✅ (opt-in: EPH_ALLOW_EVENT_CREATION=1, each run creates an event) |
+| REG-124 / ENG-1214: with PD Hours set up, a session with credit shows its "1.50 PD" badge on its page and in the schedule | eph/feedback-profiles | ✅ (PD event; setup without "Failed to create prerequisite", ENG-2068, checked when it was set up 2026-11-25; org rollup ENG-2058 is "Coming soon") |
+| ENG-1543: a 90-minute session earns 1.50 credit hours, a TBA session none, and an ineligible one shows no PD badge | eph/feedback-profiles | ✅ (PD event) |
 | ENG-183: Android check-in: undoing an event check-in in Name Search is saved | eph/checkin-android | ✅ (open bug, marked with openBug: the circle unticks but no request is sent; the attendee stays checked in, also on qaengreminders in production) |
 | Android check-in: undoing a session check-in is saved (SC-06 on Android) | eph/checkin-android | ✅ |
 | TC-F3-02: /password-reset and /password-reset/ show the reset form (main site; email, link and new password stay manual: captcha, no email on eph) | eph/f3-login | ✅ |
@@ -77,19 +98,16 @@ fails with "steps not recorded yet", so it gets written against the real screens
 | Check | File | Skips while |
 | --- | --- | --- |
 | REG-012 / TC-F1-01, REG-013 / TC-F1-02, TC-F1-04/05 | eph/f1-signup | /signup has a captcha on eph |
-| TC-F2-08 (written in full; ran once on eph 2026-11-10: the event was created and its editor opened), REG-014 / ENG-271 | eph/f2-events | EPH_ALLOW_EVENT_CREATION isn't set (each run creates an event that can't be deleted); the /signup half (TC-F2-01) stays manual: captcha |
-| REG-101, REG-206, REG-207, REG-125, TC-F6-05 | eph/f6-registration | registration isn't on: its setup doesn't stick on demofriends' plan (tried 2026-11-10; needs a plan with registration, such as Boost) |
+| TC-F2-08 (written in full; ran once on eph 2026-11-10: the event was created and its editor opened) | eph/f2-events | EPH_ALLOW_EVENT_CREATION isn't set (each run creates an event that can't be deleted); the /signup half (TC-F2-01) stays manual: captcha |
 | REG-117 | eph/f8-checkin | file uploads fail on eph |
 | ENG-241 | eph/f8-checkin | always: visual check (special characters drawn as boxes), stays manual; badge templates don't load on eph either |
-| REG-106 (written in full), REG-104 / REG-211 | eph/f9-sessions | the import queue isn't processing / secret sessions need Ultra |
+| REG-106 (written in full) | eph/f9-sessions | the import queue isn't processing |
 | TC-F10-04 (written in full) | eph/f10-control-panel | the import queue isn't processing |
 | REG-118, REG-221, ENG-2588, ENG-2592 | eph/feedback-profiles | no feedback button on the public site, for the admin or the attendee (feedback is enabled in Settings; checked 2026-11-10) |
-| REG-223 | eph/feedback-profiles | sponsor levels can't be added on the event's plan |
-| REG-124, ENG-1543 (regression of the designed behavior, closed 2026-11-04: a timed session earns credit for its duration, TBA and ineligible sessions earn none) | eph/feedback-profiles | PD Hours isn't enabled on the event (the pdhours tag, blocker #11) |
+| REG-223 | eph/feedback-profiles | sponsor levels are 8 fixed slots that can only be renamed, also on Ultra (checked 2026-11-25): how a level was created and deleted in production (2026-11-03) is to confirm |
 | ENG-2641 | eph/feedback-profiles | the event's dates don't include today |
-| REG-001 to REG-006, REG-017, REG-202 to REG-205, TC-F4-01 to TC-F4-09, SCH-16 (steps not recorded yet) | eph/f4-payments | needs the eph payments event (EPH_PAYMENTS_URL) with Stripe connected and registration on; the one on pr-1906 (qaeng2884vat) has Stripe, but on Free Trial registration doesn't stay on (plan change requested 2026-11-23) |
-| ENG-2884 / TC-F4-12: Schedmin saves and clears the VAT rate and merchant tax IDs, other taxes untouched; TC-F4-21: it rejects IDs without txr_ / txi_ (pending D7) | eph/eng-2884-vat | written in full; skips until ENG-2884 is on eph and EPH_SCHEDMIN_USERNAME / EPH_SCHEDMIN_PASSWORD are set (field names per decision D3) |
-| ENG-2884 / TC-F4-13 to TC-F4-20, TC-F4-23, TC-F4-24 (steps not recorded yet) | eph/eng-2884-vat | same as F4: needs the eph payments event with registration on and EUR |
+| REG-001, REG-002/003, REG-006, REG-017, REG-203/205, TC-F4-01, 02, 05 to 09 (steps not recorded yet) | eph/f4-payments | need a completed purchase: eph has no payment webhook (ENG-2832); TC-F4-07 (declined card) is still to write |
+| ENG-2884 / TC-F4-18, 19, 20, 23, 24 (steps not recorded yet) | eph/eng-2884-vat | 18: a second event with Stripe; 19: completed orders (webhook); 20: UK/CA/AU rates in the event's Stripe account (needs its login); 23: expected result not defined; 24: reading the invoice needs Stripe access |
 | ENG-2884 / TC-F4-22 (M10: new PHP with the old payment binary) | eph/eng-2884-vat | always: needs eph deployed with the old binary, stays manual |
 
 ## Placeholders by target

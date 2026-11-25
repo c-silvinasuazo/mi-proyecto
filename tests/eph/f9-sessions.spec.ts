@@ -1,11 +1,11 @@
 import { Page } from '@playwright/test';
 import { test, expect } from './fixtures';
 import * as fs from 'fs';
-import { logInToEph, retryRequest, runId } from '../helpers';
+import { logInToEph, requireEnv, retryRequest, runId } from '../helpers';
 import { writeXlsx } from '../xlsx';
-import { expectImageLoads, solidPng } from './people';
+import { attendeeId, expectImageLoads, joinedAs, setPeopleTag, solidPng } from './people';
 import { addDescription, createSession, editDescription, eventFirstDay, nextDay, openAddSession, openEditSession, pickTime, publishNewSession } from './sessions';
-import { ephGap, ephMakesPdfs, openBug, requireAccount, requireFileUploads, requireImportQueueWorking, requireSecretSessions, stepsNotRecordedYet } from './preconditions';
+import { capacityEvent, ephGap, ephMakesPdfs, openBug, requireAccount, requireFileUploads, requireImportQueueWorking, requireSecretSessions } from './preconditions';
 
 // F9 session editor. Cases still marked fixme are placeholders until they're recorded (see README: Recording a flow).
 
@@ -327,12 +327,6 @@ test.describe('F9 session editor', () => {
     await expect(session, 'A page opened before the freeze took the frozen session off My Schedule').toHaveClass(/\bsub\b/);
   });
 
-  // REG-104 / REG-211 / TC-F9-04
-  test('REG-104 / REG-211 / TC-F9-04: private session hidden from non-invited attendees; Enroll by People Tag works (needs Ultra)', async ({ page }) => {
-    await requireSecretSessions(page);
-    requireAccount('ATTENDEE');
-    stepsNotRecordedYet();
-  });
   // REG-107
   // REG-107 (ENG-934, ENG-105): Reports -> Event Schedule (PDF) is /print with a "Download PDF" link; Reports ->
   // Attendee Schedules (PDF) lists attendees with a session and a "Download" link each. The PDFs' text is compressed,
@@ -448,5 +442,60 @@ test.describe('F9 session editor', () => {
     // The type field keeps the stored types as the select's chosen options (a split type shows as two).
     const types = () => page.locator('#edit-event-type').evaluate((e) => [...(e as HTMLSelectElement).selectedOptions].map((o) => o.text));
     await expect.poll(types, { message: 'The session type was split or changed' }).toEqual([type]);
+  });
+});
+
+// Secret sessions are an Ultra feature: they run on the capacity event (EPH_CAPACITY_URL), which is on Ultra.
+test.describe('F9 secret sessions (needs the eph capacity event, on Ultra)', () => {
+  test.use(capacityEvent);
+
+  // REG-104 (ENG-2166, ENG-1735, ENG-460, ENG-2117): a secret session doesn't appear in the public schedule for a
+  // logged-in attendee who isn't enrolled, nor for a logged-out visitor; the admin sees it with its SECRET label. The
+  // reminder emails stay manual (no email on eph).
+  test('REG-104: a secret session is hidden from the public schedule; the admin sees its SECRET label', async ({ page, newPage, baseURL }) => {
+    await requireSecretSessions(page);
+    requireAccount('ATTENDEE');
+    const title = `QA secret ${runId()}`;
+    const id = await createSession(page, title, { secret: true });
+    await page.goto(`/event/${id}`);
+    await expect(page.getByText('SECRET', { exact: true }).first(), 'The admin should see the session marked SECRET').toBeVisible();
+    await page.goto('/list/simple');
+    await expect(page.getByText(title).first(), 'The admin should see the secret session in the schedule').toBeVisible();
+
+    const attendee = await newPage({ baseURL, storageState: { cookies: [], origins: [] } });
+    await logInToEph(attendee, 'EPH_ATTENDEE', baseURL);
+    const visitor = await newPage({ baseURL, storageState: { cookies: [], origins: [] } });
+    for (const [who, other] of [['A logged-in attendee who isn\'t enrolled', attendee], ['A logged-out visitor', visitor]] as const) {
+      await other.goto('/list/simple');
+      await expect(other.getByText(title), `${who} should not see the secret session in the schedule`).toHaveCount(0);
+    }
+  });
+
+  // REG-211 / TC-F9-04 (ENG-536): Sessions -> Bulk Actions -> Enroll by People Tag enrolls the attendees with that tag in
+  // a secret session: the tagged attendee sees it in the schedule, the speaker (not tagged) doesn't. Needs the People
+  // Tag "QA enroll" (Settings -> People Tags). The tag is taken off the attendee after the test. The speaker PDF and
+  // the reminder emails stay manual.
+  test('REG-211 / TC-F9-04: Enroll by People Tag enrolls the tagged attendee in a secret session', async ({ page, newPage, baseURL }) => {
+    test.slow();
+    await requireSecretSessions(page);
+    requireAccount('ATTENDEE');
+    requireAccount('SPEAKER');
+    const attendee = await joinedAs(newPage, baseURL!, 'EPH_ATTENDEE');
+    const speaker = await joinedAs(newPage, baseURL!, 'EPH_SPEAKER');
+    const title = `QA secret enroll ${runId()}`;
+    const id = await createSession(page, title, { secret: true });
+    const userId = (await attendeeId(page, requireEnv('EPH_ATTENDEE_USERNAME')))!;
+    const tag = await setPeopleTag(page, userId, 'QA enroll', true);
+    try {
+      // The request Enroll by People Tag's Update button sends (after its "Are you sure" prompt).
+      const enrolled = await page.request.post('/editor/schedule', { form: { what: 'enrollTaggedMulti', 'data[sessionIds]': id, 'data[assign][]': tag } });
+      expect(enrolled.ok(), 'Enroll by People Tag failed').toBe(true);
+      await attendee.goto('/list/simple');
+      await expect(attendee.getByText(title).first(), 'The tagged attendee should see the secret session they were enrolled in').toBeVisible();
+      await speaker.goto('/list/simple');
+      await expect(speaker.getByText(title), 'An attendee without the tag should not see the secret session').toHaveCount(0);
+    } finally {
+      await setPeopleTag(page, userId, 'QA enroll', false);
+    }
   });
 });

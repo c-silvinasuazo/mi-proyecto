@@ -1,6 +1,6 @@
 import { test, expect } from './fixtures';
 import { runId } from '../helpers';
-import { requireEventCreationAllowed, stepsNotRecordedYet } from './preconditions';
+import { requireEventCreationAllowed } from './preconditions';
 
 // F2 events. Cases still marked fixme are placeholders until they're recorded (see README: Recording a flow).
 test.describe('F2 events', () => {
@@ -62,9 +62,41 @@ test.describe('F2 events', () => {
     await dialog.getByRole('button', { name: 'Cancel' }).click();
   });
 
-  // REG-014 / ENG-271: duplicating creates a new event on eph each run, so it's opt-in (see TC-F2-01).
-  test('REG-014 / ENG-271: duplicating keeps registration off Eventbrite and shows current Settings labels', async () => {
+  // REG-014 / TC-F2-03 (ENG-2022, ENG-271, ENG-2240): duplicating the payments event (which sells with Sched Ticketing,
+  // the case ENG-2022 was reported for) with every option checked gives a copy that isn't switched to Eventbrite, keeps
+  // the registration form and shows the current Settings sections. It sends the request the Dashboard's Duplicate
+  // Event dialog sends. Each run creates an event on eph that can't be deleted, so it's opt-in (see TC-F2-01).
+  test('REG-014 / ENG-271: duplicating keeps registration off Eventbrite and shows current Settings labels', async ({ page, baseURL }) => {
     requireEventCreationAllowed();
-    stepsNotRecordedYet();
+    test.skip(!process.env.EPH_PAYMENTS_URL, 'Duplicates the payments event (EPH_PAYMENTS_URL), which uses Sched Ticketing');
+    const source = new URL(process.env.EPH_PAYMENTS_URL!).hostname.split('.')[0];
+    const main = new URL(baseURL!).origin.replace(/\/\/[^.]+\./, '//');
+    await page.goto('/editor');
+    // The Dashboard calls the main site's API with the session's token as Authorization.
+    const token = JSON.parse(decodeURIComponent((await page.context().cookies(main)).find((c) => c.name === 'token')!.value));
+    // Duplicating copies the whole event and takes longer than a click's time.
+    const api = (path: string, data?: object) => (data ? page.request.post(`${main}/api/${path}`, { headers: { authorization: token }, data, timeout: 90_000 }) : page.request.get(`${main}/api/${path}`, { headers: { authorization: token } }));
+    // The organization that owns the source event.
+    const orgs = (await (await api('org/list')).json()).organizations as { id: string }[];
+    let orgid: string | undefined;
+    for (const org of orgs) {
+      const confs = JSON.stringify(await (await api(`org/conf?orgid=${org.id}&format=json`)).json());
+      if (confs.includes(`"${source}"`)) orgid = org.id;
+    }
+    expect(orgid, `No organization of the admin owns ${source}`).toBeTruthy();
+    const options = ['sessions', 'venues', 'moderators', 'custom pages', 'admins', 'speakers', 'artists', 'sponsors', 'exhibitors', 'registration form', 'session feedback form', 'event feedback form', 'badges', 'appearance', 'content', 'speaker tools', 'attendance', 'privacy'];
+    const confid = `qadup${runId()}`;
+    const created = await api('org/create-conf', { orgid, deptid: orgid, name: `QA duplicate ${runId()}`, confid, source_conf: { confid: source, options } });
+    expect(created.status(), `Duplicating ${source} failed: ${(await created.text()).slice(0, 200)}`).toBe(201);
+
+    const copy = `https://${confid}.${new URL(main).host}`;
+    await page.goto(`${copy}/editor`);
+    expect(await page.content(), 'The copy should not be switched to Eventbrite registration (ENG-2022)').toContain('"privacy_eventbrite":"false"');
+    await page.goto(`${copy}/editor/registration`);
+    await expect(page.getByRole('button', { name: 'Customize Form' }), 'The copy should keep the registration form (ENG-2240)').toBeVisible();
+    await page.goto(`${copy}/editor/settings`);
+    for (const section of ['Session Visibility', 'Waitlist Settings']) {
+      await expect(page.getByText(section).first(), `The copy's Settings should show "${section}" (ENG-271)`).toBeVisible();
+    }
   });
 });

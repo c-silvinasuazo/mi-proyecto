@@ -29,11 +29,17 @@ export class SessionPage {
 
   // The toggle calls /event-set?add=<id> (or ?del=) and then reloads the page. The label changes before the reload, so
   // wait for the request and the reload: a navigation started meanwhile (going to My Schedule) would cancel the reload
-  // and fail with ERR_ABORTED.
+  // and fail with ERR_ABORTED. Removing a session with limited capacity asks first ("You may not be able to get back in
+  // if this is full"): confirm it.
   private async clickToggle(action: 'add' | 'del') {
     const saved = this.page.waitForResponse((r) => r.url().includes(`/event-set?${action}=`));
     const reload = this.page.waitForEvent('framenavigated', { predicate: (frame) => frame === this.page.mainFrame(), timeout: 10_000 }).catch(() => null);
     await this.toggle.click();
+    if (action === 'del') {
+      const confirm = this.page.getByRole('alertdialog', { name: /Remove this from your schedule/ }).getByRole('button', { name: 'Remove' });
+      const asked = await Promise.race([confirm.waitFor({ timeout: 10_000 }).then(() => true, () => false), saved.then(() => false)]);
+      if (asked) await confirm.click();
+    }
     expect((await saved).ok(), `The My Schedule request (${action}) failed`).toBe(true);
     if (await reload) await this.page.waitForLoadState('load');
   }

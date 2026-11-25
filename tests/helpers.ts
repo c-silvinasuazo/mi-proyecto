@@ -48,15 +48,21 @@ export function runId(): string {
 
 // Logs in to the eph event's editor and saves the session to .auth/eph.json, which every eph test loads. eph has
 // its own database: use the docker-cd test admin (see README), not a production account. The payments event
-// (EPH_PAYMENTS_URL) is another event, with its own session: .auth/eph-payments.json.
+// (EPH_PAYMENTS_URL), the capacity event (EPH_CAPACITY_URL), the registration event (EPH_REGISTRATION_URL) and the
+// PD event (EPH_PD_URL) are other events, each with its own session in .auth/.
 export async function logInToEphEditor(page: Page, base = requireEnv('EPH_BASE_URL')) {
   await logInToEph(page, 'EPH', base);
   await page.context().storageState({ path: ephSessionFile(base) });
 }
 
 export function ephSessionFile(base: string) {
-  const payments = process.env.EPH_PAYMENTS_URL;
-  return payments && new URL(base).host === new URL(payments).host ? '.auth/eph-payments.json' : '.auth/eph.json';
+  const host = new URL(base).host;
+  const same = (url?: string) => !!url && new URL(url).host === host;
+  if (same(process.env.EPH_PAYMENTS_URL)) return '.auth/eph-payments.json';
+  if (same(process.env.EPH_CAPACITY_URL)) return '.auth/eph-capacity.json';
+  if (same(process.env.EPH_REGISTRATION_URL)) return '.auth/eph-registration.json';
+  if (same(process.env.EPH_PD_URL)) return '.auth/eph-pd.json';
+  return '.auth/eph.json';
 }
 
 // Logs in to the eph event with the admin (EPH) or one of the optional accounts (EPH_SPEAKER, EPH_ATTENDEE). The

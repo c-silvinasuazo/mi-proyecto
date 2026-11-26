@@ -1,53 +1,13 @@
 # APP-16: inside the app, the event's pages don't show the web's "Download the Sched app" banner (REG-123): the
-# schedule, a session, and an attendee's profile from the attendee list (Directory on iOS, Info on Android, as in
-# APP-10).
+# schedule, a session, and an attendee's profile from the attendee list.
 appId: ${MAESTRO_APP_ID}
 ---
 - runFlow: common/open-event.yaml
 - assertNotVisible: ".*[Dd]ownload.*"
-- runFlow:
-    when:
-      platform: iOS
-    commands:
-      - tapOn: ${MAESTRO_SESSION}
-      - assertVisible: {id: "session title", text: "${MAESTRO_SESSION}"}
-- runFlow:
-    when:
-      platform: Android
-    commands:
-      - tapOn: {id: "${MAESTRO_SESSION}"}
-      - assertVisible: "${MAESTRO_SESSION_DAY} ${MAESTRO_SESSION_DATE}"
+- runFlow: common/open-session.yaml
 - assertNotVisible: ".*[Dd]ownload.*"
-# Maestro's back is Android only; on iOS the session page closes with the edge swipe (its back button has no label).
-- runFlow:
-    when:
-      platform: iOS
-    commands:
-      - swipe:
-          start: "1%,50%"
-          end: "90%,50%"
-          duration: 300
-      - waitForAnimationToEnd
-- runFlow:
-    when:
-      platform: Android
-    commands:
-      - back
-- runFlow:
-    when:
-      platform: iOS
-    commands:
-      - tapOn: "Directory"
-      - tapOn: "Attendees"
-- runFlow:
-    when:
-      platform: Android
-    commands:
-      - tapOn: "Info"
-      # The Info menu animates in; a tap on Attendees before it settles is lost (APP-10 stayed on Info once, 2026-11-17).
-      - waitForAnimationToEnd
-      - tapOn: "Attendees"
-      - hideKeyboard
+- runFlow: common/back.yaml
+- runFlow: common/open-attendees.yaml
 - tapOn: ${MAESTRO_ATTENDEE}
 - assertVisible: ${MAESTRO_ATTENDEE}
 - assertNotVisible: ".*[Dd]ownload.*"

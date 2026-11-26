@@ -1,6 +1,45 @@
 import { test, expect } from './fixtures';
+import type { APIResponse, Locator, Page } from '@playwright/test';
 import { runId } from '../helpers';
 import { requireEventCreationAllowed } from './preconditions';
+
+// Opens the Dashboard's Create New Event dialog. Without an organization the dialog asks for a new one's name; once
+// the admin has one, it's a dropdown instead.
+async function openCreateEventDialog(page: Page, dashboard: string, orgName: string) {
+  await page.goto(`${dashboard}/my-events`);
+  await page.getByRole('button', { name: 'Create New Event' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Create New Event' });
+  const newOrg = dialog.getByRole('textbox', { name: 'Organization name' });
+  if (await newOrg.isVisible()) await newOrg.fill(orgName);
+  return dialog;
+}
+
+// The URL is checked as it's typed (after a short pause), so type it rather than paste it.
+async function typeEventUrl(dialog: Locator, value: string) {
+  const box = dialog.getByRole('textbox', { name: 'Event URL' });
+  await box.clear();
+  await box.pressSequentially(value, { delay: 30 });
+  await box.blur();
+}
+
+// The main site's API as the Dashboard calls it: the session's token goes as Authorization. A POST (duplicating
+// copies the whole event) takes longer than a click's time.
+async function dashboardApi(page: Page, main: string) {
+  const token = JSON.parse(decodeURIComponent((await page.context().cookies(main)).find((c) => c.name === 'token')!.value));
+  const headers = { authorization: token };
+  return (path: string, data?: object): Promise<APIResponse> =>
+    data ? page.request.post(`${main}/api/${path}`, { headers, data, timeout: 90_000 }) : page.request.get(`${main}/api/${path}`, { headers });
+}
+
+// The id of the admin's organization that owns the event `confid`, or undefined.
+async function organizationOwning(api: Awaited<ReturnType<typeof dashboardApi>>, confid: string) {
+  const orgs = (await (await api('org/list')).json()).organizations as { id: string }[];
+  for (const org of orgs) {
+    const confs = JSON.stringify(await (await api(`org/conf?orgid=${org.id}&format=json`)).json());
+    if (confs.includes(`"${confid}"`)) return org.id;
+  }
+  return undefined;
+}
 
 // F2 events. Cases still marked fixme are placeholders until they're recorded (see README: Recording a flow).
 test.describe('F2 events', () => {
@@ -11,16 +50,9 @@ test.describe('F2 events', () => {
     requireEventCreationAllowed();
     const dashboard = new URL(baseURL!).origin.replace(/\/\/[^.]+\./, '//dashboard.');
     const url = `qaf2${runId()}`;
-    await page.goto(`${dashboard}/my-events`);
-    await page.getByRole('button', { name: 'Create New Event' }).click();
-    const dialog = page.getByRole('dialog', { name: 'Create New Event' });
-    const newOrg = dialog.getByRole('textbox', { name: 'Organization name' });
-    if (await newOrg.isVisible()) await newOrg.fill(`QA F2 Org ${url}`);
+    const dialog = await openCreateEventDialog(page, dashboard, `QA F2 Org ${url}`);
     await dialog.getByRole('textbox', { name: 'Event name' }).fill(`QA F2 event ${url}`);
-    const urlBox = dialog.getByRole('textbox', { name: 'Event URL' });
-    await urlBox.clear();
-    await urlBox.pressSequentially(url, { delay: 30 });
-    await urlBox.blur();
+    await typeEventUrl(dialog, url);
     const create = dialog.getByRole('button', { name: 'Create New Event' });
     await expect(create).toBeEnabled({ timeout: 15_000 });
     await create.click();
@@ -35,27 +67,14 @@ test.describe('F2 events', () => {
   // warning and keep Create disabled; a free URL enables it. Nothing is created.
   test('TC-F2-04: a taken or reserved URL disables "Create event"', async ({ page, baseURL }) => {
     const dashboard = new URL(baseURL!).origin.replace(/\/\/[^.]+\./, '//dashboard.');
-    await page.goto(`${dashboard}/my-events`);
-    await page.getByRole('button', { name: 'Create New Event' }).click();
-    const dialog = page.getByRole('dialog', { name: 'Create New Event' });
+    const dialog = await openCreateEventDialog(page, dashboard, `QA F2 Org ${runId()}`);
     const create = dialog.getByRole('button', { name: 'Create New Event' });
-    const url = dialog.getByRole('textbox', { name: 'Event URL' });
-    // Without an organization the dialog asks for a new one's name; once the admin has one, it's a dropdown instead.
-    const newOrg = dialog.getByRole('textbox', { name: 'Organization name' });
-    if (await newOrg.isVisible()) await newOrg.fill(`QA F2 Org ${runId()}`);
-
-    // The URL is checked as it's typed (after a short pause), so type it rather than paste it.
-    const typeUrl = async (value: string) => {
-      await url.clear();
-      await url.pressSequentially(value, { delay: 30 });
-      await url.blur();
-    };
-    await typeUrl(`qaf2free${runId()}`);
+    await typeEventUrl(dialog, `qaf2free${runId()}`);
     await expect(create, 'A free URL should enable Create').toBeEnabled({ timeout: 15_000 });
 
     const existing = new URL(baseURL!).hostname.split('.')[0];
     for (const taken of [existing, 'admin']) {
-      await typeUrl(taken);
+      await typeEventUrl(dialog, taken);
       await expect(dialog.getByRole('status').or(dialog.getByText(/not available|already taken/i)).first(), `No warning for the URL "${taken}"`).toContainText(/not available|taken/i);
       await expect(create, `Create is enabled for the URL "${taken}"`).toBeDisabled();
     }
@@ -72,17 +91,8 @@ test.describe('F2 events', () => {
     const source = new URL(process.env.EPH_PAYMENTS_URL!).hostname.split('.')[0];
     const main = new URL(baseURL!).origin.replace(/\/\/[^.]+\./, '//');
     await page.goto('/editor');
-    // The Dashboard calls the main site's API with the session's token as Authorization.
-    const token = JSON.parse(decodeURIComponent((await page.context().cookies(main)).find((c) => c.name === 'token')!.value));
-    // Duplicating copies the whole event and takes longer than a click's time.
-    const api = (path: string, data?: object) => (data ? page.request.post(`${main}/api/${path}`, { headers: { authorization: token }, data, timeout: 90_000 }) : page.request.get(`${main}/api/${path}`, { headers: { authorization: token } }));
-    // The organization that owns the source event.
-    const orgs = (await (await api('org/list')).json()).organizations as { id: string }[];
-    let orgid: string | undefined;
-    for (const org of orgs) {
-      const confs = JSON.stringify(await (await api(`org/conf?orgid=${org.id}&format=json`)).json());
-      if (confs.includes(`"${source}"`)) orgid = org.id;
-    }
+    const api = await dashboardApi(page, main);
+    const orgid = await organizationOwning(api, source);
     expect(orgid, `No organization of the admin owns ${source}`).toBeTruthy();
     const options = ['sessions', 'venues', 'moderators', 'custom pages', 'admins', 'speakers', 'artists', 'sponsors', 'exhibitors', 'registration form', 'session feedback form', 'event feedback form', 'badges', 'appearance', 'content', 'speaker tools', 'attendance', 'privacy'];
     const confid = `qadup${runId()}`;

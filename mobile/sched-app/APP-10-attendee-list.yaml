@@ -1,22 +1,6 @@
-# APP-10: the event's attendee list isn't blank (ENG-2213 was a blank list). iOS has it at Directory -> Attendees; the
-# Android app (1.63.1) has no Directory tab and puts it at Info -> Attendees (ENG-2591 is about aligning the tabs).
+# APP-10: the event's attendee list isn't blank (ENG-2213 was a blank list).
 appId: ${MAESTRO_APP_ID}
 ---
 - runFlow: common/open-event.yaml
-- runFlow:
-    when:
-      platform: iOS
-    commands:
-      - tapOn: "Directory"
-      - tapOn: "Attendees"
-- runFlow:
-    when:
-      platform: Android
-    commands:
-      - tapOn: "Info"
-      # The Info menu animates in; a tap on Attendees before it settles is lost (APP-10 stayed on Info once, 2026-11-17).
-      - waitForAnimationToEnd
-      - tapOn: "Attendees"
-      # The list opens with its search box focused; the names show in the accessibility tree once the keyboard is down.
-      - hideKeyboard
+- runFlow: common/open-attendees.yaml
 - assertVisible: ${MAESTRO_ATTENDEE}

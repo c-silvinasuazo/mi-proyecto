@@ -5,7 +5,29 @@ import { logInToEph, requireEnv, retryRequest, runId } from '../helpers';
 import { writeXlsx } from '../xlsx';
 import { attendeeId, expectImageLoads, joinedAs, setPeopleTag, solidPng } from './people';
 import { addDescription, createSession, editDescription, eventFirstDay, nextDay, openAddSession, openEditSession, pickTime, publishNewSession } from './sessions';
-import { capacityEvent, ephGap, ephMakesPdfs, openBug, requireAccount, requireFileUploads, requireImportQueueWorking, requireSecretSessions } from './preconditions';
+import { capacityEvent, ephGap, openBug, requireAccount, requireFileUploads, requireImportQueueWorking, requireSecretSessions, whenEphMakesPdfs } from './preconditions';
+
+// The name a download goes by: its Content-Disposition header and its URL.
+function downloadName(response: { headers(): Record<string, string>; url(): string }) {
+  return `${response.headers()['content-disposition'] ?? ''} ${response.url()}`;
+}
+
+// The description a session form sent, from the form data publishNewSession returns.
+function sentDescription(formData: string) {
+  return formData.match(/name="data\[description\]"\r\n\r\n([\s\S]*?)\r\n------/)?.[1] ?? '';
+}
+
+// The status of the editor's session import job for a file ("Queued", "Completed", ...), or "not listed".
+async function importJobStatus(page: Page, filename: string) {
+  const jobs = (await (await page.request.post('/editor/schedule', { form: { what: 'getImportJobs' } })).json()).results ?? {};
+  return (Object.values(jobs) as { filename: string; status: string }[]).find((job) => job.filename === filename)?.status ?? 'not listed';
+}
+
+// Notes a PHP warning the server printed before a response's JSON, so the report shows it without failing the check.
+function noteServerNotice(responseText: string, type: string) {
+  const notice = responseText.replace(/<[^>]+>/g, ' ').match(/Warning[^{]*/)?.[0];
+  if (notice) test.info().annotations.push({ type, description: notice.trim() });
+}
 
 // F9 session editor. Cases still marked fixme are placeholders until they're recorded (see README: Recording a flow).
 
@@ -136,7 +158,7 @@ test.describe('F9 session editor', () => {
     const response = await page.request.get((await file.getAttribute('href'))!);
     const bytes = await response.body();
     expect(bytes.subarray(0, 5).toString(), 'The file is not a PDF').toBe('%PDF-');
-    const name = `${response.headers()['content-disposition'] ?? ''} ${response.url()}`;
+    const name = downloadName(response);
     expect(name, 'The file does not download as .pdf').toMatch(/\.pdf/i);
     expect(name, 'The file downloads as zip or bin').not.toMatch(/\.(zip|bin)\b/i);
   });
@@ -171,7 +193,7 @@ test.describe('F9 session editor', () => {
       el.dispatchEvent(new ClipboardEvent('paste', { clipboardData: transfer, bubbles: true, cancelable: true }));
     }, { html, visible });
     await expect(addDescription(page)).toContainText(last);
-    const sent = (await publishNewSession(page)).match(/name="data\[description\]"\r\n\r\n([\s\S]*?)\r\n------/)?.[1] ?? '';
+    const sent = sentDescription(await publishNewSession(page));
     expect(sent.length, 'The description sent should still be over 8,192 characters of markup').toBeGreaterThan(8192);
 
     const id = await openEditSession(page, title);
@@ -219,11 +241,7 @@ test.describe('F9 session editor', () => {
     await page.locator('#add-session-import-finish').click();
 
     // The import is queued; wait for the job to finish.
-    const jobStatus = async () => {
-      const jobs = (await (await page.request.post('/editor/schedule', { form: { what: 'getImportJobs' } })).json()).results ?? {};
-      return (Object.values(jobs) as { filename: string; status: string }[]).find((job) => job.filename === `qa-import-${run}.xlsx`)?.status ?? 'not listed';
-    };
-    await expect.poll(jobStatus, { message: 'The import job never finished (on eph 2026-11-10 jobs stay Queued: the job queue isn\'t processing)', timeout: 150_000, intervals: [5_000, 10_000] }).not.toMatch(/queued|processing/i);
+    await expect.poll(() => importJobStatus(page, `qa-import-${run}.xlsx`), { message: 'The import job never finished (on eph 2026-11-10 jobs stay Queued: the job queue isn\'t processing)', timeout: 150_000, intervals: [5_000, 10_000] }).not.toMatch(/queued|processing/i);
 
     for (const session of sessions) {
       await page.goto('/editor/schedule');
@@ -332,7 +350,6 @@ test.describe('F9 session editor', () => {
   // Attendee Schedules (PDF) lists attendees with a session and a "Download" link each. The PDFs' text is compressed,
   // so "contains data" is checked on the page each PDF is made from, plus a real, non-trivial PDF download.
   test('REG-107: event and attendee schedule PDFs contain data', async ({ page }) => {
-    const pdfs = await ephMakesPdfs(page);
     const title = `QA F9 print ${runId()}`;
     await createSession(page, title);
 
@@ -348,13 +365,13 @@ test.describe('F9 session editor', () => {
     await test.step('event schedule', async () => {
       await page.goto('/print');
       await expect(page.getByText(title), 'The printable event schedule does not list the session').toBeVisible();
-      if (pdfs) await expectPdf(page.getByRole('link', { name: /download pdf/i }), 'The event schedule');
+      await whenEphMakesPdfs(page, () => expectPdf(page.getByRole('link', { name: /download pdf/i }), 'The event schedule'));
     });
     await test.step('attendee schedules', async () => {
       await page.goto('/editor/exports/attendee-schedule-export');
       const download = page.getByRole('link', { name: 'Download', exact: true });
       await expect(download.first(), 'No attendee has a schedule to export').toBeVisible();
-      if (pdfs) await expectPdf(download.first(), 'An attendee schedule');
+      await whenEphMakesPdfs(page, () => expectPdf(download.first(), 'An attendee schedule'));
     });
   });
   // REG-127
@@ -396,9 +413,7 @@ test.describe('F9 session editor', () => {
     await page.locator('.avatar-dropzone:visible').first().click();
     const uploaded = page.waitForResponse((r) => r.request().method() === 'POST' && r.url().endsWith('/editor/people'));
     await (await chooser).setFiles({ name: 'qa-sponsor.png', mimeType: 'image/png', buffer: solidPng(30, 100, 160) });
-    const upload = await (await uploaded).text();
-    const notice = upload.replace(/<[^>]+>/g, ' ').match(/Warning[^{]*/)?.[0];
-    if (notice) test.info().annotations.push({ type: 'server notice on photo upload', description: notice.trim() });
+    noteServerNotice(await (await uploaded).text(), 'server notice on photo upload');
     const accept = page.getByRole('button', { name: 'Accept' });
     await accept.click();
     await expect(accept, 'Accept did not close the crop step').toBeHidden();

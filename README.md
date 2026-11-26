@@ -7,7 +7,7 @@ Browser checks for the QA regression suite, with these targets:
 | Production | `npm run test:prod` | `tests/readonly` and `tests/cfp-readonly`: read-only checks | No |
 | eph (PR environment) | `npm run test:eph` | Every flow in `tests/eph`, in Chrome. REG-220 in Safari: `npx playwright test --project=eph-safari`. `npm run test:eph:quick` leaves out the two `@slow` cases (REG-105's unfreeze wait and the TC-F10-04 import, up to 15 minutes each) | Yes, only on eph (isolated database) |
 | eph on an iPhone | `npm run test:eph:iphone` | `tests/eph-iphone`: the event site at iPhone size in WebKit (search, description, My Schedule, attendee list). Needs `npx playwright install webkit` | Yes, only on eph |
-| Sched app (iOS and Android) | `npm run test:ios` or `npm run test:android` | `mobile/sched-app`: Maestro flows for the native app on a simulator or emulator (APP-01, 02, 07, 09, 10 and 13). Setup in [mobile/README.md](mobile/README.md) | No (read-only, on qa reminders 2 in production) |
+| Sched app (iOS and Android) | `npm run test:ios` or `npm run test:android` | `mobile/sched-app`: Maestro flows for the native app on a simulator or emulator (APP-01, 02, 07, 09, 10, 13, 16 and REG-225; APP-15 in `mobile/sched-app-dark`). Setup in [mobile/README.md](mobile/README.md) | No (read-only, on QA ENG-2240 copy in production) |
 
 `COVERAGE.md` maps every validated check to its test, or to "manual" with the reason. `TEST-IDS.md` lists the elements
 the tests can only find by CSS class or screen position, to ask the developers for test ids.
@@ -84,8 +84,11 @@ Each flow in `tests/eph` that isn't recorded yet is a `test.fixme` with its step
    tests (`openAddSession` / `publishNewSession`, `addAttendeeFromEditor`).
 8. Screens that several specs use have a page object in `tests/eph/pages` (the Check-In App, a session's page and My
    Schedule). Add to them instead of repeating selectors in a spec.
-9. Run `npm run test:eph:headed` to check it, then `npm run typecheck` and `npm run lint` (errors fail CI; the warnings
-   left are conditionals kept on purpose, for screens that only sometimes show a button).
+9. Keep branching out of the test body: a step that depends on the screen or on eph (a button that only sometimes
+   shows, a PDF eph can't make yet) goes in a helper (`whenEphMakesPdfs`, `openCreateEventDialog`), so each test reads
+   as one path. A helper that asserts goes in `assertFunctionNames` in `eslint.config.mjs`.
+10. Run `npm run test:eph:headed` to check it, then `npm run typecheck` and `npm run lint` (any error or warning fails
+    CI).
 
 ## Notes
 

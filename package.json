@@ -2,7 +2,7 @@
   "name": "sched-qa-playwright",
   "version": "0.1.0",
   "private": true,
-  "description": "QA proof of concept: read-only Playwright checks against a Sched environment.",
+  "description": "Sched QA automation: Playwright checks for production (read-only) and eph, and Maestro flows for the Sched app.",
   "scripts": {
     "test:prod": "playwright test --project=prod --project=cfp-readonly",
     "test:prod:headed": "playwright test --project=prod --project=cfp-readonly --headed",
@@ -15,7 +15,7 @@
     "test:ios:login": "sh mobile/run.sh login --platform ios",
     "test:ios:dark": "sh mobile/run.sh sched-app-dark --platform ios",
     "typecheck": "tsc -p .",
-    "lint": "eslint .",
+    "lint": "eslint . --max-warnings 0",
     "record": "playwright codegen",
     "report": "playwright show-report"
   },

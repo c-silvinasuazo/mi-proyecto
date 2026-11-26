@@ -10,6 +10,13 @@ function where(p: Page) {
   return `${u.origin}${u.pathname}`;
 }
 
+// A session page shows its title: the first line of the schedule link that opened it (a link with no text, for
+// example an image, gives nothing to look for).
+async function expectSessionPageTitle(page: Page, linkText: string) {
+  const title = linkText.trim().split('\n')[0];
+  if (title) await expect(page.getByText(title, { exact: false }).first(), 'The session page does not show its title').toBeVisible();
+}
+
 // A page "works" if it isn't the login page and doesn't show a server error.
 async function expectPageWorks(page: Page, path: string) {
   const response = await page.goto(path);
@@ -44,10 +51,10 @@ test.describe('eph areas: public site', () => {
     await expectPageWorks(page, '/');
     const session = page.locator('a[href*="event/"]').first();
     await expect(session, `No session links on the schedule. Landed on: ${where(page)}`).toBeVisible({ timeout: 15_000 });
-    const title = (await session.innerText()).trim().split('\n')[0];
+    const linkText = await session.innerText();
     await session.click();
     await expect(page, 'The session page did not open').toHaveURL(/\/event\//);
-    if (title) await expect(page.getByText(title, { exact: false }).first()).toBeVisible();
+    await expectSessionPageTitle(page, linkText);
   });
 
   test('REG-103 search returns results', async ({ page }) => {

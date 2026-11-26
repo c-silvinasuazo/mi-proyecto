@@ -201,6 +201,11 @@ export async function ephMakesPdfs(page: Page) {
   return pdfs;
 }
 
+// Runs a step that ends in a PDF only while eph generates PDFs; otherwise ephMakesPdfs notes the skipped step.
+export async function whenEphMakesPdfs(page: Page, step: () => Promise<void>) {
+  if (await ephMakesPdfs(page)) await step();
+}
+
 // Spreadsheet exports come back empty on eph (blocker #3 in ENG-2832). Tries the attendee export and skips while it's
 // empty, so the check runs for real once exports work.
 export async function requireExports(page: Page) {

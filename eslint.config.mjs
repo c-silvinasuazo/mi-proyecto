@@ -34,8 +34,9 @@ export default tseslint.config(
       // is still flagged.
       'playwright/no-skipped-test': ['warn', { allowConditional: true }],
       // Helpers that assert inside: the login helpers, the page and attendee checks, and the placeholders, which fail
-      // with "steps not recorded yet" once their precondition is met.
-      'playwright/expect-expect': ['warn', { assertFunctionNames: ['login', 'logInToEphEditor', 'expectPageWorks', 'addAttendee', 'stepsNotRecordedYet'] }],
+      // with "steps not recorded yet" once their precondition is met; addAttendeeFromEditor checks the attendee is added;
+      // expectVat checks the Stripe summary's VAT.
+      'playwright/expect-expect': ['warn', { assertFunctionNames: ['login', 'logInToEphEditor', 'expectPageWorks', 'addAttendee', 'addAttendeeFromEditor', 'expectVat', 'stepsNotRecordedYet'] }],
     },
   },
 );

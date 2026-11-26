@@ -1,0 +1,16 @@
+# Opens the QA session ($MAESTRO_SESSION) from the event's schedule and waits for its page: on iOS by its title, on
+# Android by its date (the Android session page has no id on the title). Used by APP-09, APP-15 and APP-16.
+appId: ${MAESTRO_APP_ID}
+---
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn: ${MAESTRO_SESSION}
+      - assertVisible: {id: "session title", text: "${MAESTRO_SESSION}"}
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - tapOn: {id: "${MAESTRO_SESSION}"}
+      - assertVisible: "${MAESTRO_SESSION_DAY} ${MAESTRO_SESSION_DATE}"

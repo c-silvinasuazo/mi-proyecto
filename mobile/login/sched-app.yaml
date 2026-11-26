@@ -1,6 +1,6 @@
-# Logs the QA account (SCHED_EMAIL and SCHED_PASSWORD from .env) in to the Sched app inside qa reminders 2, from a fresh
-# install, for the flows in mobile/sched-app-logged-in. Run it yourself (npm run test:ios:login): mobile/run.sh passes
-# the account to Maestro only for this folder. The labels keep the values out of Maestro's console output; Maestro's
+# Logs the QA account (SCHED_EMAIL and SCHED_PASSWORD from .env) in to the Sched app inside the QA event
+# ($MAESTRO_EVENT), from a fresh install, for the flows in mobile/sched-app-logged-in. Run it yourself
+# (npm run test:ios:login): mobile/run.sh passes the account to Maestro only for this folder. The labels keep the values out of Maestro's console output; Maestro's
 # own debug files in ~/.maestro/tests can still hold them. iOS only for now, and blocked by that login issue (below).
 appId: ${MAESTRO_APP_ID}
 ---

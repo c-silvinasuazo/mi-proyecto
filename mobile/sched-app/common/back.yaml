@@ -1,0 +1,18 @@
+# Goes back one screen. Maestro's back is Android only; on iOS a page closes with the edge swipe (the session page's
+# back button has no label).
+appId: ${MAESTRO_APP_ID}
+---
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - swipe:
+          start: "1%,50%"
+          end: "90%,50%"
+          duration: 300
+      - waitForAnimationToEnd
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - back

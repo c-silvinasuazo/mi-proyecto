@@ -48,13 +48,13 @@ Status: ✅ automated · 🟡 placeholder (`test.fixme`, to record) · 👤 stay
 | APP-08 (web): add a session to My Schedule and remove it on an iPhone | eph-iphone/event-site-iphone | ✅ |
 | APP-10 (web): the attendee list isn't blank on an iPhone | eph-iphone/event-site-iphone | ✅ |
 | APP-01: the Sched app opens on a fresh install to the events list, no login wall | mobile/sched-app (Maestro) | ✅ iOS (Sched Dev 2.16.2 simulator) and Android (1.63.1) |
-| APP-02: the app's search finds qa reminders 2 and it opens to its schedule and tabs | mobile/sched-app (Maestro) | ✅ iOS and Android |
+| APP-02: the app's search finds the QA event (QA ENG-2240 copy) and it opens to its schedule and tabs | mobile/sched-app (Maestro) | ✅ iOS and Android |
 | APP-07: the event's search finds a session by one word and hides the others | mobile/sched-app (Maestro) | ✅ iOS and Android |
-| APP-09: a session opens to its title, time, speaker and description | mobile/sched-app (Maestro) | ✅ iOS and Android (the description of qa publico was added on 2026-11-17) |
-| APP-10: the attendee list isn't blank (Directory -> Attendees on iOS, Info -> Attendees on Android) | mobile/sched-app (Maestro) | ✅ iOS and Android (Android has no Directory tab; ENG-2591 aligns the tabs) |
-| APP-13 / REG-126 / TC-F6-03 (app half): an event without registration (qa reminders 2) opens straight to its schedule | mobile/sched-app (Maestro) | ✅ iOS and Android |
-| APP-16 / REG-123: no "Download the Sched app" banner on the schedule, a session or an attendee's profile | mobile/sched-app (Maestro) | ✅ iOS and Android |
-| APP-15 / REG-122: in dark mode the schedule, a session and the attendee list show their content | mobile/sched-app-dark (Maestro) | ✅ iOS and Android, with screenshots for the visual check (Android 1.63.1 turns dark and reads well; Sched Dev 2.16.2 on iOS stays light, so dark mode isn't really exercised there) |
+| APP-09: a session opens to its title, time, speaker and description | mobile/sched-app (Maestro) | ✅ iOS and Android |
+| APP-10: the attendee list isn't blank (Directory -> Attendees on iOS, Info -> Attendees on Android) | mobile/sched-app (Maestro) | ✅ iOS and Android (Android has no Directory tab; ENG-2591 aligns the tabs). Needs a public attendee on the QA event, which it doesn't have yet (2026-11-25): fails until one is added (mobile/README.md). |
+| APP-13 / REG-126 / TC-F6-03 (app half): an event without registration (the QA event) opens straight to its schedule | mobile/sched-app (Maestro) | ✅ iOS and Android |
+| APP-16 / REG-123: no "Download the Sched app" banner on the schedule, a session or an attendee's profile | mobile/sched-app (Maestro) | ✅ iOS and Android. Needs a public attendee on the QA event, which it doesn't have yet (2026-11-25): fails until one is added (mobile/README.md). |
+| APP-15 / REG-122: in dark mode the schedule, a session and the attendee list show their content | mobile/sched-app-dark (Maestro) | ✅ iOS and Android, with screenshots for the visual check (Android 1.63.1 turns dark and reads well; Sched Dev 2.16.2 on iOS stays light, so dark mode isn't really exercised there). Needs a public attendee on the QA event, which it doesn't have yet (2026-11-25): fails until one is added (mobile/README.md). |
 | REG-225 (ENG-2172): the event's speaker list in the app keeps the web's order (featured first, then by last name) | mobile/sched-app (Maestro) | ✅ iOS and Android |
 | ENG-2884 / TC-F4-12: Schedmin saves and clears the VAT rate and merchant tax IDs, other taxes untouched | eph/eng-2884-vat | ✅ (payments event, master eph) |
 | ENG-2884 / TC-F4-21: Schedmin rejects a rate ID without txr_ and a tax ID without txi_, and says why | eph/eng-2884-vat | ✅ |

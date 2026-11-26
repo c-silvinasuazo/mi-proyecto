@@ -1,7 +1,22 @@
+import { Page } from '@playwright/test';
 import { test, expect } from './fixtures';
 import { runId } from '../helpers';
 import { SessionPage } from './pages/session-page';
 import { createSession, eventDates } from './sessions';
+
+// The sidebar's Filter By Date link must keep the schedule (with sessions) on screen. A one-day event has no Filter By
+// Date (demofriends on eph, 2026-11-15), so it's only checked on a longer event. Ends back on the first day's schedule.
+async function checkFilterByDate(page: Page, day: string, last: string) {
+  if (last === day) {
+    test.info().annotations.push({ type: 'skipped step', description: `Filter By Date: the event has one day (${day})` });
+    return;
+  }
+  const [year] = day.split('-');
+  const month = new Date(`${day}T12:00:00Z`).toLocaleString('en-US', { month: 'short', timeZone: 'UTC' });
+  await page.getByRole('link', { name: new RegExp(year) }).filter({ hasText: new RegExp(month, 'i') }).first().click();
+  await expect(page.locator('a[href*="event/"]').first(), 'Filter By Date left the schedule').toBeVisible();
+  await page.goto(`/${day}`);
+}
 
 // public site. Each test creates the session it looks for (on the event's first day, inside the event's dates; sessions
 // outside them don't show, "No schedule listed yet") and deletes it afterwards. Schedule links are relative ("event/<id>/...").
@@ -21,17 +36,7 @@ test.describe('public site', () => {
     await expect(page, 'The date filter redirected away from the schedule').toHaveURL(new RegExp(`/${day}$`));
     const session = page.getByRole('link', { name: new RegExp(title) }).first();
     await expect(session, 'The date filter does not show the session').toBeVisible();
-    // The sidebar's Filter By Date link must also keep the schedule (with sessions) on screen. A one-day event has no
-    // Filter By Date (demofriends on eph, 2026-11-15), so that part only runs on a longer event.
-    if (last === day) {
-      test.info().annotations.push({ type: 'skipped step', description: `Filter By Date: the event has one day (${day})` });
-    } else {
-      const [year] = day.split('-');
-      const month = new Date(`${day}T12:00:00Z`).toLocaleString('en-US', { month: 'short', timeZone: 'UTC' });
-      await page.getByRole('link', { name: new RegExp(year) }).filter({ hasText: new RegExp(month, 'i') }).first().click();
-      await expect(page.locator('a[href*="event/"]').first(), 'Filter By Date left the schedule').toBeVisible();
-      await page.goto(`/${day}`);
-    }
+    await checkFilterByDate(page, day, last);
 
     await session.click();
     await expect(page).toHaveURL(/\/event\//);
@@ -117,6 +122,7 @@ test.describe('public site', () => {
     // The chat bubble and banners load after the page, from other services, and they're what this case looks for, so
     // wait for the network to go quiet (an exception to waiting for something on the page: there is nothing to wait
     // for when nothing covers the controls). The chat keeps a connection open, so give up after 15 seconds.
+    // eslint-disable-next-line playwright/no-networkidle -- the exception explained above
     await page.waitForLoadState('networkidle', { timeout: 15_000 }).catch(() => {});
     await expectUncovered([
       page.getByRole('button', { name: 'Add New' }),

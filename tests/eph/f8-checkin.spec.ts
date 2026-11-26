@@ -5,7 +5,12 @@ import { runId } from '../helpers';
 import { CheckinApp } from './pages/checkin-app';
 import { SessionPage } from './pages/session-page';
 import { createSession } from './sessions';
-import { ephMakesPdfs, requireFileUploads, stepsNotRecordedYet } from './preconditions';
+import { requireFileUploads, stepsNotRecordedYet, whenEphMakesPdfs } from './preconditions';
+
+// The number of pages in a PDF (its text is compressed, so the layout is checked through the page count).
+function pdfPageCount(pdf: Buffer) {
+  return (pdf.toString('latin1').match(/\/Type\s*\/Page[^s]/g) ?? []).length;
+}
 
 // Self Check-in in Settings (needed for the session QR export), and its value before REG-113 changed it.
 let selfCheckinBefore: boolean | undefined;
@@ -63,17 +68,15 @@ test.describe('F8 check-in, QR and badges', () => {
     for (const title of titles) expect(shown, `The export is missing "${title}"`).toContain(title);
     expect(shown, 'The export includes a session that was not selected').not.toContain(skipped);
 
-    if (!(await ephMakesPdfs(page))) return;
-    const download = qr.waitForEvent('download', { timeout: 30_000 }).catch(() => null);
-    // "Export all (PDF)" sits at the top of the first page; go back there.
-    await qr.reload();
-    await qr.getByText(/export all/i).first().click({ timeout: 15_000 });
-    const file = await download;
-    expect(file, '"Export all (PDF)" did not download anything').toBeTruthy();
-    const pdf = fs.readFileSync(await file!.path());
-    expect(pdf.subarray(0, 5).toString(), 'Export all (PDF) is not a PDF').toBe('%PDF-');
-    const pages = (pdf.toString('latin1').match(/\/Type\s*\/Page[^s]/g) ?? []).length;
-    expect(pages, 'The QR PDF should have the 4 sessions on 2 pages (3 per page)').toBe(2);
+    await whenEphMakesPdfs(page, async () => {
+      const download = qr.waitForEvent('download', { timeout: 30_000 });
+      // "Export all (PDF)" sits at the top of the first page; go back there.
+      await qr.reload();
+      await qr.getByText(/export all/i).first().click({ timeout: 15_000 });
+      const pdf = fs.readFileSync(await (await download).path());
+      expect(pdf.subarray(0, 5).toString(), 'Export all (PDF) is not a PDF').toBe('%PDF-');
+      expect(pdfPageCount(pdf), 'The QR PDF should have the 4 sessions on 2 pages (3 per page)').toBe(2);
+    });
   });
 
   // TC-F8-05: the admin adds a session to their schedule (so they're its attendee), checks themself in from the

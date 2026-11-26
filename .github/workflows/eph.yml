@@ -26,7 +26,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # Type-check and lint (errors fail the job; warnings are conditionals kept on purpose, see eslint.config.mjs).
+  # Type-check and lint (any error or warning fails the job, see eslint.config.mjs).
   typecheck:
     runs-on: ubuntu-latest
     steps:

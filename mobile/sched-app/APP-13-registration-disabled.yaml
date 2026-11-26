@@ -1,5 +1,5 @@
-# APP-13: an event without registration (qa reminders 2 has none) opens straight to its schedule, with no registration
-# step on the way (REG-126, ENG-547).
+# APP-13: an event without registration (the QA event, $MAESTRO_EVENT, has none) opens straight to its schedule, with
+# no registration step on the way (REG-126, ENG-547).
 appId: ${MAESTRO_APP_ID}
 ---
 - runFlow: common/open-event.yaml

@@ -1,21 +1,18 @@
 # APP-09: a session opens to its details: title, time and speaker, and its description when it has one
-# ($MAESTRO_SESSION_DESCRIPTION; no session in the QA event has one yet, so that check is skipped while it is unset).
+# ($MAESTRO_SESSION_DESCRIPTION; that check is skipped while it is unset).
 appId: ${MAESTRO_APP_ID}
 ---
 - runFlow: common/open-event.yaml
+- runFlow: common/open-session.yaml
 - runFlow:
     when:
       platform: iOS
     commands:
-      - tapOn: ${MAESTRO_SESSION}
-      - assertVisible: {id: "session title", text: "${MAESTRO_SESSION}"}
       - assertVisible: ".*begins ${MAESTRO_SESSION_DAY}, ${MAESTRO_SESSION_DATE} at ${MAESTRO_SESSION_START}.*"
 - runFlow:
     when:
       platform: Android
     commands:
-      - tapOn: {id: "${MAESTRO_SESSION}"}
-      - assertVisible: "${MAESTRO_SESSION_DAY} ${MAESTRO_SESSION_DATE}"
       - assertVisible: "${MAESTRO_SESSION_START}.*"
 - assertVisible: ${MAESTRO_SPEAKER}
 - runFlow:

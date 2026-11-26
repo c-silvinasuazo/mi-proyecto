@@ -130,16 +130,16 @@ test.describe('feedback, profiles, sponsors and PD', () => {
           await setSpeakerTools(page, options);
           const [shown] = await toolsShown();
           await tool(shown).click();
-          const titleField = sp.locator('input[name="title"]');
+          const details = ['title', 'video_stream', 'rsvp_url'].map((name) => sp.locator(`input[name="${name}"]`));
           const descriptionEditor = sp.locator('.fr-element');
-          if (shown === 'Edit Session') {
-            await expect(titleField, '"Edit Session" should open the title field').toBeVisible();
-            for (const name of ['video_stream', 'rsvp_url']) await expect(sp.locator(`input[name="${name}"]`)).toBeVisible();
-            await expect(descriptionEditor, '"Edit Session" should not open the description').toBeHidden();
-          } else {
-            await expect(descriptionEditor, '"Edit Description" should open the description editor').toBeVisible();
-            await expect(titleField, '"Edit Description" should not open the title').toBeHidden();
-          }
+          const byTool: Record<string, { opens: typeof details; keepsClosed: typeof details }> = {
+            'Edit Session': { opens: details, keepsClosed: [descriptionEditor] },
+            'Edit Description': { opens: [descriptionEditor], keepsClosed: [details[0]] },
+          };
+          const fields = byTool[shown];
+          expect(fields, `Unknown speaker tool "${shown}"`).toBeDefined();
+          for (const field of fields!.opens) await expect(field, `"${shown}" should open ${field}`).toBeVisible();
+          for (const field of fields!.keepsClosed) await expect(field, `"${shown}" should not open ${field}`).toBeHidden();
         }
       });
     } finally {
